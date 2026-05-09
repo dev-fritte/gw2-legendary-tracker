@@ -108,20 +108,7 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
   const canSubmit = !!inputKey.trim() && !validateMutation.isPending;
 
   return (
-    <div style={{ minHeight: "100vh", color: "#e8e4f0", position: "relative", overflow: "hidden" }}>
-      {/* Top glow */}
-      <div
-        style={{
-          position: "absolute",
-          top: -200,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: 800,
-          height: 800,
-          background: "radial-gradient(circle, rgba(147,73,204,0.18) 0%, transparent 60%)",
-          pointerEvents: "none",
-        }}
-      />
+    <div style={{ minHeight: "100vh", color: "#e8e4f0", position: "relative" }}>
 
       {isAuthenticated && onLogout && <Navbar onLogout={onLogout} />}
 
