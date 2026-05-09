@@ -15,7 +15,6 @@ import { Navbar } from "@/components/Navbar";
 import type { NavSection } from "@/components/Navbar";
 import { CharacterCard, CharacterCardSkeleton } from "./CharacterCard";
 import { useCharacterNames, useCharacterDetails } from "@/hooks/useCharacters";
-import { useProfessionIconMap } from "@/hooks/useProfessions";
 import { storage } from "@/services/storage";
 import { getProfessionMeta } from "@/utils/professions";
 import { cn } from "@/utils/cn";
@@ -55,7 +54,6 @@ export function CharacterSelectionPage({
   const namesQuery = useCharacterNames(apiKey);
   const names = namesQuery.data ?? [];
   const detailsQuery = useCharacterDetails(apiKey, names, namesQuery.isSuccess);
-  const professionIcons = useProfessionIconMap(apiKey);
 
   // ── Sort state ─────────────────────────────────────────────────
   const [sortKey, setSortKey] = useState<SortKey>("playtime");
@@ -228,7 +226,6 @@ export function CharacterSelectionPage({
                 characters={characters}
                 selected={selected}
                 onToggle={toggle}
-                professionIcons={professionIcons}
               />
             ) : characters.length > 0 ? (
               <div className="space-y-2">
@@ -238,7 +235,6 @@ export function CharacterSelectionPage({
                     character={char}
                     selected={selected.has(char.name)}
                     onToggle={toggle}
-                    professionIcon={professionIcons.get(char.profession)}
                   />
                 ))}
               </div>
@@ -302,12 +298,10 @@ function ProfessionGroupedList({
   characters,
   selected,
   onToggle,
-  professionIcons,
 }: {
   characters: Character[];
   selected: Set<string>;
   onToggle: (name: string) => void;
-  professionIcons: Map<string, string>;
 }) {
   const groups = characters.reduce<Map<string, Character[]>>((acc, char) => {
     const list = acc.get(char.profession) ?? [];
@@ -340,7 +334,6 @@ function ProfessionGroupedList({
                 character={char}
                 selected={selected.has(char.name)}
                 onToggle={onToggle}
-                professionIcon={professionIcons.get(char.profession)}
               />
             ))}
           </div>

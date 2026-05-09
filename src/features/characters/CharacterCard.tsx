@@ -9,10 +9,9 @@ interface CharacterCardProps {
   character: Character;
   selected: boolean;
   onToggle: (name: string) => void;
-  professionIcon?: string;
 }
 
-export function CharacterCard({ character, selected, onToggle, professionIcon }: CharacterCardProps) {
+export function CharacterCard({ character, selected, onToggle }: CharacterCardProps) {
   const { t } = useTranslation();
   const meta = getProfessionMeta(character.profession);
 
@@ -52,29 +51,12 @@ export function CharacterCard({ character, selected, onToggle, professionIcon }:
       />
 
       {/* Profession icon */}
-      <div style={{ width: 36, height: 36, flexShrink: 0 }}>
-        {professionIcon ? (
-          <img
-            src={professionIcon}
-            alt={character.profession}
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          />
-        ) : (
-          <span
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: meta.hex,
-              fontSize: 10,
-              fontWeight: 600,
-            }}
-          >
-            {character.profession.slice(0, 3)}
-          </span>
-        )}
+      <div style={{ width: 48, height: 48, flexShrink: 0 }}>
+        <img
+          src={meta.decoIcon}
+          alt={character.profession}
+          style={{ width: "100%", height: "100%", objectFit: "contain" }}
+        />
       </div>
 
       {/* Text block */}
