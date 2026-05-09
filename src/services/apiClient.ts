@@ -3,6 +3,7 @@ import type {
   GW2Account,
   Character,
   GW2Item,
+  GW2Profession,
   LegendaryArmoryItem,
   GW2Skin,
 } from "@/types/gw2-api";
@@ -97,6 +98,13 @@ export class GW2ApiClient {
     return results
       .filter((r): r is PromiseFulfilledResult<Character> => r.status === "fulfilled")
       .map((r) => r.value);
+  }
+
+  async getProfessions(): Promise<GW2Profession[]> {
+    const { data } = await this.http.get<GW2Profession[]>("/professions", {
+      params: { ids: "all" },
+    });
+    return data;
   }
 
   async getLegendaryArmory(): Promise<LegendaryArmoryItem[]> {
