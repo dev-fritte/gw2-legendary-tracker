@@ -16,7 +16,7 @@ interface TrackerPageProps {
   onLogout: () => void;
 }
 
-export function TrackerPage({ apiKey, characters, onBack, onLogout }: TrackerPageProps) {
+export function TrackerPage({ apiKey, characters, onBack, onLogout }: Readonly<TrackerPageProps>) {
   const { t } = useTranslation();
   const professionIcons = useProfessionIconMap(apiKey);
   const { result, isLoading, isLoadingArmory, isLoadingItems, error, refetch } =
@@ -146,11 +146,11 @@ function SectionHeader({
   label,
   count,
   accent = false,
-}: {
-  label: string;
-  count: number;
-  accent?: boolean;
-}) {
+}: Readonly<{
+    label: string;
+    count: number;
+    accent?: boolean;
+}>) {
   return (
     <div className="flex items-center gap-2">
       <span
@@ -169,10 +169,10 @@ function SectionHeader({
 function LoadingStatus({
   isLoadingArmory,
   isLoadingItems,
-}: {
-  isLoadingArmory: boolean;
-  isLoadingItems: boolean;
-}) {
+}: Readonly<{
+    isLoadingArmory: boolean;
+    isLoadingItems: boolean;
+}>) {
   const { t } = useTranslation();
   return (
     <div className="flex items-center gap-3 text-sm text-zinc-500">
