@@ -11,27 +11,29 @@ export type Profession =
 
 interface ProfessionMeta {
   label: string;
+  hex: string;
   color: string;
   bgColor: string;
   borderColor: string;
 }
 
 export const PROFESSION_META: Record<Profession, ProfessionMeta> = {
-  Guardian:     { label: "Guardian",     color: "text-[#1a6e8a]", bgColor: "bg-[#1a6e8a]/15", borderColor: "border-[#1a6e8a]/40" },
-  Warrior:      { label: "Warrior",      color: "text-[#c8a72e]", bgColor: "bg-[#c8a72e]/15", borderColor: "border-[#c8a72e]/40" },
-  Engineer:     { label: "Engineer",     color: "text-[#c07830]", bgColor: "bg-[#c07830]/15", borderColor: "border-[#c07830]/40" },
-  Ranger:       { label: "Ranger",       color: "text-[#67a833]", bgColor: "bg-[#67a833]/15", borderColor: "border-[#67a833]/40" },
-  Thief:        { label: "Thief",        color: "text-[#974550]", bgColor: "bg-[#974550]/15", borderColor: "border-[#974550]/40" },
-  Elementalist: { label: "Elementalist", color: "text-[#dc6e6e]", bgColor: "bg-[#dc6e6e]/15", borderColor: "border-[#dc6e6e]/40" },
-  Mesmer:       { label: "Mesmer",       color: "text-[#8f47b3]", bgColor: "bg-[#8f47b3]/15", borderColor: "border-[#8f47b3]/40" },
-  Necromancer:  { label: "Necromancer",  color: "text-[#52a76f]", bgColor: "bg-[#52a76f]/15", borderColor: "border-[#52a76f]/40" },
-  Revenant:     { label: "Revenant",     color: "text-[#a04030]", bgColor: "bg-[#a04030]/15", borderColor: "border-[#a04030]/40" },
+  Guardian:     { label: "Guardian",     hex: "#5fb1c4", color: "text-[#5fb1c4]", bgColor: "bg-[#5fb1c4]/15", borderColor: "border-[#5fb1c4]/40" },
+  Warrior:      { label: "Warrior",      hex: "#d4a93a", color: "text-[#d4a93a]", bgColor: "bg-[#d4a93a]/15", borderColor: "border-[#d4a93a]/40" },
+  Engineer:     { label: "Engineer",     hex: "#cc8a3d", color: "text-[#cc8a3d]", bgColor: "bg-[#cc8a3d]/15", borderColor: "border-[#cc8a3d]/40" },
+  Ranger:       { label: "Ranger",       hex: "#7ab86c", color: "text-[#7ab86c]", bgColor: "bg-[#7ab86c]/15", borderColor: "border-[#7ab86c]/40" },
+  Thief:        { label: "Thief",        hex: "#a64252", color: "text-[#a64252]", bgColor: "bg-[#a64252]/15", borderColor: "border-[#a64252]/40" },
+  Elementalist: { label: "Elementalist", hex: "#e07a7a", color: "text-[#e07a7a]", bgColor: "bg-[#e07a7a]/15", borderColor: "border-[#e07a7a]/40" },
+  Mesmer:       { label: "Mesmer",       hex: "#b78bd6", color: "text-[#b78bd6]", bgColor: "bg-[#b78bd6]/15", borderColor: "border-[#b78bd6]/40" },
+  Necromancer:  { label: "Necromancer",  hex: "#52b788", color: "text-[#52b788]", bgColor: "bg-[#52b788]/15", borderColor: "border-[#52b788]/40" },
+  Revenant:     { label: "Revenant",     hex: "#c46a3d", color: "text-[#c46a3d]", bgColor: "bg-[#c46a3d]/15", borderColor: "border-[#c46a3d]/40" },
 };
 
 export function getProfessionMeta(profession: string): ProfessionMeta {
   return (
     PROFESSION_META[profession as Profession] ?? {
       label: profession,
+      hex: "#6a6478",
       color: "text-zinc-400",
       bgColor: "bg-zinc-800",
       borderColor: "border-zinc-700",

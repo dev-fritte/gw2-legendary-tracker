@@ -9,9 +9,10 @@ interface CharacterCardProps {
   character: Character;
   selected: boolean;
   onToggle: (name: string) => void;
+  professionIcon?: string;
 }
 
-export function CharacterCard({ character, selected, onToggle }: CharacterCardProps) {
+export function CharacterCard({ character, selected, onToggle, professionIcon }: CharacterCardProps) {
   const { t } = useTranslation();
   const meta = getProfessionMeta(character.profession);
 
@@ -22,13 +23,27 @@ export function CharacterCard({ character, selected, onToggle }: CharacterCardPr
     <label
       htmlFor={`char-${character.name}`}
       className={cn(
-        "group flex items-start gap-4 rounded-lg border p-4 cursor-pointer transition-all duration-150",
-        "hover:border-zinc-600 hover:bg-zinc-800/50",
+        "group relative flex items-center gap-4 rounded-lg border p-4 pl-5 cursor-pointer transition-all duration-150 overflow-hidden",
         selected
-          ? "border-amber-600/50 bg-amber-600/5"
-          : "border-zinc-800 bg-zinc-900",
+          ? "border-[rgba(147,73,204,0.5)] bg-[rgba(147,73,204,0.06)]"
+          : "hover:border-[rgba(147,73,204,0.25)] hover:bg-[rgba(20,16,28,0.5)]",
       )}
+      style={{ borderColor: selected ? undefined : "rgba(147,73,204,0.15)", background: selected ? undefined : "rgba(20,16,28,0.6)" }}
     >
+      {/* Profession accent stripe */}
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 3,
+          background: meta.hex,
+          opacity: 0.75,
+          borderRadius: "4px 0 0 4px",
+        }}
+      />
+
       <Checkbox
         id={`char-${character.name}`}
         checked={selected}
@@ -36,34 +51,50 @@ export function CharacterCard({ character, selected, onToggle }: CharacterCardPr
         className="mt-0.5 shrink-0"
       />
 
+      {/* Profession icon */}
+      <div style={{ width: 36, height: 36, flexShrink: 0 }}>
+        {professionIcon ? (
+          <img
+            src={professionIcon}
+            alt={character.profession}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          />
+        ) : (
+          <span
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: meta.hex,
+              fontSize: 10,
+              fontWeight: 600,
+            }}
+          >
+            {character.profession.slice(0, 3)}
+          </span>
+        )}
+      </div>
+
+      {/* Text block */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-medium text-zinc-50 truncate">{character.name}</span>
-          {/* Profession badge */}
-          <span
-            className={cn(
-              "inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold shrink-0",
-              meta.color,
-              meta.bgColor,
-              meta.borderColor,
-            )}
-          >
-            {meta.label}
-          </span>
+          <span className="font-medium text-[#e8e4f0] truncate">{character.name}</span>
         </div>
 
-        <div className="mt-1 flex items-center gap-3 text-sm text-zinc-500">
+        <div className="mt-1 flex items-center gap-3 text-sm" style={{ color: "#6a6478" }}>
           <span>{t("characters.level", { level: character.level })}</span>
-          <span className="text-zinc-700">·</span>
+          <span style={{ color: "#3a3448" }}>·</span>
           <span className="capitalize">{character.race}</span>
-          <span className="text-zinc-700">·</span>
+          <span style={{ color: "#3a3448" }}>·</span>
           <span className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
             {hours.toLocaleString()} h
           </span>
           {templateCount > 0 && (
             <>
-              <span className="text-zinc-700">·</span>
+              <span style={{ color: "#3a3448" }}>·</span>
               <span className="flex items-center gap-1">
                 <LayoutList className="w-3.5 h-3.5" />
                 {t("characters.templates", { count: templateCount })}
@@ -73,26 +104,30 @@ export function CharacterCard({ character, selected, onToggle }: CharacterCardPr
         </div>
       </div>
 
-      {/* Selection indicator line */}
+      {/* Selected indicator */}
       <div
-        className={cn(
-          "self-stretch w-0.5 rounded-full transition-colors shrink-0",
-          selected ? "bg-amber-500" : "bg-transparent",
-        )}
+        className="self-stretch w-0.5 rounded-full transition-colors shrink-0"
+        style={{ background: selected ? "#9349CC" : "transparent" }}
       />
     </label>
   );
 }
 
-// Skeleton version for loading state
 export function CharacterCardSkeleton() {
   return (
-    <div className="flex items-start gap-4 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+    <div
+      className="flex items-center gap-4 rounded-lg border p-4 pl-5"
+      style={{ borderColor: "rgba(147,73,204,0.12)", background: "rgba(20,16,28,0.6)" }}
+    >
       <div className="mt-0.5 h-4 w-4 rounded-sm bg-zinc-800 animate-pulse shrink-0" />
+      <div
+        className="w-10 h-10 rounded-md animate-pulse shrink-0"
+        style={{ background: "rgba(147,73,204,0.1)" }}
+      />
       <div className="flex-1 space-y-2">
         <div className="flex items-center gap-2">
           <div className="h-4 w-32 rounded bg-zinc-800 animate-pulse" />
-          <div className="h-5 w-20 rounded-md bg-zinc-800 animate-pulse" />
+          <div className="h-5 w-20 rounded bg-zinc-800 animate-pulse" />
         </div>
         <div className="flex gap-3">
           <div className="h-3.5 w-14 rounded bg-zinc-800 animate-pulse" />

@@ -6,7 +6,7 @@ export default {
     overview: "Overview",
   },
   auth: {
-    title: "Legendary Tracker",
+    title: "Legendary Mystic Forge",
     subtitle: "Guild Wars 2 — Legendary Progress Analyzer",
     cardTitle: "Connect your Account",
     cardDescription:
@@ -27,13 +27,17 @@ export default {
     },
   },
   characters: {
+    stepLabel: "STEP 02",
+    stepSub: "ANALYSIS WINDOW",
+    pageTitle: "Choose Your Heroes",
     title: "Select Characters",
     description:
-      "Choose which characters to include in the legendary weapon analysis.",
+      "Only selected characters are factored into the next legendary weapon recommendation. Inventories, templates and builds are synchronized.",
     loadingCharacters: "Loading characters…",
     loadingDetails: "Loading character details…",
     selectAll: "Select all",
     deselectAll: "Deselect all",
+    selectedCount: "of {{total}} selected",
     selected: "{{count}} of {{total}} selected",
     analyzeButton: "Analyze ({{count}})",
     analyzeButtonDisabled: "Select at least one character",
@@ -44,6 +48,7 @@ export default {
     fetchingCharacter: "Loading {{name}}…",
     partialError: "{{count}} character(s) could not be loaded and were skipped.",
     sortBy: "Sort by",
+    sortLabel: "Sort",
     sortPlaytime: "Playtime",
     sortProfession: "Profession",
     sortAlphabetical: "Alphabetical",

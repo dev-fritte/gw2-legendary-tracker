@@ -37,15 +37,28 @@ export function Navbar({ onLogout, activeSection, onNavigate }: NavbarProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-zinc-800 bg-zinc-950/90 backdrop-blur supports-[backdrop-filter]:bg-zinc-950/75">
+    <header
+      className="sticky top-0 z-40 w-full"
+      style={{
+        background: "rgba(11,8,20,0.85)",
+        borderBottom: "1px solid rgba(147,73,204,0.18)",
+        backdropFilter: "blur(10px)",
+      }}
+    >
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-4 px-4">
         {/* Brand */}
         <div className="flex items-center gap-2.5 shrink-0">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-amber-600/20 border border-amber-600/30">
-            <span className="text-amber-400 text-xs font-bold">GW2</span>
-          </div>
-          <span className="font-semibold text-zinc-50 text-sm tracking-tight hidden sm:block">
-            Legendary Tracker
+          <img
+            src="/favicon.svg"
+            alt="Legendary Mystic Forge"
+            style={{ width: 28, height: 28, borderRadius: 6, boxShadow: "0 0 12px rgba(147,73,204,0.5)" }}
+          />
+          <span
+            className="text-sm font-semibold tracking-tight hidden sm:block"
+            style={{ fontFamily: '"Cinzel", serif', color: "#e8e4f0" }}
+          >
+            Legendary{" "}
+            <span style={{ color: "#9349CC" }}>Mystic Forge</span>
           </span>
         </div>
 
@@ -56,12 +69,29 @@ export function Navbar({ onLogout, activeSection, onNavigate }: NavbarProps) {
               <button
                 key={section}
                 onClick={() => onNavigate(section)}
-                className={cn(
-                  "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                style={
                   activeSection === section
-                    ? "text-zinc-50 bg-zinc-800"
-                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60",
-                )}
+                    ? {
+                        background: "rgba(147,73,204,0.15)",
+                        border: "1px solid rgba(147,73,204,0.4)",
+                        color: "#fff",
+                      }
+                    : {
+                        border: "1px solid transparent",
+                        color: "#8e8a9a",
+                      }
+                }
+                onMouseEnter={(e) => {
+                  if (activeSection !== section) {
+                    (e.currentTarget as HTMLButtonElement).style.color = "#c8bee0";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeSection !== section) {
+                    (e.currentTarget as HTMLButtonElement).style.color = "#8e8a9a";
+                  }
+                }}
               >
                 {label}
               </button>
@@ -74,22 +104,37 @@ export function Navbar({ onLogout, activeSection, onNavigate }: NavbarProps) {
           {/* Language switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-1.5 text-zinc-400 hover:text-zinc-50">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5"
+                style={{ color: "#8e8a9a" }}
+              >
                 <Languages className="h-4 w-4" />
-                <span className="hidden sm:inline">{currentLangMeta.flag} {currentLangMeta.label}</span>
+                <span className="hidden sm:inline">
+                  {currentLangMeta.flag} {currentLangMeta.label}
+                </span>
                 <span className="sm:hidden">{currentLangMeta.flag}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuLabel>{t("nav.language")}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
+            <DropdownMenuContent
+              align="end"
+              className="w-40"
+              style={{ background: "#14101c", border: "1px solid rgba(147,73,204,0.25)" }}
+            >
+              <DropdownMenuLabel style={{ color: "#a89cc0" }}>
+                {t("nav.language")}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator style={{ background: "rgba(147,73,204,0.15)" }} />
               {SUPPORTED_LANGUAGES.map((lang) => (
                 <DropdownMenuItem
                   key={lang.code}
                   onClick={() => handleLanguageChange(lang.code)}
                   className={cn(
                     "cursor-pointer",
-                    currentLang === lang.code && "text-amber-400 focus:text-amber-300",
+                    currentLang === lang.code
+                      ? "text-[#9349CC] focus:text-[#b06de0]"
+                      : "text-[#c8bee0]",
                   )}
                 >
                   <span className="mr-2">{lang.flag}</span>
@@ -102,14 +147,21 @@ export function Navbar({ onLogout, activeSection, onNavigate }: NavbarProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <div className="h-4 w-px bg-zinc-800" />
+          <div className="h-4 w-px" style={{ background: "rgba(147,73,204,0.2)" }} />
 
           {/* Logout */}
           <Button
             variant="ghost"
             size="sm"
             onClick={onLogout}
-            className="gap-1.5 text-zinc-400 hover:text-red-400 hover:bg-red-950/30"
+            className="gap-1.5 hover:bg-red-950/30"
+            style={{ color: "#8e8a9a" }}
+            onMouseEnter={(e) =>
+              ((e.currentTarget as HTMLButtonElement).style.color = "#f87171")
+            }
+            onMouseLeave={(e) =>
+              ((e.currentTarget as HTMLButtonElement).style.color = "#8e8a9a")
+            }
           >
             <LogOut className="h-4 w-4" />
             <span className="hidden sm:inline">{t("nav.logout")}</span>

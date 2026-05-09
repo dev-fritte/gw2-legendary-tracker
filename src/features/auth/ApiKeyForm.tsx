@@ -1,13 +1,70 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { KeyRound, Loader2, ExternalLink, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, ExternalLink } from "lucide-react";
 import { getApiClient, InvalidApiKeyError, ApiTimeoutError } from "@/services/apiClient";
 import { Navbar } from "@/components/Navbar";
+
+function RuneRing({ size = 120 }: { size?: number }) {
+  const dots = [0, 60, 120, 180, 240, 300].map((a) => ({
+    x: 32 + 28 * Math.cos((a * Math.PI) / 180),
+    y: 32 + 28 * Math.sin((a * Math.PI) / 180),
+  }));
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        position: "relative",
+        display: "grid",
+        placeItems: "center",
+        background: "radial-gradient(circle, rgba(147,73,204,0.13) 0%, transparent 70%)",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          inset: -8,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(147,73,204,0.27) 0%, transparent 60%)",
+          filter: "blur(8px)",
+          pointerEvents: "none",
+        }}
+      />
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 64 64"
+        style={{ position: "absolute", inset: 0 }}
+      >
+        <circle cx="32" cy="32" r="28" fill="none" stroke="#9349CC" strokeWidth="0.5" opacity="0.6" />
+        <circle cx="32" cy="32" r="22" fill="none" stroke="#9349CC" strokeWidth="0.5" strokeDasharray="2 3" opacity="0.5" />
+        <circle cx="32" cy="32" r="14" fill="none" stroke="#e9c66b" strokeWidth="0.6" opacity="0.7" />
+        {dots.map((d, i) => (
+          <circle key={i} cx={d.x} cy={d.y} r="1.4" fill="#9349CC" />
+        ))}
+      </svg>
+      <div
+        style={{
+          width: size * 0.42,
+          height: size * 0.42,
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, #9349CC, #5a2a7e)",
+          boxShadow: "0 0 20px rgba(147,73,204,0.53), inset 0 0 8px rgba(255,255,255,0.2)",
+          display: "grid",
+          placeItems: "center",
+          fontSize: size * 0.18,
+          color: "#fff",
+          fontFamily: '"Cinzel", serif',
+          fontWeight: 700,
+        }}
+      >
+        ✦
+      </div>
+    </div>
+  );
+}
 
 interface ApiKeyFormProps {
   onSuccess: (apiKey: string) => void;
@@ -48,105 +105,283 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
     validateMutation.mutate(trimmed);
   };
 
+  const canSubmit = !!inputKey.trim() && !validateMutation.isPending;
+
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col">
+    <div style={{ minHeight: "100vh", color: "#e8e4f0", position: "relative", overflow: "hidden" }}>
+      {/* Top glow */}
+      <div
+        style={{
+          position: "absolute",
+          top: -200,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: 800,
+          height: 800,
+          background: "radial-gradient(circle, rgba(147,73,204,0.18) 0%, transparent 60%)",
+          pointerEvents: "none",
+        }}
+      />
+
       {isAuthenticated && onLogout && <Navbar onLogout={onLogout} />}
 
-      <div className="flex flex-1 items-center justify-center p-4">
-        <div className="w-full max-w-md space-y-6">
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <div className="flex justify-center mb-4">
-              <div className="relative">
-                <div className="w-16 h-16 rounded-full bg-amber-600/20 flex items-center justify-center border border-amber-600/30">
-                  <KeyRound className="w-8 h-8 text-amber-400" />
-                </div>
-                <div className="absolute inset-0 rounded-full bg-amber-500/10 blur-xl" />
-              </div>
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight text-zinc-50">
-              {t("auth.title")}
-            </h1>
-            <p className="text-zinc-400 text-sm">{t("auth.subtitle")}</p>
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: isAuthenticated ? "calc(100vh - 56px)" : "100vh",
+          padding: 16,
+        }}
+      >
+        <div style={{ width: "100%", maxWidth: 480, textAlign: "center" }}>
+          {/* RuneRing */}
+          <div style={{ display: "grid", placeItems: "center", marginBottom: 24 }}>
+            <RuneRing size={120} />
           </div>
 
-          {/* Form Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">{t("auth.cardTitle")}</CardTitle>
-              <CardDescription>{t("auth.cardDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="api-key">{t("auth.apiKeyLabel")}</Label>
-                  <Input
-                    id="api-key"
-                    type="password"
-                    placeholder={t("auth.apiKeyPlaceholder")}
-                    value={inputKey}
-                    onChange={(e) => setInputKey(e.target.value)}
-                    disabled={validateMutation.isPending}
-                    autoComplete="off"
-                    spellCheck={false}
-                  />
-                </div>
+          {/* Eyebrow */}
+          <div
+            style={{
+              fontSize: 11,
+              letterSpacing: 4,
+              textTransform: "uppercase",
+              color: "#9349CC",
+              marginBottom: 10,
+              fontWeight: 500,
+            }}
+          >
+            ✦ Tyrias Schmiedebuch ✦
+          </div>
 
-                {errorMessage && (
-                  <div className="flex items-start gap-2 rounded-md border border-red-800/50 bg-red-950/30 px-3 py-2.5 text-sm text-red-400">
-                    <span className="mt-0.5">⚠</span>
-                    <span>{errorMessage}</span>
-                  </div>
-                )}
+          {/* Title */}
+          <h1
+            style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: 40,
+              fontWeight: 600,
+              margin: 0,
+              letterSpacing: 1,
+              background: "linear-gradient(180deg, #fff 0%, #9349CC 140%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            {t("auth.title")}
+          </h1>
+          <p
+            style={{
+              color: "#8e8a9a",
+              fontSize: 15,
+              margin: "14px 0 36px",
+              lineHeight: 1.6,
+            }}
+          >
+            {t("auth.subtitle")}
+          </p>
 
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={!inputKey.trim() || validateMutation.isPending}
-                >
-                  {validateMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      {t("auth.validating")}
-                    </>
-                  ) : (
-                    <>
-                      <ShieldCheck className="w-4 h-4" />
-                      {t("auth.connectButton")}
-                    </>
-                  )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+          {/* Form card */}
+          <form
+            onSubmit={handleSubmit}
+            style={{
+              background: "rgba(20,16,28,0.8)",
+              border: "1px solid rgba(147,73,204,0.25)",
+              borderRadius: 12,
+              padding: 24,
+              textAlign: "left",
+              boxShadow: "0 0 40px rgba(147,73,204,0.08)",
+            }}
+          >
+            <label
+              style={{
+                fontSize: 11,
+                letterSpacing: 2,
+                textTransform: "uppercase",
+                color: "#a89cc0",
+                fontWeight: 600,
+                display: "block",
+                marginBottom: 10,
+              }}
+            >
+              {t("auth.apiKeyLabel")}
+            </label>
 
-          {/* Help section */}
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4 space-y-2">
-            <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
-              {t("auth.permissionsTitle")}
-            </p>
-            <ul className="text-sm text-zinc-500 space-y-1">
-              {["account", "characters", "inventories", "builds"].map((perm) => (
-                <li key={perm} className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-600 shrink-0" />
-                  {perm}
-                </li>
-              ))}
-            </ul>
+            {/* Input row */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                background: "#0b0814",
+                border: "1px solid rgba(147,73,204,0.2)",
+                borderRadius: 8,
+                padding: "12px 14px",
+                marginBottom: errorMessage ? 12 : 16,
+              }}
+            >
+              <span style={{ color: "#9349CC", fontSize: 16, lineHeight: 1 }}>⚿</span>
+              <input
+                type="password"
+                placeholder={t("auth.apiKeyPlaceholder")}
+                value={inputKey}
+                onChange={(e) => setInputKey(e.target.value)}
+                disabled={validateMutation.isPending}
+                autoComplete="off"
+                spellCheck={false}
+                style={{
+                  flex: 1,
+                  background: "transparent",
+                  border: "none",
+                  outline: "none",
+                  color: "#e8e4f0",
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontSize: 13,
+                }}
+              />
+            </div>
+
+            {/* Error */}
+            {errorMessage && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 8,
+                  borderRadius: 8,
+                  border: "1px solid rgba(220,60,60,0.3)",
+                  background: "rgba(220,60,60,0.08)",
+                  padding: "10px 14px",
+                  fontSize: 13,
+                  color: "#f87171",
+                  marginBottom: 16,
+                }}
+              >
+                <span>⚠</span>
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {/* Submit button */}
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              style={{
+                width: "100%",
+                padding: "14px 16px",
+                border: "none",
+                borderRadius: 8,
+                background: canSubmit
+                  ? "linear-gradient(180deg, #9349CC 0%, #5a2a7e 100%)"
+                  : "rgba(147,73,204,0.25)",
+                color: "#fff",
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 600,
+                fontSize: 14,
+                letterSpacing: 1,
+                textTransform: "uppercase",
+                cursor: canSubmit ? "pointer" : "not-allowed",
+                boxShadow: canSubmit
+                  ? "0 0 20px rgba(147,73,204,0.35), inset 0 1px 0 rgba(255,255,255,0.15)"
+                  : "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                transition: "all 0.2s",
+              }}
+            >
+              {validateMutation.isPending ? (
+                <>
+                  <Loader2 style={{ width: 16, height: 16, animation: "spin 1s linear infinite" }} />
+                  {t("auth.validating")}
+                </>
+              ) : (
+                <>✦ {t("auth.connectButton")}</>
+              )}
+            </button>
+          </form>
+
+          {/* Permissions */}
+          <div
+            style={{
+              marginTop: 20,
+              display: "flex",
+              justifyContent: "center",
+              gap: 16,
+              flexWrap: "wrap",
+            }}
+          >
+            {["account", "characters", "inventories", "builds"].map((p) => (
+              <span
+                key={p}
+                style={{
+                  fontSize: 11,
+                  color: "#6a6478",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
+                <span
+                  style={{
+                    width: 4,
+                    height: 4,
+                    background: "#9349CC",
+                    borderRadius: 99,
+                    display: "block",
+                    flexShrink: 0,
+                  }}
+                />
+                {p}
+              </span>
+            ))}
+          </div>
+
+          {/* Arena.net link */}
+          <div style={{ marginTop: 14 }}>
             <a
               href="https://account.arena.net/applications"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors mt-2"
+              style={{
+                fontSize: 12,
+                color: "#6a6478",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                textDecoration: "none",
+                transition: "color 0.15s",
+              }}
+              onMouseEnter={(e) =>
+                ((e.currentTarget as HTMLAnchorElement).style.color = "#9349CC")
+              }
+              onMouseLeave={(e) =>
+                ((e.currentTarget as HTMLAnchorElement).style.color = "#6a6478")
+              }
             >
               {t("auth.generateKey")}
-              <ExternalLink className="w-3 h-3" />
+              <ExternalLink style={{ width: 12, height: 12 }} />
             </a>
           </div>
 
-          <p className="text-center text-xs text-zinc-600">{t("auth.privacyNote")}</p>
+          {/* Privacy */}
+          <p
+            style={{
+              marginTop: 24,
+              fontSize: 11,
+              color: "#5a5468",
+              textAlign: "center",
+            }}
+          >
+            🔒 {t("auth.privacyNote")}
+          </p>
         </div>
       </div>
+
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }
