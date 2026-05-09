@@ -67,11 +67,6 @@ export function WeaponRecommendationCard({
                   <Sparkles className="w-5 h-5 text-zinc-600" />
                 </div>
               )}
-              {isCovered && (
-                <div className="absolute inset-0 rounded-md bg-zinc-900/60 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                </div>
-              )}
             </div>
           </div>
 
