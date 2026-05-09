@@ -19,12 +19,21 @@ interface OverviewPageProps {
 }
 
 type ViewMode = "flat" | "grouped";
+type FilterType = "all" | "weapons" | "armor";
 
 export function OverviewPage({ apiKey, onLogout, onNavigate }: OverviewPageProps) {
   const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<ViewMode>("flat");
-  const { items, isLoading, isLoadingItems, error, unlockedCount, totalCount, refetch } =
+  const [filterType, setFilterType] = useState<FilterType>("all");
+  const { items: allItems, isLoading, isLoadingItems, error, refetch } =
     useLegendaryOverview(apiKey);
+
+  const items =
+    filterType === "weapons" ? allItems.filter((i) => i.itemType === "Weapon")
+    : filterType === "armor"   ? allItems.filter((i) => i.itemType !== "Weapon")
+    : allItems;
+  const unlockedCount = items.filter((i) => i.count > 0).length;
+  const totalCount = items.length;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ color: "#e8e4f0" }}>
@@ -66,56 +75,53 @@ export function OverviewPage({ apiKey, onLogout, onNavigate }: OverviewPageProps
         {!error && (
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
               border: "1px solid rgba(147,73,204,0.18)",
               background: "rgba(20,16,28,0.8)",
               borderRadius: 8,
               padding: "12px 16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
             }}
           >
-            <span className="text-sm" style={{ color: "#6a6478" }}>
-              {t("overview.unlocked")}:{" "}
-              <span style={{ color: "#e8e4f0", fontWeight: 600 }}>{unlockedCount}</span>
-              {" / "}
-              <span style={{ color: "#e8e4f0", fontWeight: 600 }}>{totalCount}</span>
-              {isLoading && (
-                <span className="ml-3" style={{ color: "#5a5468" }}>
-                  · {isLoadingItems ? t("overview.loadingItems") : t("overview.loading")}
-                </span>
-              )}
-            </span>
+            {/* Row 1: count + view toggle */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span className="text-sm" style={{ color: "#6a6478" }}>
+                {t("overview.unlocked")}:{" "}
+                <span style={{ color: "#e8e4f0", fontWeight: 600 }}>{unlockedCount}</span>
+                {" / "}
+                <span style={{ color: "#e8e4f0", fontWeight: 600 }}>{totalCount}</span>
+                {isLoading && (
+                  <span className="ml-3" style={{ color: "#5a5468" }}>
+                    · {isLoadingItems ? t("overview.loadingItems") : t("overview.loading")}
+                  </span>
+                )}
+              </span>
 
-            {/* View toggle */}
-            <div
-              style={{
-                display: "flex",
-                border: "1px solid rgba(147,73,204,0.25)",
-                borderRadius: 6,
-                overflow: "hidden",
-              }}
-            >
-              {(["flat", "grouped"] as ViewMode[]).map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  style={{
-                    padding: "4px 12px",
-                    fontSize: 12,
-                    fontWeight: 500,
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "all 0.15s",
-                    background: viewMode === mode
-                      ? "linear-gradient(135deg, #9349CC, #7a3aaa)"
-                      : "transparent",
-                    color: viewMode === mode ? "#fff" : "#8e8a9a",
-                  }}
-                >
-                  {mode === "flat" ? t("overview.viewAll") : t("overview.viewGrouped")}
-                </button>
-              ))}
+              <PillToggle<ViewMode>
+                value={viewMode}
+                onChange={setViewMode}
+                options={[
+                  { value: "flat",    label: t("overview.viewAll") },
+                  { value: "grouped", label: t("overview.viewGrouped") },
+                ]}
+              />
+            </div>
+
+            {/* Row 2: type filter */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 11, color: "#5a5468", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                {t("overview.filterLabel")}
+              </span>
+              <PillToggle<FilterType>
+                value={filterType}
+                onChange={setFilterType}
+                options={[
+                  { value: "all",     label: t("overview.filterAll") },
+                  { value: "weapons", label: t("overview.filterWeapons") },
+                  { value: "armor",   label: t("overview.filterArmor") },
+                ]}
+              />
             </div>
           </div>
         )}
@@ -129,6 +135,39 @@ export function OverviewPage({ apiKey, onLogout, onNavigate }: OverviewPageProps
           <LegendaryGrid items={items} />
         )}
       </main>
+    </div>
+  );
+}
+
+function PillToggle<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  options: { value: T; label: string }[];
+}) {
+  return (
+    <div style={{ display: "flex", border: "1px solid rgba(147,73,204,0.25)", borderRadius: 6, overflow: "hidden" }}>
+      {options.map((opt) => (
+        <button
+          key={opt.value}
+          onClick={() => onChange(opt.value)}
+          style={{
+            padding: "4px 12px",
+            fontSize: 12,
+            fontWeight: 500,
+            border: "none",
+            cursor: "pointer",
+            transition: "all 0.15s",
+            background: value === opt.value ? "linear-gradient(135deg, #9349CC, #7a3aaa)" : "transparent",
+            color: value === opt.value ? "#fff" : "#8e8a9a",
+          }}
+        >
+          {opt.label}
+        </button>
+      ))}
     </div>
   );
 }

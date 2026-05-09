@@ -32,8 +32,8 @@ export function Navbar({ onLogout, activeSection, onNavigate }: NavbarProps) {
     SUPPORTED_LANGUAGES.find((l) => l.code === currentLang) ?? SUPPORTED_LANGUAGES[0];
 
   const navItems: { section: NavSection; label: string }[] = [
-    { section: "zommoros", label: t("nav.zommorosChoice") },
     { section: "overview", label: t("nav.overview") },
+    { section: "zommoros", label: t("nav.zommorosChoice") },
   ];
 
   return (
@@ -47,7 +47,12 @@ export function Navbar({ onLogout, activeSection, onNavigate }: NavbarProps) {
     >
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-4 px-4">
         {/* Brand */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        <a
+          href="#overview"
+          onClick={(e) => { e.preventDefault(); onNavigate?.("overview"); }}
+          className="flex items-center gap-2.5 shrink-0"
+          style={{ textDecoration: "none" }}
+        >
           <img
             src="/favicon.svg"
             alt="Legendary Mystic Forge"
@@ -60,15 +65,16 @@ export function Navbar({ onLogout, activeSection, onNavigate }: NavbarProps) {
             Legendary{" "}
             <span style={{ color: "#9349CC" }}>Mystic Forge</span>
           </span>
-        </div>
+        </a>
 
         {/* Nav items */}
         {onNavigate && (
           <nav className="flex items-center gap-1 flex-1">
             {navItems.map(({ section, label }) => (
-              <button
+              <a
                 key={section}
-                onClick={() => onNavigate(section)}
+                href={`#${section}`}
+                onClick={(e) => { e.preventDefault(); onNavigate(section); }}
                 className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
                 style={
                   activeSection === section
@@ -76,25 +82,27 @@ export function Navbar({ onLogout, activeSection, onNavigate }: NavbarProps) {
                         background: "rgba(147,73,204,0.15)",
                         border: "1px solid rgba(147,73,204,0.4)",
                         color: "#fff",
+                        textDecoration: "none",
                       }
                     : {
                         border: "1px solid transparent",
                         color: "#8e8a9a",
+                        textDecoration: "none",
                       }
                 }
                 onMouseEnter={(e) => {
                   if (activeSection !== section) {
-                    (e.currentTarget as HTMLButtonElement).style.color = "#c8bee0";
+                    (e.currentTarget as HTMLAnchorElement).style.color = "#c8bee0";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (activeSection !== section) {
-                    (e.currentTarget as HTMLButtonElement).style.color = "#8e8a9a";
+                    (e.currentTarget as HTMLAnchorElement).style.color = "#8e8a9a";
                   }
                 }}
               >
                 {label}
-              </button>
+              </a>
             ))}
           </nav>
         )}
