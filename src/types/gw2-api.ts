@@ -17,10 +17,10 @@ export interface GW2Account {
 }
 
 export type WeaponSlot =
-  | "Weapon_A1"
-  | "Weapon_A2"
-  | "Weapon_B1"
-  | "Weapon_B2";
+  | "WeaponA1"
+  | "WeaponA2"
+  | "WeaponB1"
+  | "WeaponB2";
 
 export type ArmorSlot =
   | "Helm"
@@ -165,6 +165,13 @@ export interface InfixUpgrade {
   };
 }
 
+export interface GW2Profession {
+  id: string;
+  name: string;
+  icon: string;
+  icon_big: string;
+}
+
 export interface LegendaryArmoryItem {
   id: number;
   count: number;
@@ -207,13 +214,19 @@ export interface CharacterWeaponUsage {
 
 export interface LegendaryWeaponRecommendation {
   weaponType: WeaponType;
-  impact: number; // number of characters that would benefit
+  /** Slots without a legendary equipped (the actual "need" count) */
+  impact: number;
+  /** All slots using this weapon type across selected characters */
   affectedCharacters: Array<{
     name: string;
     profession: string;
     slot: WeaponSlot;
+    isLegendary: boolean;
   }>;
+  /** Number of legendaries of this type in the armory */
   existingLegendaryCount: number;
+  /** Whether any character has a legendary of this type equipped */
+  hasEquippedLegendary: boolean;
   icon?: string;
   sampleItemId?: number;
 }

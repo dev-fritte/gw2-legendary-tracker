@@ -16,7 +16,7 @@ export function CharacterCard({ character, selected, onToggle }: CharacterCardPr
   const meta = getProfessionMeta(character.profession);
 
   const weaponSlots = character.equipment.filter((e) =>
-    ["Weapon_A1", "Weapon_A2", "Weapon_B1", "Weapon_B2"].includes(e.slot),
+    ["WeaponA1", "WeaponA2", "WeaponB1", "WeaponB2"].includes(e.slot),
   );
   const hasWeapons = weaponSlots.length > 0;
   const hours = Math.floor(character.age / 3600);
