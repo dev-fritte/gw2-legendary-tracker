@@ -20,13 +20,33 @@ export default {
     errors: {
       invalidKey:
         "Invalid API key. Make sure it has account & characters permissions.",
-      timeout:
-        "Connection timed out. Please check your internet connection.",
+      timeout: "Connection timed out. Please check your internet connection.",
       unexpected: "An unexpected error occurred. Please try again.",
     },
   },
+  characters: {
+    title: "Select Characters",
+    description:
+      "Choose which characters to include in the legendary weapon analysis.",
+    loadingCharacters: "Loading characters…",
+    loadingDetails: "Loading character details…",
+    selectAll: "Select all",
+    deselectAll: "Deselect all",
+    selected: "{{count}} of {{total}} selected",
+    analyzeButton: "Analyze ({{count}})",
+    analyzeButtonDisabled: "Select at least one character",
+    level: "Level {{level}}",
+    errorTitle: "Failed to load characters",
+    errorRetry: "Retry",
+    noCharacters: "No characters found on this account.",
+    fetchingCharacter: "Loading {{name}}…",
+    partialError: "{{count}} character(s) could not be loaded and were skipped.",
+    sortBy: "Sort by",
+    sortPlaytime: "Playtime",
+    sortProfession: "Profession",
+    sortAlphabetical: "Alphabetical",
+  },
   tracker: {
-    authenticated: "Authenticated — Character selection & tracker coming next.",
-    logout: "Log out",
+    backToSelection: "Back to selection",
   },
 } as const;

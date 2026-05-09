@@ -20,13 +20,33 @@ export default {
     errors: {
       invalidKey:
         "Ungültiger API-Schlüssel. Stelle sicher, dass er die Berechtigungen 'account' und 'characters' besitzt.",
-      timeout:
-        "Verbindung unterbrochen. Bitte überprüfe deine Internetverbindung.",
+      timeout: "Verbindung unterbrochen. Bitte überprüfe deine Internetverbindung.",
       unexpected: "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.",
     },
   },
+  characters: {
+    title: "Charaktere auswählen",
+    description:
+      "Wähle aus, welche Charaktere in die Analyse der legendären Waffen einbezogen werden sollen.",
+    loadingCharacters: "Charaktere werden geladen…",
+    loadingDetails: "Charakterdetails werden geladen…",
+    selectAll: "Alle auswählen",
+    deselectAll: "Alle abwählen",
+    selected: "{{count}} von {{total}} ausgewählt",
+    analyzeButton: "Analysieren ({{count}})",
+    analyzeButtonDisabled: "Mindestens einen Charakter auswählen",
+    level: "Stufe {{level}}",
+    errorTitle: "Charaktere konnten nicht geladen werden",
+    errorRetry: "Erneut versuchen",
+    noCharacters: "Keine Charaktere auf diesem Konto gefunden.",
+    fetchingCharacter: "{{name}} wird geladen…",
+    partialError: "{{count}} Charakter(e) konnten nicht geladen werden und wurden übersprungen.",
+    sortBy: "Sortieren nach",
+    sortPlaytime: "Spielzeit",
+    sortProfession: "Klasse",
+    sortAlphabetical: "Alphabetisch",
+  },
   tracker: {
-    authenticated: "Authentifiziert — Charakterauswahl & Tracker folgt.",
-    logout: "Abmelden",
+    backToSelection: "Zurück zur Auswahl",
   },
 } as const;
