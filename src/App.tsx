@@ -25,7 +25,7 @@ export default function App() {
   }
 
   if (section === "overview") {
-    return <OverviewPage onLogout={clearApiKey} onNavigate={handleNavigate} />;
+    return <OverviewPage apiKey={apiKey} onLogout={clearApiKey} onNavigate={handleNavigate} />;
   }
 
   if (view === "tracker") {

@@ -112,13 +112,20 @@ export class GW2ApiClient {
     return data;
   }
 
-  async getItems(ids: number[]): Promise<GW2Item[]> {
+  async getAllLegendaryArmory(): Promise<{ id: number; max_count: number }[]> {
+    const { data } = await this.http.get<{ id: number; max_count: number }[]>("/legendaryarmory", {
+      params: { ids: "all" },
+    });
+    return data;
+  }
+
+  async getItems(ids: number[], lang?: string): Promise<GW2Item[]> {
     if (ids.length === 0) return [];
     const chunks = chunkArray(ids, 200);
     const results = await Promise.all(
       chunks.map((chunk) =>
         this.http
-          .get<GW2Item[]>("/items", { params: { ids: chunk.join(",") } })
+          .get<GW2Item[]>("/items", { params: { ids: chunk.join(","), ...(lang ? { lang } : {}) } })
           .then((r) => r.data),
       ),
     );
