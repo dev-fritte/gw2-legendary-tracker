@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Users, RefreshCw, ChevronRight, AlertTriangle, ArrowUpDown, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,10 @@ export function CharacterSelectionPage({
 
   // ── Sort state ─────────────────────────────────────────────────
   const [sortKey, setSortKey] = useState<SortKey>("playtime");
-  const characters = sortCharacters(detailsQuery.data ?? [], sortKey);
+  const characters = useMemo(
+    () => sortCharacters(detailsQuery.data ?? [], sortKey),
+    [detailsQuery.data, sortKey],
+  );
 
   // ── Selection state ────────────────────────────────────────────
   const [selected, setSelected] = useState<Set<string>>(
