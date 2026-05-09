@@ -46,7 +46,12 @@ export function calculateRecommendations(
   const usageMap = new Map<WeaponType, WeaponTypeAccumulator>();
 
   for (const char of characters) {
-    for (const eq of char.equipment) {
+    // Deduplicate by slot — the API returns one entry per slot per equipment
+    // template tab, so the same slot can appear multiple times.
+    const uniqueEquipment = [
+      ...new Map(char.equipment.map((e) => [e.slot, e])).values(),
+    ];
+    for (const eq of uniqueEquipment) {
       if (!WEAPON_SLOTS.has(eq.slot)) continue;
 
       const item = itemMap.get(eq.id);
@@ -128,7 +133,10 @@ export function collectItemIds(
 ): number[] {
   const ids = new Set<number>();
   for (const char of characters) {
-    for (const eq of char.equipment) {
+    const uniqueEquipment = [
+      ...new Map(char.equipment.map((e) => [e.slot, e])).values(),
+    ];
+    for (const eq of uniqueEquipment) {
       if (WEAPON_SLOTS.has(eq.slot)) ids.add(eq.id);
     }
   }

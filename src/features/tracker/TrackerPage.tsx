@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Navbar } from "@/components/Navbar";
+import type { NavSection } from "@/components/Navbar";
 import { WeaponRecommendationCard, WeaponRecommendationCardSkeleton } from "./WeaponRecommendationCard";
 import { useWeaponAnalysis } from "@/hooks/useWeaponAnalysis";
 import { useProfessionIconMap } from "@/hooks/useProfessions";
@@ -14,9 +15,10 @@ interface TrackerPageProps {
   characters: Character[];
   onBack: () => void;
   onLogout: () => void;
+  onNavigate: (section: NavSection) => void;
 }
 
-export function TrackerPage({ apiKey, characters, onBack, onLogout }: Readonly<TrackerPageProps>) {
+export function TrackerPage({ apiKey, characters, onBack, onLogout, onNavigate }: Readonly<TrackerPageProps>) {
   const { t } = useTranslation();
   const professionIcons = useProfessionIconMap(apiKey);
   const { result, isLoading, isLoadingArmory, isLoadingItems, error, refetch } =
@@ -24,7 +26,7 @@ export function TrackerPage({ apiKey, characters, onBack, onLogout }: Readonly<T
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
-      <Navbar onLogout={onLogout} />
+      <Navbar onLogout={onLogout} activeSection="zommoros" onNavigate={onNavigate} />
 
       <main className="flex-1 mx-auto w-full max-w-2xl px-4 py-8 space-y-6">
         {/* Page header */}

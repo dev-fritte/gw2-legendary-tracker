@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Navbar } from "@/components/Navbar";
+import type { NavSection } from "@/components/Navbar";
 import { CharacterCard, CharacterCardSkeleton } from "./CharacterCard";
 import { useCharacterNames, useCharacterDetails } from "@/hooks/useCharacters";
 import { storage } from "@/services/storage";
@@ -39,12 +40,14 @@ interface CharacterSelectionPageProps {
   apiKey: string;
   onLogout: () => void;
   onAnalyze: (characters: Character[]) => void;
+  onNavigate: (section: NavSection) => void;
 }
 
 export function CharacterSelectionPage({
   apiKey,
   onLogout,
   onAnalyze,
+  onNavigate,
 }: CharacterSelectionPageProps) {
   const { t } = useTranslation();
 
@@ -100,7 +103,7 @@ export function CharacterSelectionPage({
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
-      <Navbar onLogout={onLogout} />
+      <Navbar onLogout={onLogout} activeSection="zommoros" onNavigate={onNavigate} />
 
       <main className="flex-1 mx-auto w-full max-w-2xl px-4 py-8 space-y-6">
         {/* Page header */}

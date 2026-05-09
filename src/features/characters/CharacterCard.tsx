@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Sword, Clock } from "lucide-react";
+import { LayoutList, Clock } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/utils/cn";
 import { getProfessionMeta } from "@/utils/professions";
@@ -15,10 +15,7 @@ export function CharacterCard({ character, selected, onToggle }: CharacterCardPr
   const { t } = useTranslation();
   const meta = getProfessionMeta(character.profession);
 
-  const weaponSlots = character.equipment.filter((e) =>
-    ["WeaponA1", "WeaponA2", "WeaponB1", "WeaponB2"].includes(e.slot),
-  );
-  const hasWeapons = weaponSlots.length > 0;
+  const templateCount = new Set(character.equipment.flatMap((e) => e.tabs ?? [])).size;
   const hours = Math.floor(character.age / 3600);
 
   return (
@@ -64,12 +61,12 @@ export function CharacterCard({ character, selected, onToggle }: CharacterCardPr
             <Clock className="w-3.5 h-3.5" />
             {hours.toLocaleString()} h
           </span>
-          {hasWeapons && (
+          {templateCount > 0 && (
             <>
               <span className="text-zinc-700">·</span>
               <span className="flex items-center gap-1">
-                <Sword className="w-3.5 h-3.5" />
-                {weaponSlots.length} {weaponSlots.length === 1 ? "slot" : "slots"}
+                <LayoutList className="w-3.5 h-3.5" />
+                {t("characters.templates", { count: templateCount })}
               </span>
             </>
           )}

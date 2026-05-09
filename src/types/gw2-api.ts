@@ -77,6 +77,7 @@ export type WeaponType =
 export interface EquipmentItem {
   id: number;
   slot: EquipmentSlot;
+  tabs?: number[];
   skin?: number;
   upgrades?: number[];
   infusions?: number[];

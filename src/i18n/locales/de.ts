@@ -2,6 +2,8 @@ export default {
   nav: {
     logout: "Abmelden",
     language: "Sprache",
+    zommorosChoice: "Zommoros' Wahl",
+    overview: "Übersicht",
   },
   auth: {
     title: "Legendary Tracker",
@@ -45,6 +47,8 @@ export default {
     sortPlaytime: "Spielzeit",
     sortProfession: "Klasse",
     sortAlphabetical: "Alphabetisch",
+    templates: "{{count}} Template",
+    templates_other: "{{count}} Templates",
   },
   tracker: {
     backToSelection: "Zurück zur Auswahl",
