@@ -46,12 +46,11 @@ export function calculateRecommendations(
   const usageMap = new Map<WeaponType, WeaponTypeAccumulator>();
 
   for (const char of characters) {
-    // Deduplicate by slot — the API returns one entry per slot per equipment
-    // template tab, so the same slot can appear multiple times.
-    const uniqueEquipment = [
-      ...new Map(char.equipment.map((e) => [e.slot, e])).values(),
-    ];
-    for (const eq of uniqueEquipment) {
+    // The GW2 API (v=2019-12-19) returns one entry per unique (item, slot)
+    // combination. The `tabs` array lists every equipment-template tab that
+    // uses this item in this slot.  We must count each tab individually —
+    // that is what the user sees as "X slots".
+    for (const eq of char.equipment) {
       if (!WEAPON_SLOTS.has(eq.slot)) continue;
 
       const item = itemMap.get(eq.id);
@@ -59,6 +58,8 @@ export function calculateRecommendations(
 
       const weaponType = item.details.type as WeaponType;
       const isLegendary = item.rarity === "Legendary";
+      // How many template tabs use this item in this slot?
+      const tabCount = eq.tabs?.length ?? 1;
 
       const acc = usageMap.get(weaponType) ?? {
         allChars: [],
@@ -67,12 +68,15 @@ export function calculateRecommendations(
         sampleItemId: item.id,
       };
 
-      acc.allChars.push({
-        name: char.name,
-        profession: char.profession,
-        slot: eq.slot as LegendaryWeaponRecommendation["affectedCharacters"][number]["slot"],
-        isLegendary,
-      });
+      // Push one entry per template tab so the impact counter is correct.
+      for (let i = 0; i < tabCount; i++) {
+        acc.allChars.push({
+          name: char.name,
+          profession: char.profession,
+          slot: eq.slot as LegendaryWeaponRecommendation["affectedCharacters"][number]["slot"],
+          isLegendary,
+        });
+      }
 
       if (isLegendary) acc.hasEquippedLegendary = true;
 
@@ -133,10 +137,7 @@ export function collectItemIds(
 ): number[] {
   const ids = new Set<number>();
   for (const char of characters) {
-    const uniqueEquipment = [
-      ...new Map(char.equipment.map((e) => [e.slot, e])).values(),
-    ];
-    for (const eq of uniqueEquipment) {
+    for (const eq of char.equipment) {
       if (WEAPON_SLOTS.has(eq.slot)) ids.add(eq.id);
     }
   }

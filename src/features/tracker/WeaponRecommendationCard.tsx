@@ -123,15 +123,16 @@ export function WeaponRecommendationCard({
                       {t("tracker.impactLabel", { count: impact })}
                     </span>
                   </div>
-                  <span className="text-[10px] mt-0.5 pr-0.5" style={{ color: "#6a6478" }}>
-                    {t("tracker.affectedCharacters")}
-                  </span>
                 </div>
               )}
             </div>
 
             {/* Character chips */}
-            <div className="flex flex-wrap gap-1.5">
+            <div className="space-y-1.5">
+              <span className="text-[10px]" style={{ color: "#6a6478" }}>
+                {t("tracker.affectedCharacters")}
+              </span>
+              <div className="flex flex-wrap gap-1.5">
               {uniqueChars.map((char) => {
                 const meta = getProfessionMeta(char.profession);
                 const slotsForChar = affectedCharacters.filter((c) => c.name === char.name);
@@ -168,6 +169,7 @@ export function WeaponRecommendationCard({
                   </div>
                 );
               })}
+              </div>
             </div>
           </div>
         </div>
