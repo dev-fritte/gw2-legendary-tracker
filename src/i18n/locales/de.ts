@@ -100,6 +100,9 @@ export default {
     sectionAlreadyHave: "Bereits vorhanden",
     errorTitle: "Tracker-Daten konnten nicht geladen werden",
     errorRetry: "Erneut versuchen",
+    useStarterKits: "Waffen mit vorhandenen Starter-Kits priorisieren",
+    starterKitAvailable: "Starter-Kit vorhanden",
+    starterKitAvailable_other: "{{count}} Starter-Kits vorhanden",
   },
   weapons: {
     Axe: "Axt",

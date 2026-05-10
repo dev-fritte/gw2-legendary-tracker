@@ -25,6 +25,7 @@ export function WeaponRecommendationCard({
     affectedCharacters,
     existingLegendaryCount,
     hasEquippedLegendary,
+    starterKitCount,
     icon,
   } = recommendation;
 
@@ -104,6 +105,16 @@ export function WeaponRecommendationCard({
                     <p className="text-xs flex items-center gap-1" style={{ color: "rgba(233,198,107,0.7)" }}>
                       <Sparkles className="w-3 h-3" />
                       {t("tracker.weaponAlreadyLegendary")}
+                    </p>
+                  )}
+                  {starterKitCount > 0 && !isCovered && (
+                    <p className="text-xs flex items-center gap-1" style={{ color: "#7ec88a" }}>
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+                        <rect x="1" y="3" width="10" height="7.5" rx="1" stroke="#7ec88a" strokeWidth="1.2" />
+                        <path d="M4 3V2.5A2 2 0 0 1 8 2.5V3" stroke="#7ec88a" strokeWidth="1.2" strokeLinecap="round" />
+                        <path d="M4.5 6.5L5.5 7.5L7.5 5.5" stroke="#7ec88a" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      {t("tracker.starterKitAvailable", { count: starterKitCount })}
                     </p>
                   )}
                 </div>

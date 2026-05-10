@@ -100,6 +100,9 @@ export default {
     sectionAlreadyHave: "Already have",
     errorTitle: "Failed to load tracker data",
     errorRetry: "Retry",
+    useStarterKits: "Prioritise weapons with owned Starter Kits",
+    starterKitAvailable: "Starter Kit available",
+    starterKitAvailable_other: "{{count}} Starter Kits available",
   },
   weapons: {
     Axe: "Axe",

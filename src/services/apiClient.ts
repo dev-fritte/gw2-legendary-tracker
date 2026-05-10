@@ -5,6 +5,7 @@ import type {
   GW2Item,
   GW2Profession,
   LegendaryArmoryItem,
+  BankItem,
   GW2Skin,
 } from "@/types/gw2-api";
 
@@ -104,6 +105,11 @@ export class GW2ApiClient {
     const { data } = await this.http.get<GW2Profession[]>("/professions", {
       params: { ids: "all" },
     });
+    return data;
+  }
+
+  async getAccountBank(): Promise<(BankItem | null)[]> {
+    const { data } = await this.http.get<(BankItem | null)[]>("/account/bank");
     return data;
   }
 

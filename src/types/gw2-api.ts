@@ -228,6 +228,20 @@ export interface LegendaryWeaponRecommendation {
   existingLegendaryCount: number;
   /** Whether any character has a legendary of this type equipped */
   hasEquippedLegendary: boolean;
+  /** Number of owned Starter Kits that cover this weapon type (0 = none) */
+  starterKitCount: number;
   icon?: string;
   sampleItemId?: number;
+}
+
+/** A single item slot in the account bank (null = empty slot) */
+export interface BankItem {
+  id: number;
+  count: number;
+  charges?: number;
+  skin?: number;
+  upgrades?: number[];
+  infusions?: number[];
+  binding?: "Character" | "Account";
+  bound_to?: string;
 }

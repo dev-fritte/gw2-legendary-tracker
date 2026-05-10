@@ -6,6 +6,13 @@ import type {
   LegendaryWeaponRecommendation,
 } from "@/types/gw2-api";
 
+export interface CalculationOptions {
+  /** Weapon types → kit count map from useStarterKits. Empty map = disabled. */
+  starterKitMap?: Map<WeaponType, number>;
+  /** When true, weapons with starter kits sort above weapons without. */
+  prioritiseStarterKits?: boolean;
+}
+
 const WEAPON_SLOTS = new Set([
   "WeaponA1",
   "WeaponA2",
@@ -29,6 +36,7 @@ export function calculateRecommendations(
   characters: Character[],
   itemMap: Map<number, GW2Item>,
   armory: LegendaryArmoryItem[],
+  { starterKitMap = new Map(), prioritiseStarterKits = true }: CalculationOptions = {},
 ): AnalysisResult {
   // Build map: weaponType → count of legendaries in armory
   const armoryByWeaponType = new Map<WeaponType, number>();
@@ -105,6 +113,7 @@ export function calculateRecommendations(
       affectedCharacters: acc.allChars,
       existingLegendaryCount: armoryCount,
       hasEquippedLegendary: acc.hasEquippedLegendary,
+      starterKitCount: starterKitMap.get(weaponType) ?? 0,
       icon: acc.icon,
       sampleItemId: acc.sampleItemId,
     };
@@ -122,7 +131,15 @@ export function calculateRecommendations(
   const byImpact = (
     a: LegendaryWeaponRecommendation,
     b: LegendaryWeaponRecommendation,
-  ) => b.impact - a.impact || a.weaponType.localeCompare(b.weaponType);
+  ) => {
+    // When starter-kit prioritisation is active, weapons with at least one
+    // owned kit rank above those without, regardless of raw impact.
+    if (prioritiseStarterKits) {
+      const kitDiff = (b.starterKitCount > 0 ? 1 : 0) - (a.starterKitCount > 0 ? 1 : 0);
+      if (kitDiff !== 0) return kitDiff;
+    }
+    return b.impact - a.impact || a.weaponType.localeCompare(b.weaponType);
+  };
 
   recommendations.sort(byImpact);
   coveredByArmory.sort(byImpact);

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, AlertTriangle, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Navbar } from "@/components/Navbar";
 import { WeaponRecommendationCard, WeaponRecommendationCardSkeleton } from "./WeaponRecommendationCard";
 import { useWeaponAnalysis } from "@/hooks/useWeaponAnalysis";
+import { useStarterKits } from "@/hooks/useStarterKits";
 import { useProfessionIconMap } from "@/hooks/useProfessions";
 import type { NavSection } from "@/components/Navbar";
 import type { Character } from "@/types/gw2-api";
@@ -19,9 +21,12 @@ interface TrackerPageProps {
 
 export function TrackerPage({ apiKey, characters, onBack, onLogout, onNavigate }: Readonly<TrackerPageProps>) {
   const { t } = useTranslation();
+  const [useStarterKitPriority, setUseStarterKitPriority] = useState(true);
+
   const professionIcons = useProfessionIconMap(apiKey);
+  const { kitMap } = useStarterKits(apiKey, characters);
   const { result, isLoading, isLoadingArmory, isLoadingItems, error, refetch } =
-    useWeaponAnalysis(apiKey, characters);
+    useWeaponAnalysis(apiKey, characters, kitMap, useStarterKitPriority);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ color: "#e8e4f0" }}>
@@ -72,6 +77,45 @@ export function TrackerPage({ apiKey, characters, onBack, onLogout, onNavigate }
               </span>
             ))}
           </div>
+
+          {/* Starter Kit toggle */}
+          <label
+            className="inline-flex items-center gap-2.5 cursor-pointer select-none"
+            style={{ width: "fit-content" }}
+          >
+            <div
+              role="checkbox"
+              aria-checked={useStarterKitPriority}
+              tabIndex={0}
+              onClick={() => setUseStarterKitPriority((v) => !v)}
+              onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") setUseStarterKitPriority((v) => !v); }}
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: 4,
+                border: useStarterKitPriority ? "1px solid #9349CC" : "1px solid rgba(147,73,204,0.4)",
+                background: useStarterKitPriority
+                  ? "linear-gradient(135deg,#b06de0,#7a3aaa)"
+                  : "transparent",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                transition: "all 0.15s",
+                cursor: "pointer",
+                outline: "none",
+              }}
+            >
+              {useStarterKitPriority && (
+                <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+                  <path d="M1 3.5L3.5 6L8 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </div>
+            <span className="text-xs" style={{ color: "#a89cc0" }}>
+              {t("tracker.useStarterKits")}
+            </span>
+          </label>
         </div>
 
         {/* Error state */}

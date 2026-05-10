@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getApiClient } from "@/services/apiClient";
 import { calculateRecommendations, collectItemIds } from "@/utils/calculation";
-import type { Character, GW2Item, LegendaryArmoryItem } from "@/types/gw2-api";
+import type { Character, GW2Item, LegendaryArmoryItem, WeaponType } from "@/types/gw2-api";
 
 function useArmory(apiKey: string) {
   return useQuery({
@@ -22,7 +22,12 @@ function useItems(apiKey: string, ids: number[], enabled: boolean) {
   });
 }
 
-export function useWeaponAnalysis(apiKey: string, characters: Character[]) {
+export function useWeaponAnalysis(
+  apiKey: string,
+  characters: Character[],
+  starterKitMap: Map<WeaponType, number> = new Map(),
+  prioritiseStarterKits: boolean = true,
+) {
   const armoryQuery = useArmory(apiKey);
   const armory = armoryQuery.data ?? [];
 
@@ -38,7 +43,7 @@ export function useWeaponAnalysis(apiKey: string, characters: Character[]) {
 
   const result =
     itemsQuery.isSuccess
-      ? calculateRecommendations(characters, itemMap, armory)
+      ? calculateRecommendations(characters, itemMap, armory, { starterKitMap, prioritiseStarterKits })
       : null;
 
   return {
