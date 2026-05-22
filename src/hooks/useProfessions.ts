@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { getApiClient } from "@/services/apiClient";
+import { useQuery } from '@tanstack/react-query';
+import { getApiClient } from '@/services/apiClient';
 
 export function useProfessions(apiKey: string) {
   return useQuery({
-    queryKey: ["professions"],
+    queryKey: ['professions'],
     queryFn: () => getApiClient(apiKey).getProfessions(),
     // Profession data never changes — cache indefinitely for the session
     staleTime: Infinity,

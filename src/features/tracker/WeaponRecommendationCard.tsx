@@ -1,9 +1,9 @@
-import { useTranslation } from "react-i18next";
-import { Sparkles, Users } from "lucide-react";
-import { ProfessionIcon } from "@/components/ProfessionIcon";
-import { getProfessionMeta } from "@/utils/professions";
-import { cn } from "@/utils/cn";
-import type { LegendaryWeaponRecommendation } from "@/types/gw2-api";
+import { useTranslation } from 'react-i18next';
+import { Sparkles, Users } from 'lucide-react';
+import { ProfessionIcon } from '@/components/ProfessionIcon';
+import { getProfessionMeta } from '@/utils/professions';
+import { cn } from '@/utils/cn';
+import type { LegendaryWeaponRecommendation } from '@/types/gw2-api';
 
 interface WeaponRecommendationCardProps {
   recommendation: LegendaryWeaponRecommendation;
@@ -29,9 +29,7 @@ export function WeaponRecommendationCard({
     icon,
   } = recommendation;
 
-  const uniqueChars = [
-    ...new Map(affectedCharacters.map((c) => [c.name, c])).values(),
-  ];
+  const uniqueChars = [...new Map(affectedCharacters.map((c) => [c.name, c])).values()];
 
   const weaponLabel = t(`weapons.${weaponType}`, { defaultValue: weaponType });
 
@@ -39,19 +37,17 @@ export function WeaponRecommendationCard({
     <div
       className="rounded-lg transition-colors"
       style={{
-        border: isCovered
-          ? "1px solid rgba(147,73,204,0.12)"
-          : "1px solid rgba(147,73,204,0.25)",
-        background: "rgba(20,16,28,0.7)",
+        border: isCovered ? '1px solid rgba(147,73,204,0.12)' : '1px solid rgba(147,73,204,0.25)',
+        background: 'rgba(20,16,28,0.7)',
         opacity: isCovered ? 0.65 : 1,
       }}
       onMouseEnter={(e) => {
         if (!isCovered)
-          (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(147,73,204,0.45)";
+          (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(147,73,204,0.45)';
       }}
       onMouseLeave={(e) => {
         if (!isCovered)
-          (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(147,73,204,0.25)";
+          (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(147,73,204,0.25)';
       }}
     >
       <div className="p-4">
@@ -61,7 +57,7 @@ export function WeaponRecommendationCard({
             {!isCovered && (
               <span
                 className="text-xs font-bold w-5 text-center"
-                style={{ color: "#e9c66b", fontFamily: '"Cinzel", serif' }}
+                style={{ color: '#e9c66b', fontFamily: '"Cinzel", serif' }}
               >
                 #{rank}
               </span>
@@ -72,15 +68,15 @@ export function WeaponRecommendationCard({
                   src={icon}
                   alt={weaponLabel}
                   className="w-12 h-12 rounded-md object-cover"
-                  style={{ border: "1px solid rgba(147,73,204,0.3)", background: "#14101c" }}
+                  style={{ border: '1px solid rgba(147,73,204,0.3)', background: '#14101c' }}
                   loading="lazy"
                 />
               ) : (
                 <div
                   className="w-12 h-12 rounded-md flex items-center justify-center"
-                  style={{ border: "1px solid rgba(147,73,204,0.3)", background: "#14101c" }}
+                  style={{ border: '1px solid rgba(147,73,204,0.3)', background: '#14101c' }}
                 >
-                  <Sparkles className="w-5 h-5" style={{ color: "rgba(147,73,204,0.4)" }} />
+                  <Sparkles className="w-5 h-5" style={{ color: 'rgba(147,73,204,0.4)' }} />
                 </div>
               )}
             </div>
@@ -91,30 +87,52 @@ export function WeaponRecommendationCard({
             {/* Header */}
             <div className="flex items-start justify-between gap-2">
               <div className="space-y-0.5">
-                <h3 className="font-semibold leading-tight" style={{ color: "#e8e4f0" }}>
+                <h3 className="font-semibold leading-tight" style={{ color: '#e8e4f0' }}>
                   {weaponLabel}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {existingLegendaryCount > 0 && (
-                    <p className="text-xs flex items-center gap-1" style={{ color: "#e9c66b" }}>
+                    <p className="text-xs flex items-center gap-1" style={{ color: '#e9c66b' }}>
                       <Sparkles className="w-3 h-3" />
-                      {t("tracker.armoryCount", { count: existingLegendaryCount })}
+                      {t('tracker.armoryCount', { count: existingLegendaryCount })}
                     </p>
                   )}
                   {hasEquippedLegendary && existingLegendaryCount === 0 && (
-                    <p className="text-xs flex items-center gap-1" style={{ color: "rgba(233,198,107,0.7)" }}>
+                    <p
+                      className="text-xs flex items-center gap-1"
+                      style={{ color: 'rgba(233,198,107,0.7)' }}
+                    >
                       <Sparkles className="w-3 h-3" />
-                      {t("tracker.weaponAlreadyLegendary")}
+                      {t('tracker.weaponAlreadyLegendary')}
                     </p>
                   )}
                   {starterKitCount > 0 && !isCovered && (
-                    <p className="text-xs flex items-center gap-1" style={{ color: "#7ec88a" }}>
+                    <p className="text-xs flex items-center gap-1" style={{ color: '#7ec88a' }}>
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-                        <rect x="1" y="3" width="10" height="7.5" rx="1" stroke="#7ec88a" strokeWidth="1.2" />
-                        <path d="M4 3V2.5A2 2 0 0 1 8 2.5V3" stroke="#7ec88a" strokeWidth="1.2" strokeLinecap="round" />
-                        <path d="M4.5 6.5L5.5 7.5L7.5 5.5" stroke="#7ec88a" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                        <rect
+                          x="1"
+                          y="3"
+                          width="10"
+                          height="7.5"
+                          rx="1"
+                          stroke="#7ec88a"
+                          strokeWidth="1.2"
+                        />
+                        <path
+                          d="M4 3V2.5A2 2 0 0 1 8 2.5V3"
+                          stroke="#7ec88a"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M4.5 6.5L5.5 7.5L7.5 5.5"
+                          stroke="#7ec88a"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
-                      {t("tracker.starterKitAvailable", { count: starterKitCount })}
+                      {t('tracker.starterKitAvailable', { count: starterKitCount })}
                     </p>
                   )}
                 </div>
@@ -125,13 +143,16 @@ export function WeaponRecommendationCard({
                   <div
                     className="flex items-center gap-1.5 rounded-md px-2.5 py-1"
                     style={{
-                      background: "rgba(147,73,204,0.15)",
-                      border: "1px solid rgba(147,73,204,0.35)",
+                      background: 'rgba(147,73,204,0.15)',
+                      border: '1px solid rgba(147,73,204,0.35)',
                     }}
                   >
-                    <Users className="w-3.5 h-3.5" style={{ color: "#b06de0" }} />
-                    <span className="text-sm font-bold" style={{ color: "#c8a0f0", fontFamily: '"Cinzel", serif' }}>
-                      {t("tracker.impactLabel", { count: impact })}
+                    <Users className="w-3.5 h-3.5" style={{ color: '#b06de0' }} />
+                    <span
+                      className="text-sm font-bold"
+                      style={{ color: '#c8a0f0', fontFamily: '"Cinzel", serif' }}
+                    >
+                      {t('tracker.impactLabel', { count: impact })}
                     </span>
                   </div>
                 </div>
@@ -140,46 +161,49 @@ export function WeaponRecommendationCard({
 
             {/* Character chips */}
             <div className="space-y-1.5">
-              <span className="text-[10px]" style={{ color: "#6a6478" }}>
-                {t("tracker.affectedCharacters")}
+              <span className="text-[10px]" style={{ color: '#6a6478' }}>
+                {t('tracker.affectedCharacters')}
               </span>
               <div className="flex flex-wrap gap-1.5">
-              {uniqueChars.map((char) => {
-                const meta = getProfessionMeta(char.profession);
-                const slotsForChar = affectedCharacters.filter((c) => c.name === char.name);
-                const nonLegendarySlots = slotsForChar.filter((c) => !c.isLegendary).length;
-                const legendarySlots = slotsForChar.filter((c) => c.isLegendary).length;
+                {uniqueChars.map((char) => {
+                  const meta = getProfessionMeta(char.profession);
+                  const slotsForChar = affectedCharacters.filter((c) => c.name === char.name);
+                  const nonLegendarySlots = slotsForChar.filter((c) => !c.isLegendary).length;
+                  const legendarySlots = slotsForChar.filter((c) => c.isLegendary).length;
 
-                return (
-                  <div
-                    key={char.name}
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs",
-                      char.isLegendary
-                        ? "border-zinc-700 bg-zinc-800/60"
-                        : cn(meta.bgColor, meta.borderColor),
-                    )}
-                  >
-                    <ProfessionIcon
-                      icon={professionIcons.get(char.profession)}
-                      profession={char.profession}
-                      className="w-3.5 h-3.5 shrink-0"
-                    />
-                    <span
-                      className="truncate max-w-[120px]"
-                      style={{ color: char.isLegendary ? "#6a6478" : "#c8bee0" }}
+                  return (
+                    <div
+                      key={char.name}
+                      className={cn(
+                        'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs',
+                        char.isLegendary
+                          ? 'border-zinc-700 bg-zinc-800/60'
+                          : cn(meta.bgColor, meta.borderColor)
+                      )}
                     >
-                      {char.name}
-                    </span>
-                    {nonLegendarySlots > 1 && (
-                      <span style={{ color: "#6a6478" }}>×{nonLegendarySlots}</span>
-                    )}
-                    {legendarySlots > 0 && (
-                      <Sparkles className="w-2.5 h-2.5" style={{ color: "rgba(233,198,107,0.6)" }} />
-                    )}
-                  </div>
-                );
-              })}
+                      <ProfessionIcon
+                        icon={professionIcons.get(char.profession)}
+                        profession={char.profession}
+                        className="w-3.5 h-3.5 shrink-0"
+                      />
+                      <span
+                        className="truncate max-w-[120px]"
+                        style={{ color: char.isLegendary ? '#6a6478' : '#c8bee0' }}
+                      >
+                        {char.name}
+                      </span>
+                      {nonLegendarySlots > 1 && (
+                        <span style={{ color: '#6a6478' }}>×{nonLegendarySlots}</span>
+                      )}
+                      {legendarySlots > 0 && (
+                        <Sparkles
+                          className="w-2.5 h-2.5"
+                          style={{ color: 'rgba(233,198,107,0.6)' }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -193,7 +217,7 @@ export function WeaponRecommendationCardSkeleton() {
   return (
     <div
       className="rounded-lg"
-      style={{ border: "1px solid rgba(147,73,204,0.12)", background: "rgba(20,16,28,0.6)" }}
+      style={{ border: '1px solid rgba(147,73,204,0.12)', background: 'rgba(20,16,28,0.6)' }}
     >
       <div className="p-4">
         <div className="flex items-start gap-4">

@@ -1,5 +1,5 @@
-const API_KEY_STORAGE_KEY = "gw2_legendary_tracker_api_key";
-const SELECTED_CHARS_KEY = "gw2_legendary_tracker_selected_chars";
+const API_KEY_STORAGE_KEY = 'gw2_legendary_tracker_api_key';
+const SELECTED_CHARS_KEY = 'gw2_legendary_tracker_selected_chars';
 
 export const storage = {
   getApiKey(): string | null {

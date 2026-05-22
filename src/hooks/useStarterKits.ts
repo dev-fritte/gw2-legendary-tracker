@@ -1,12 +1,12 @@
-import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getApiClient } from "@/services/apiClient";
-import { STARTER_KIT_IDS, buildStarterKitMap } from "@/utils/starterKits";
-import type { Character, WeaponType } from "@/types/gw2-api";
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getApiClient } from '@/services/apiClient';
+import { buildStarterKitMap, STARTER_KIT_IDS } from '@/utils/starterKits';
+import type { Character, WeaponType } from '@/types/gw2-api';
 
 function useAccountBank(apiKey: string) {
   return useQuery({
-    queryKey: ["accountBank", apiKey],
+    queryKey: ['accountBank', apiKey],
     queryFn: () => getApiClient(apiKey).getAccountBank(),
     staleTime: 5 * 60 * 1000,
   });

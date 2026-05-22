@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { getApiClient } from "@/services/apiClient";
-import type { GW2Item, LegendaryArmoryItem } from "@/types/gw2-api";
+import { useQuery } from '@tanstack/react-query';
+import { getApiClient } from '@/services/apiClient';
+import type { GW2Item, LegendaryArmoryItem } from '@/types/gw2-api';
 
 export interface LegendaryGridItem {
   id: number;
@@ -13,7 +13,7 @@ export interface LegendaryGridItem {
 
 function useAllLegendaryArmory(apiKey: string) {
   return useQuery({
-    queryKey: ["legendaryArmory", "all"],
+    queryKey: ['legendaryArmory', 'all'],
     queryFn: () => getApiClient(apiKey).getAllLegendaryArmory(),
     staleTime: 24 * 60 * 60 * 1000,
   });
@@ -21,16 +21,15 @@ function useAllLegendaryArmory(apiKey: string) {
 
 function useAccountArmory(apiKey: string) {
   return useQuery({
-    queryKey: ["legendaryArmory", "account", apiKey],
-    queryFn: (): Promise<LegendaryArmoryItem[]> =>
-      getApiClient(apiKey).getLegendaryArmory(),
+    queryKey: ['legendaryArmory', 'account', apiKey],
+    queryFn: (): Promise<LegendaryArmoryItem[]> => getApiClient(apiKey).getLegendaryArmory(),
     staleTime: 5 * 60 * 1000,
   });
 }
 
 function useItems(apiKey: string, ids: number[], enabled: boolean) {
   return useQuery({
-    queryKey: ["items", ids],
+    queryKey: ['items', ids],
     queryFn: () => getApiClient(apiKey).getItems(ids),
     enabled: enabled && ids.length > 0,
     staleTime: 60 * 60 * 1000,
@@ -45,11 +44,9 @@ export function useLegendaryOverview(apiKey: string) {
   const itemsReady = allQuery.isSuccess && accountQuery.isSuccess;
   const itemsQuery = useItems(apiKey, allIds, itemsReady);
 
-  const accountMap = new Map<number, number>(
-    (accountQuery.data ?? []).map((e) => [e.id, e.count]),
-  );
+  const accountMap = new Map<number, number>((accountQuery.data ?? []).map((e) => [e.id, e.count]));
   const maxCountMap = new Map<number, number>(
-    (allQuery.data ?? []).map((e) => [e.id, e.max_count]),
+    (allQuery.data ?? []).map((e) => [e.id, e.max_count])
   );
 
   const items: LegendaryGridItem[] = (itemsQuery.data ?? [])

@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
-import { Loader2, ExternalLink } from "lucide-react";
-import { getApiClient, InvalidApiKeyError, ApiTimeoutError } from "@/services/apiClient";
-import { Navbar } from "@/components/Navbar";
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { ExternalLink, Loader2 } from 'lucide-react';
+import { ApiTimeoutError, getApiClient, InvalidApiKeyError } from '@/services/apiClient';
+import { Navbar } from '@/components/Navbar';
 
 function RuneRing({ size = 120 }: { size?: number }) {
   const dots = [0, 60, 120, 180, 240, 300].map((a) => ({
@@ -15,32 +15,57 @@ function RuneRing({ size = 120 }: { size?: number }) {
       style={{
         width: size,
         height: size,
-        borderRadius: "50%",
-        position: "relative",
-        display: "grid",
-        placeItems: "center",
-        background: "radial-gradient(circle, rgba(147,73,204,0.13) 0%, transparent 70%)",
+        borderRadius: '50%',
+        position: 'relative',
+        display: 'grid',
+        placeItems: 'center',
+        background: 'radial-gradient(circle, rgba(147,73,204,0.13) 0%, transparent 70%)',
       }}
     >
       <div
         style={{
-          position: "absolute",
+          position: 'absolute',
           inset: -8,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(147,73,204,0.27) 0%, transparent 60%)",
-          filter: "blur(8px)",
-          pointerEvents: "none",
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(147,73,204,0.27) 0%, transparent 60%)',
+          filter: 'blur(8px)',
+          pointerEvents: 'none',
         }}
       />
       <svg
         width={size}
         height={size}
         viewBox="0 0 64 64"
-        style={{ position: "absolute", inset: 0 }}
+        style={{ position: 'absolute', inset: 0 }}
       >
-        <circle cx="32" cy="32" r="28" fill="none" stroke="#9349CC" strokeWidth="0.5" opacity="0.6" />
-        <circle cx="32" cy="32" r="22" fill="none" stroke="#9349CC" strokeWidth="0.5" strokeDasharray="2 3" opacity="0.5" />
-        <circle cx="32" cy="32" r="14" fill="none" stroke="#e9c66b" strokeWidth="0.6" opacity="0.7" />
+        <circle
+          cx="32"
+          cy="32"
+          r="28"
+          fill="none"
+          stroke="#9349CC"
+          strokeWidth="0.5"
+          opacity="0.6"
+        />
+        <circle
+          cx="32"
+          cy="32"
+          r="22"
+          fill="none"
+          stroke="#9349CC"
+          strokeWidth="0.5"
+          strokeDasharray="2 3"
+          opacity="0.5"
+        />
+        <circle
+          cx="32"
+          cy="32"
+          r="14"
+          fill="none"
+          stroke="#e9c66b"
+          strokeWidth="0.6"
+          opacity="0.7"
+        />
         {dots.map((d, i) => (
           <circle key={i} cx={d.x} cy={d.y} r="1.4" fill="#9349CC" />
         ))}
@@ -49,13 +74,13 @@ function RuneRing({ size = 120 }: { size?: number }) {
         style={{
           width: size * 0.42,
           height: size * 0.42,
-          borderRadius: "50%",
-          background: "linear-gradient(135deg, #9349CC, #5a2a7e)",
-          boxShadow: "0 0 20px rgba(147,73,204,0.53), inset 0 0 8px rgba(255,255,255,0.2)",
-          display: "grid",
-          placeItems: "center",
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #9349CC, #5a2a7e)',
+          boxShadow: '0 0 20px rgba(147,73,204,0.53), inset 0 0 8px rgba(255,255,255,0.2)',
+          display: 'grid',
+          placeItems: 'center',
           fontSize: size * 0.18,
-          color: "#fff",
+          color: '#fff',
           fontFamily: '"Cinzel", serif',
           fontWeight: 700,
         }}
@@ -74,7 +99,7 @@ interface ApiKeyFormProps {
 
 export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: ApiKeyFormProps) {
   const { t } = useTranslation();
-  const [inputKey, setInputKey] = useState("");
+  const [inputKey, setInputKey] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const validateMutation = useMutation({
@@ -88,11 +113,11 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
     },
     onError: (error: unknown) => {
       if (error instanceof InvalidApiKeyError) {
-        setErrorMessage(t("auth.errors.invalidKey"));
+        setErrorMessage(t('auth.errors.invalidKey'));
       } else if (error instanceof ApiTimeoutError) {
-        setErrorMessage(t("auth.errors.timeout"));
+        setErrorMessage(t('auth.errors.timeout'));
       } else {
-        setErrorMessage(t("auth.errors.unexpected"));
+        setErrorMessage(t('auth.errors.unexpected'));
       }
     },
   });
@@ -108,23 +133,22 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
   const canSubmit = !!inputKey.trim() && !validateMutation.isPending;
 
   return (
-    <div style={{ minHeight: "100vh", color: "#e8e4f0", position: "relative" }}>
-
+    <div style={{ minHeight: '100vh', color: '#e8e4f0', position: 'relative' }}>
       {isAuthenticated && onLogout && <Navbar onLogout={onLogout} />}
 
       <div
         style={{
-          position: "relative",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: isAuthenticated ? "calc(100vh - 56px)" : "100vh",
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: isAuthenticated ? 'calc(100vh - 56px)' : '100vh',
           padding: 16,
         }}
       >
-        <div style={{ width: "100%", maxWidth: 480, textAlign: "center" }}>
+        <div style={{ width: '100%', maxWidth: 480, textAlign: 'center' }}>
           {/* RuneRing */}
-          <div style={{ display: "grid", placeItems: "center", marginBottom: 24 }}>
+          <div style={{ display: 'grid', placeItems: 'center', marginBottom: 24 }}>
             <RuneRing size={120} />
           </div>
 
@@ -133,8 +157,8 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
             style={{
               fontSize: 11,
               letterSpacing: 4,
-              textTransform: "uppercase",
-              color: "#9349CC",
+              textTransform: 'uppercase',
+              color: '#9349CC',
               marginBottom: 10,
               fontWeight: 500,
             }}
@@ -150,67 +174,67 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
               fontWeight: 600,
               margin: 0,
               letterSpacing: 1,
-              background: "linear-gradient(180deg, #fff 0%, #9349CC 140%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              background: 'linear-gradient(180deg, #fff 0%, #9349CC 140%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
             }}
           >
-            {t("auth.title")}
+            {t('auth.title')}
           </h1>
           <p
             style={{
-              color: "#8e8a9a",
+              color: '#8e8a9a',
               fontSize: 15,
-              margin: "14px 0 36px",
+              margin: '14px 0 36px',
               lineHeight: 1.6,
             }}
           >
-            {t("auth.subtitle")}
+            {t('auth.subtitle')}
           </p>
 
           {/* Form card */}
           <form
             onSubmit={handleSubmit}
             style={{
-              background: "rgba(20,16,28,0.8)",
-              border: "1px solid rgba(147,73,204,0.25)",
+              background: 'rgba(20,16,28,0.8)',
+              border: '1px solid rgba(147,73,204,0.25)',
               borderRadius: 12,
               padding: 24,
-              textAlign: "left",
-              boxShadow: "0 0 40px rgba(147,73,204,0.08)",
+              textAlign: 'left',
+              boxShadow: '0 0 40px rgba(147,73,204,0.08)',
             }}
           >
             <label
               style={{
                 fontSize: 11,
                 letterSpacing: 2,
-                textTransform: "uppercase",
-                color: "#a89cc0",
+                textTransform: 'uppercase',
+                color: '#a89cc0',
                 fontWeight: 600,
-                display: "block",
+                display: 'block',
                 marginBottom: 10,
               }}
             >
-              {t("auth.apiKeyLabel")}
+              {t('auth.apiKeyLabel')}
             </label>
 
             {/* Input row */}
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
+                display: 'flex',
+                alignItems: 'center',
                 gap: 10,
-                background: "#0b0814",
-                border: "1px solid rgba(147,73,204,0.2)",
+                background: '#0b0814',
+                border: '1px solid rgba(147,73,204,0.2)',
                 borderRadius: 8,
-                padding: "12px 14px",
+                padding: '12px 14px',
                 marginBottom: errorMessage ? 12 : 16,
               }}
             >
-              <span style={{ color: "#9349CC", fontSize: 16, lineHeight: 1 }}>⚿</span>
+              <span style={{ color: '#9349CC', fontSize: 16, lineHeight: 1 }}>⚿</span>
               <input
                 type="password"
-                placeholder={t("auth.apiKeyPlaceholder")}
+                placeholder={t('auth.apiKeyPlaceholder')}
                 value={inputKey}
                 onChange={(e) => setInputKey(e.target.value)}
                 disabled={validateMutation.isPending}
@@ -218,10 +242,10 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
                 spellCheck={false}
                 style={{
                   flex: 1,
-                  background: "transparent",
-                  border: "none",
-                  outline: "none",
-                  color: "#e8e4f0",
+                  background: 'transparent',
+                  border: 'none',
+                  outline: 'none',
+                  color: '#e8e4f0',
                   fontFamily: '"JetBrains Mono", monospace',
                   fontSize: 13,
                 }}
@@ -232,15 +256,15 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
             {errorMessage && (
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "flex-start",
+                  display: 'flex',
+                  alignItems: 'flex-start',
                   gap: 8,
                   borderRadius: 8,
-                  border: "1px solid rgba(220,60,60,0.3)",
-                  background: "rgba(220,60,60,0.08)",
-                  padding: "10px 14px",
+                  border: '1px solid rgba(220,60,60,0.3)',
+                  background: 'rgba(220,60,60,0.08)',
+                  padding: '10px 14px',
                   fontSize: 13,
-                  color: "#f87171",
+                  color: '#f87171',
                   marginBottom: 16,
                 }}
               >
@@ -254,37 +278,39 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
               type="submit"
               disabled={!canSubmit}
               style={{
-                width: "100%",
-                padding: "14px 16px",
-                border: "none",
+                width: '100%',
+                padding: '14px 16px',
+                border: 'none',
                 borderRadius: 8,
                 background: canSubmit
-                  ? "linear-gradient(180deg, #9349CC 0%, #5a2a7e 100%)"
-                  : "rgba(147,73,204,0.25)",
-                color: "#fff",
+                  ? 'linear-gradient(180deg, #9349CC 0%, #5a2a7e 100%)'
+                  : 'rgba(147,73,204,0.25)',
+                color: '#fff',
                 fontFamily: '"Cinzel", serif',
                 fontWeight: 600,
                 fontSize: 14,
                 letterSpacing: 1,
-                textTransform: "uppercase",
-                cursor: canSubmit ? "pointer" : "not-allowed",
+                textTransform: 'uppercase',
+                cursor: canSubmit ? 'pointer' : 'not-allowed',
                 boxShadow: canSubmit
-                  ? "0 0 20px rgba(147,73,204,0.35), inset 0 1px 0 rgba(255,255,255,0.15)"
-                  : "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                  ? '0 0 20px rgba(147,73,204,0.35), inset 0 1px 0 rgba(255,255,255,0.15)'
+                  : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 gap: 8,
-                transition: "all 0.2s",
+                transition: 'all 0.2s',
               }}
             >
               {validateMutation.isPending ? (
                 <>
-                  <Loader2 style={{ width: 16, height: 16, animation: "spin 1s linear infinite" }} />
-                  {t("auth.validating")}
+                  <Loader2
+                    style={{ width: 16, height: 16, animation: 'spin 1s linear infinite' }}
+                  />
+                  {t('auth.validating')}
                 </>
               ) : (
-                <>✦ {t("auth.connectButton")}</>
+                <>✦ {t('auth.connectButton')}</>
               )}
             </button>
           </form>
@@ -293,20 +319,20 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
           <div
             style={{
               marginTop: 20,
-              display: "flex",
-              justifyContent: "center",
+              display: 'flex',
+              justifyContent: 'center',
               gap: 16,
-              flexWrap: "wrap",
+              flexWrap: 'wrap',
             }}
           >
-            {["account", "characters", "inventories", "builds"].map((p) => (
+            {['account', 'characters', 'inventories', 'builds'].map((p) => (
               <span
                 key={p}
                 style={{
                   fontSize: 11,
-                  color: "#6a6478",
-                  display: "flex",
-                  alignItems: "center",
+                  color: '#6a6478',
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: 6,
                 }}
               >
@@ -314,9 +340,9 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
                   style={{
                     width: 4,
                     height: 4,
-                    background: "#9349CC",
+                    background: '#9349CC',
                     borderRadius: 99,
-                    display: "block",
+                    display: 'block',
                     flexShrink: 0,
                   }}
                 />
@@ -333,21 +359,17 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
               rel="noopener noreferrer"
               style={{
                 fontSize: 12,
-                color: "#6a6478",
-                display: "inline-flex",
-                alignItems: "center",
+                color: '#6a6478',
+                display: 'inline-flex',
+                alignItems: 'center',
                 gap: 4,
-                textDecoration: "none",
-                transition: "color 0.15s",
+                textDecoration: 'none',
+                transition: 'color 0.15s',
               }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLAnchorElement).style.color = "#9349CC")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLAnchorElement).style.color = "#6a6478")
-              }
+              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = '#9349CC')}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = '#6a6478')}
             >
-              {t("auth.generateKey")}
+              {t('auth.generateKey')}
               <ExternalLink style={{ width: 12, height: 12 }} />
             </a>
           </div>
@@ -357,11 +379,11 @@ export function ApiKeyForm({ onSuccess, onLogout, isAuthenticated = false }: Api
             style={{
               marginTop: 24,
               fontSize: 11,
-              color: "#5a5468",
-              textAlign: "center",
+              color: '#5a5468',
+              textAlign: 'center',
             }}
           >
-            🔒 {t("auth.privacyNote")}
+            🔒 {t('auth.privacyNote')}
           </p>
         </div>
       </div>

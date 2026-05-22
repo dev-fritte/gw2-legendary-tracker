@@ -16,63 +16,53 @@ export interface GW2Account {
   wvw_rank?: number;
 }
 
-export type WeaponSlot =
-  | "WeaponA1"
-  | "WeaponA2"
-  | "WeaponB1"
-  | "WeaponB2";
+export type WeaponSlot = 'WeaponA1' | 'WeaponA2' | 'WeaponB1' | 'WeaponB2';
 
 export type ArmorSlot =
-  | "Helm"
-  | "Shoulders"
-  | "Coat"
-  | "Gloves"
-  | "Leggings"
-  | "Boots"
-  | "HelmAquatic"
-  | "WeaponAquatic1"
-  | "WeaponAquatic2";
+  | 'Helm'
+  | 'Shoulders'
+  | 'Coat'
+  | 'Gloves'
+  | 'Leggings'
+  | 'Boots'
+  | 'HelmAquatic'
+  | 'WeaponAquatic1'
+  | 'WeaponAquatic2';
 
-export type TrinketSlot =
-  | "Backpack"
-  | "Accessory1"
-  | "Accessory2"
-  | "Amulet"
-  | "Ring1"
-  | "Ring2";
+export type TrinketSlot = 'Backpack' | 'Accessory1' | 'Accessory2' | 'Amulet' | 'Ring1' | 'Ring2';
 
-export type EquipmentSlot = WeaponSlot | ArmorSlot | TrinketSlot | "Sickle" | "Axe" | "Pick";
+export type EquipmentSlot = WeaponSlot | ArmorSlot | TrinketSlot | 'Sickle' | 'Axe' | 'Pick';
 
 export type ItemRarity =
-  | "Junk"
-  | "Basic"
-  | "Fine"
-  | "Masterwork"
-  | "Rare"
-  | "Exotic"
-  | "Ascended"
-  | "Legendary";
+  | 'Junk'
+  | 'Basic'
+  | 'Fine'
+  | 'Masterwork'
+  | 'Rare'
+  | 'Exotic'
+  | 'Ascended'
+  | 'Legendary';
 
 export type WeaponType =
-  | "Axe"
-  | "Dagger"
-  | "Mace"
-  | "Pistol"
-  | "Scepter"
-  | "Sword"
-  | "Focus"
-  | "Shield"
-  | "Torch"
-  | "Warhorn"
-  | "Greatsword"
-  | "Hammer"
-  | "LongBow"
-  | "Rifle"
-  | "ShortBow"
-  | "Staff"
-  | "Harpoon"
-  | "Speargun"
-  | "Trident";
+  | 'Axe'
+  | 'Dagger'
+  | 'Mace'
+  | 'Pistol'
+  | 'Scepter'
+  | 'Sword'
+  | 'Focus'
+  | 'Shield'
+  | 'Torch'
+  | 'Warhorn'
+  | 'Greatsword'
+  | 'Hammer'
+  | 'LongBow'
+  | 'Rifle'
+  | 'ShortBow'
+  | 'Staff'
+  | 'Harpoon'
+  | 'Speargun'
+  | 'Trident';
 
 export interface EquipmentItem {
   id: number;
@@ -81,7 +71,7 @@ export interface EquipmentItem {
   skin?: number;
   upgrades?: number[];
   infusions?: number[];
-  binding?: "Character" | "Account";
+  binding?: 'Character' | 'Account';
   bound_to?: string;
   stats?: {
     id: number;
@@ -117,7 +107,7 @@ export interface InventoryItem {
   skin?: number;
   upgrades?: number[];
   infusions?: number[];
-  binding?: "Character" | "Account";
+  binding?: 'Character' | 'Account';
   bound_to?: string;
 }
 
@@ -242,6 +232,6 @@ export interface BankItem {
   skin?: number;
   upgrades?: number[];
   infusions?: number[];
-  binding?: "Character" | "Account";
+  binding?: 'Character' | 'Account';
   bound_to?: string;
 }

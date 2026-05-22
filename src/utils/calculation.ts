@@ -2,9 +2,9 @@ import type {
   Character,
   GW2Item,
   LegendaryArmoryItem,
-  WeaponType,
   LegendaryWeaponRecommendation,
-} from "@/types/gw2-api";
+  WeaponType,
+} from '@/types/gw2-api';
 
 export interface CalculationOptions {
   /** Weapon types → kit count map from useStarterKits. Empty map = disabled. */
@@ -13,12 +13,7 @@ export interface CalculationOptions {
   prioritiseStarterKits?: boolean;
 }
 
-const WEAPON_SLOTS = new Set([
-  "WeaponA1",
-  "WeaponA2",
-  "WeaponB1",
-  "WeaponB2",
-]);
+const WEAPON_SLOTS = new Set(['WeaponA1', 'WeaponA2', 'WeaponB1', 'WeaponB2']);
 
 export interface AnalysisResult {
   recommendations: LegendaryWeaponRecommendation[];
@@ -26,7 +21,7 @@ export interface AnalysisResult {
 }
 
 interface WeaponTypeAccumulator {
-  allChars: LegendaryWeaponRecommendation["affectedCharacters"];
+  allChars: LegendaryWeaponRecommendation['affectedCharacters'];
   hasEquippedLegendary: boolean;
   icon: string | undefined;
   sampleItemId: number | undefined;
@@ -36,13 +31,13 @@ export function calculateRecommendations(
   characters: Character[],
   itemMap: Map<number, GW2Item>,
   armory: LegendaryArmoryItem[],
-  { starterKitMap = new Map(), prioritiseStarterKits = true }: CalculationOptions = {},
+  { starterKitMap = new Map(), prioritiseStarterKits = true }: CalculationOptions = {}
 ): AnalysisResult {
   // Build map: weaponType → count of legendaries in armory
   const armoryByWeaponType = new Map<WeaponType, number>();
   for (const entry of armory) {
     const item = itemMap.get(entry.id);
-    if (item?.type === "Weapon" && item.details?.type) {
+    if (item?.type === 'Weapon' && item.details?.type) {
       const wt = item.details.type as WeaponType;
       armoryByWeaponType.set(wt, (armoryByWeaponType.get(wt) ?? 0) + entry.count);
     }
@@ -62,10 +57,10 @@ export function calculateRecommendations(
       if (!WEAPON_SLOTS.has(eq.slot)) continue;
 
       const item = itemMap.get(eq.id);
-      if (!item || item.type !== "Weapon" || !item.details?.type) continue;
+      if (!item || item.type !== 'Weapon' || !item.details?.type) continue;
 
       const weaponType = item.details.type as WeaponType;
-      const isLegendary = item.rarity === "Legendary";
+      const isLegendary = item.rarity === 'Legendary';
       // How many template tabs use this item in this slot?
       const tabCount = eq.tabs?.length ?? 1;
 
@@ -81,7 +76,7 @@ export function calculateRecommendations(
         acc.allChars.push({
           name: char.name,
           profession: char.profession,
-          slot: eq.slot as LegendaryWeaponRecommendation["affectedCharacters"][number]["slot"],
+          slot: eq.slot as LegendaryWeaponRecommendation['affectedCharacters'][number]['slot'],
           isLegendary,
         });
       }
@@ -128,10 +123,7 @@ export function calculateRecommendations(
     }
   }
 
-  const byImpact = (
-    a: LegendaryWeaponRecommendation,
-    b: LegendaryWeaponRecommendation,
-  ) => {
+  const byImpact = (a: LegendaryWeaponRecommendation, b: LegendaryWeaponRecommendation) => {
     // When starter-kit prioritisation is active, weapons with at least one
     // owned kit rank above those without, regardless of raw impact.
     if (prioritiseStarterKits) {
@@ -148,10 +140,7 @@ export function calculateRecommendations(
 }
 
 /** Collect all unique item IDs needed for an analysis run */
-export function collectItemIds(
-  characters: Character[],
-  armory: LegendaryArmoryItem[],
-): number[] {
+export function collectItemIds(characters: Character[], armory: LegendaryArmoryItem[]): number[] {
   const ids = new Set<number>();
   for (const char of characters) {
     for (const eq of char.equipment) {
