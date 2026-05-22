@@ -159,53 +159,55 @@ export function WeaponRecommendationCard({
               )}
             </div>
 
-            {/* Character chips */}
-            <div className="space-y-1.5">
-              <span className="text-[10px]" style={{ color: '#6a6478' }}>
-                {t('tracker.affectedCharacters')}
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                {uniqueChars.map((char) => {
-                  const meta = getProfessionMeta(char.profession);
-                  const slotsForChar = affectedCharacters.filter((c) => c.name === char.name);
-                  const nonLegendarySlots = slotsForChar.filter((c) => !c.isLegendary).length;
-                  const legendarySlots = slotsForChar.filter((c) => c.isLegendary).length;
+            {/* Character chips — only when at least one character uses this weapon type */}
+            {uniqueChars.length > 0 && (
+              <div className="space-y-1.5">
+                <span className="text-[10px]" style={{ color: '#6a6478' }}>
+                  {t('tracker.affectedCharacters')}
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {uniqueChars.map((char) => {
+                    const meta = getProfessionMeta(char.profession);
+                    const slotsForChar = affectedCharacters.filter((c) => c.name === char.name);
+                    const nonLegendarySlots = slotsForChar.filter((c) => !c.isLegendary).length;
+                    const legendarySlots = slotsForChar.filter((c) => c.isLegendary).length;
 
-                  return (
-                    <div
-                      key={char.name}
-                      className={cn(
-                        'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs',
-                        char.isLegendary
-                          ? 'border-zinc-700 bg-zinc-800/60'
-                          : cn(meta.bgColor, meta.borderColor)
-                      )}
-                    >
-                      <ProfessionIcon
-                        icon={professionIcons.get(char.profession)}
-                        profession={char.profession}
-                        className="w-3.5 h-3.5 shrink-0"
-                      />
-                      <span
-                        className="truncate max-w-[120px]"
-                        style={{ color: char.isLegendary ? '#6a6478' : '#c8bee0' }}
+                    return (
+                      <div
+                        key={char.name}
+                        className={cn(
+                          'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs',
+                          char.isLegendary
+                            ? 'border-zinc-700 bg-zinc-800/60'
+                            : cn(meta.bgColor, meta.borderColor)
+                        )}
                       >
-                        {char.name}
-                      </span>
-                      {nonLegendarySlots > 1 && (
-                        <span style={{ color: '#6a6478' }}>×{nonLegendarySlots}</span>
-                      )}
-                      {legendarySlots > 0 && (
-                        <Sparkles
-                          className="w-2.5 h-2.5"
-                          style={{ color: 'rgba(233,198,107,0.6)' }}
+                        <ProfessionIcon
+                          icon={professionIcons.get(char.profession)}
+                          profession={char.profession}
+                          className="w-3.5 h-3.5 shrink-0"
                         />
-                      )}
-                    </div>
-                  );
-                })}
+                        <span
+                          className="truncate max-w-[120px]"
+                          style={{ color: char.isLegendary ? '#6a6478' : '#c8bee0' }}
+                        >
+                          {char.name}
+                        </span>
+                        {nonLegendarySlots > 1 && (
+                          <span style={{ color: '#6a6478' }}>×{nonLegendarySlots}</span>
+                        )}
+                        {legendarySlots > 0 && (
+                          <Sparkles
+                            className="w-2.5 h-2.5"
+                            style={{ color: 'rgba(233,198,107,0.6)' }}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

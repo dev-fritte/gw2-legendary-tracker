@@ -15,6 +15,28 @@ export interface CalculationOptions {
 
 const WEAPON_SLOTS = new Set(['WeaponA1', 'WeaponA2', 'WeaponB1', 'WeaponB2']);
 
+const ALL_WEAPON_TYPES: WeaponType[] = [
+  'Axe',
+  'Dagger',
+  'Mace',
+  'Pistol',
+  'Scepter',
+  'Sword',
+  'Focus',
+  'Shield',
+  'Torch',
+  'Warhorn',
+  'Greatsword',
+  'Hammer',
+  'LongBow',
+  'Rifle',
+  'ShortBow',
+  'Staff',
+  'Harpoon',
+  'Speargun',
+  'Trident',
+];
+
 export interface AnalysisResult {
   recommendations: LegendaryWeaponRecommendation[];
   coveredByArmory: LegendaryWeaponRecommendation[];
@@ -34,12 +56,17 @@ export function calculateRecommendations(
   { starterKitMap = new Map(), prioritiseStarterKits = true }: CalculationOptions = {}
 ): AnalysisResult {
   // Build map: weaponType → count of legendaries in armory
+  // Also track an icon/id per type for weapon types not equipped by any character.
   const armoryByWeaponType = new Map<WeaponType, number>();
+  const armoryIconByWeaponType = new Map<WeaponType, { icon: string; id: number }>();
   for (const entry of armory) {
     const item = itemMap.get(entry.id);
     if (item?.type === 'Weapon' && item.details?.type) {
       const wt = item.details.type as WeaponType;
       armoryByWeaponType.set(wt, (armoryByWeaponType.get(wt) ?? 0) + entry.count);
+      if (!armoryIconByWeaponType.has(wt)) {
+        armoryIconByWeaponType.set(wt, { icon: item.icon, id: item.id });
+      }
     }
   }
 
@@ -93,6 +120,29 @@ export function calculateRecommendations(
     }
   }
 
+  // Ensure every weapon type appears in the results, even if no character has it equipped.
+  // Build a lookup from itemMap for any weapon type not already covered by the owned armory.
+  const itemMapIconByWeaponType = new Map<WeaponType, { icon: string; id: number }>();
+  for (const [id, item] of itemMap) {
+    if (item.type !== 'Weapon' || !item.details?.type) continue;
+    const wt = item.details.type as WeaponType;
+    if (!itemMapIconByWeaponType.has(wt)) {
+      itemMapIconByWeaponType.set(wt, { icon: item.icon, id });
+    }
+  }
+
+  for (const wt of ALL_WEAPON_TYPES) {
+    if (!usageMap.has(wt)) {
+      const info = armoryIconByWeaponType.get(wt) ?? itemMapIconByWeaponType.get(wt);
+      usageMap.set(wt, {
+        allChars: [],
+        hasEquippedLegendary: false,
+        icon: info?.icon,
+        sampleItemId: info?.id,
+      });
+    }
+  }
+
   const recommendations: LegendaryWeaponRecommendation[] = [];
   const coveredByArmory: LegendaryWeaponRecommendation[] = [];
 
@@ -118,8 +168,7 @@ export function calculateRecommendations(
     if (armoryCount > 0 || acc.hasEquippedLegendary) {
       coveredByArmory.push(rec);
     } else {
-      // Only recommend if there are actually non-legendary slots to improve
-      if (impact > 0) recommendations.push(rec);
+      recommendations.push(rec);
     }
   }
 
