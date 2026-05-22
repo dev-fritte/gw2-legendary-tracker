@@ -12,7 +12,7 @@ import {
 import { type LanguageCode, SUPPORTED_LANGUAGES } from '@/i18n';
 import { cn } from '@/utils/cn';
 
-export type NavSection = 'zommoros' | 'overview';
+export type NavSection = 'zommoros' | 'overview' | 'starterkits';
 
 interface NavbarProps {
   onLogout: () => void;
@@ -33,6 +33,7 @@ export function Navbar({ onLogout, activeSection, onNavigate }: NavbarProps) {
 
   const navItems: { section: NavSection; label: string }[] = [
     { section: 'overview', label: t('nav.overview') },
+    { section: 'starterkits', label: t('nav.starterKits') },
     { section: 'zommoros', label: t('nav.zommorosChoice') },
   ];
 

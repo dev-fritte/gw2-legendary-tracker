@@ -20,6 +20,10 @@ export const STARTER_KIT_WEAPONS: Record<number, WeaponType[]> = {
 
 export const STARTER_KIT_IDS = new Set(Object.keys(STARTER_KIT_WEAPONS).map(Number));
 
+export const STARTER_KIT_ORDER: number[] = [
+  96054, 101123, 101623, 101938, 102946, 103839, 104004, 103827, 103821, 103847,
+];
+
 /**
  * Given a list of owned kit IDs, returns a map of WeaponType → count of
  * kits that cover that weapon type.  A count > 0 means the player has at

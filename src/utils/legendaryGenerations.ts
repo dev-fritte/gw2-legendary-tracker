@@ -123,6 +123,8 @@ export function getLegendaryGeneration(id: number, itemType: string): LegendaryG
   return 'other';
 }
 
+export { GEN1 as GEN1_IDS, GEN2 as GEN2_IDS, STANDALONE as STANDALONE_IDS };
+
 export const GENERATION_ORDER: LegendaryGeneration[] = [
   'gen1',
   'gen2',

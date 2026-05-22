@@ -3,6 +3,7 @@ import { ApiKeyForm } from '@/features/auth/ApiKeyForm';
 import { CharacterSelectionPage } from '@/features/characters/CharacterSelectionPage';
 import { TrackerPage } from '@/features/tracker/TrackerPage';
 import { OverviewPage } from '@/features/overview/OverviewPage';
+import { StarterKitsPage } from '@/features/starterkits/StarterKitsPage';
 import { useApiKey } from '@/hooks/useApiKey';
 import type { NavSection } from '@/components/Navbar';
 import type { Character } from '@/types/gw2-api';
@@ -11,7 +12,9 @@ type View = 'selection' | 'tracker';
 
 function getSectionFromHash(): NavSection {
   const hash = window.location.hash.replace(/^#\/?/, '');
-  return hash === 'zommoros' ? 'zommoros' : 'overview';
+  if (hash === 'zommoros') return 'zommoros';
+  if (hash === 'starterkits') return 'starterkits';
+  return 'overview';
 }
 
 export default function App() {
@@ -42,6 +45,10 @@ export default function App() {
 
   if (section === 'overview') {
     return <OverviewPage apiKey={apiKey} onLogout={clearApiKey} onNavigate={handleNavigate} />;
+  }
+
+  if (section === 'starterkits') {
+    return <StarterKitsPage apiKey={apiKey} onLogout={clearApiKey} onNavigate={handleNavigate} />;
   }
 
   if (view === 'tracker') {
