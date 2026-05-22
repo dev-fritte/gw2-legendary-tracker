@@ -4,6 +4,7 @@ export type LegendaryGeneration =
   | "gen3"
   | "standalone"
   | "armor_pve"
+  | "armor_raids"
   | "armor_pvp"
   | "armor_wvw"
   | "trinket"
@@ -60,6 +61,31 @@ const STANDALONE = new Set<number>([
   106273, // Ancora Bellum
 ]);
 
+// Raid Legendary Armor (Perfected Envoy)
+const ARMOR_RAIDS = new Set<number>([
+  // Light
+  80248, // Perfected Envoy Cowl
+  80131, // Perfected Envoy Mantle
+  80190, // Perfected Envoy Vestments
+  80111, // Perfected Envoy Gloves
+  80356, // Perfected Envoy Pants
+  80399, // Perfected Envoy Shoes
+  // Medium
+  80296, // Perfected Envoy Mask
+  80145, // Perfected Envoy Shoulderpads
+  80578, // Perfected Envoy Jerkin
+  80161, // Perfected Envoy Vambraces
+  80252, // Perfected Envoy Leggings
+  80281, // Perfected Envoy Boots
+  // Heavy
+  80384, // Perfected Envoy Helmet
+  80435, // Perfected Envoy Pauldrons
+  80254, // Perfected Envoy Breastplate
+  80205, // Perfected Envoy Gauntlets
+  80277, // Perfected Envoy Tassets
+  80557, // Perfected Envoy Greaves
+]);
+
 // PvP Legendary Armor
 // Ardent Glorious (Light), Glorious Hero's (Medium + Heavy), Mistforged Glorious Hero's
 const ARMOR_PVP = new Set<number>([
@@ -84,6 +110,7 @@ export function getLegendaryGeneration(id: number, itemType: string): LegendaryG
   if (itemType === "Armor") {
     if (ARMOR_PVP.has(id)) return "armor_pvp";
     if (ARMOR_WVW.has(id)) return "armor_wvw";
+    if (ARMOR_RAIDS.has(id)) return "armor_raids";
     return "armor_pve";
   }
   if (itemType === "Trinket") return "trinket";
@@ -105,6 +132,7 @@ export const GENERATION_ORDER: LegendaryGeneration[] = [
   "gen3",
   "standalone",
   "armor_pve",
+  "armor_raids",
   "armor_pvp",
   "armor_wvw",
   "trinket",
