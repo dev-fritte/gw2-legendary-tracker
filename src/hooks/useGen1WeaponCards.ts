@@ -10,11 +10,13 @@ export interface WeaponCardInfo {
   icon: string;
 }
 
-export function useGen1WeaponCards(apiKey: string): {
+export function useGen1WeaponCards(
+  apiKey: string,
+  lang: string
+): {
   weaponCardMap: Map<WeaponType, WeaponCardInfo>;
   isLoading: boolean;
 } {
-  // Reuses the same query key as useLegendaryOverview — shares cache if user visited overview
   const armoryQuery = useQuery({
     queryKey: ['legendaryArmory', 'all'],
     queryFn: () => getApiClient(apiKey).getAllLegendaryArmory(),
@@ -23,10 +25,10 @@ export function useGen1WeaponCards(apiKey: string): {
 
   const allIds = useMemo(() => (armoryQuery.data ?? []).map((e) => e.id), [armoryQuery.data]);
 
-  // Same query key structure as useLegendaryOverview to share cache
+  // Separate key from the language-neutral ['items', allIds] cache used by other hooks
   const itemsQuery = useQuery({
-    queryKey: ['items', allIds],
-    queryFn: () => getApiClient(apiKey).getItems(allIds),
+    queryKey: ['items', 'cards', allIds, lang],
+    queryFn: () => getApiClient(apiKey).getItems(allIds, lang),
     enabled: allIds.length > 0,
     staleTime: 60 * 60 * 1000,
   });

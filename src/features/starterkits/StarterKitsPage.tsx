@@ -40,14 +40,16 @@ function normalizeChoices(
   return stored.slice(0, count);
 }
 
-function wikiUrl(name: string): string {
-  return `https://wiki.guildwars2.com/wiki/${encodeURIComponent(name.replace(/ /g, '_'))}`;
+function wikiUrl(name: string, lang: string): string {
+  const host = lang.startsWith('de') ? 'wiki-de.guildwars2.com' : 'wiki.guildwars2.com';
+  return `https://${host}/wiki/${encodeURIComponent(name.replace(/ /g, '_'))}`;
 }
 
 export function StarterKitsPage({ apiKey, onLogout, onNavigate }: Readonly<Props>) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language.startsWith('de') ? 'de' : 'en';
   const { ownedCounts, isLoading: isLoadingOwned, error, refetch } = useOwnedStarterKits(apiKey);
-  const { weaponCardMap, isLoading: isLoadingCards } = useGen1WeaponCards(apiKey);
+  const { weaponCardMap, isLoading: isLoadingCards } = useGen1WeaponCards(apiKey, lang);
   const { unlockedItemIds, coveredWeaponTypes } = useArmoryStatus(apiKey);
 
   const [filterMode, setFilterMode] = useState<FilterMode>('all');
@@ -683,7 +685,7 @@ function WeaponCard({
   isTypeCovered: boolean;
   onSelect: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const variant = getCardVariant(isSelected, isItemOwned, isTypeCovered);
   const styles = CARD_STYLES[variant];
 
@@ -757,7 +759,7 @@ function WeaponCard({
 
             {/* Wiki link — bottom-right */}
             <a
-              href={wikiUrl(cardInfo.name)}
+              href={wikiUrl(cardInfo.name, i18n.language)}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
@@ -769,15 +771,15 @@ function WeaponCard({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 16,
-                height: 16,
-                borderRadius: 3,
-                background: 'rgba(0,0,0,0.6)',
-                color: 'rgba(255,255,255,0.55)',
+                width: 22,
+                height: 22,
+                borderRadius: 4,
+                background: 'rgba(0,0,0,0.65)',
+                color: 'rgba(255,255,255,0.7)',
                 textDecoration: 'none',
               }}
             >
-              <ExternalLink style={{ width: 9, height: 9 }} />
+              <ExternalLink style={{ width: 12, height: 12 }} />
             </a>
           </>
         ) : (
