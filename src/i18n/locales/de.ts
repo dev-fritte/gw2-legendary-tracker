@@ -34,7 +34,6 @@ export default {
     description:
       'Nur ausgewählte Charaktere fließen in die Empfehlung der nächsten Legendären ein. Inventare, Templates und Builds werden synchronisiert.',
     loadingCharacters: 'Charaktere werden geladen…',
-    loadingDetails: 'Charakterdetails werden geladen…',
     selectAll: 'Alle auswählen',
     deselectAll: 'Alle abwählen',
     selectedCount: 'von {{total}} ausgewählt',

@@ -32,7 +32,6 @@ export default {
     description:
       'Only selected characters are factored into the next legendary weapon recommendation. Inventories, templates and builds are synchronized.',
     loadingCharacters: 'Loading characters…',
-    loadingDetails: 'Loading character details…',
     selectAll: 'Select all',
     deselectAll: 'Deselect all',
     selectedCount: 'of {{total}} selected',

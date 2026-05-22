@@ -76,24 +76,11 @@ export class GW2ApiClient {
     return data;
   }
 
-  async getCharacterNames(): Promise<string[]> {
-    const { data } = await this.http.get<string[]>('/characters');
-    return data;
-  }
-
-  async getCharacter(name: string): Promise<Character> {
-    const { data } = await this.http.get<Character>(`/characters/${encodeURIComponent(name)}`, {
-      params: { v: '2019-12-19T00:00:00.000Z' },
+  async getAllCharacters(): Promise<Character[]> {
+    const { data } = await this.http.get<Character[]>('/characters', {
+      params: { ids: 'all', v: '2019-12-19T00:00:00.000Z' },
     });
     return data;
-  }
-
-  async getCharacters(names: string[]): Promise<Character[]> {
-    // GW2 API doesn't support bulk character fetch — fetch in parallel with concurrency limit
-    const results = await Promise.allSettled(names.map((name) => this.getCharacter(name)));
-    return results
-      .filter((r): r is PromiseFulfilledResult<Character> => r.status === 'fulfilled')
-      .map((r) => r.value);
   }
 
   async getProfessions(): Promise<GW2Profession[]> {

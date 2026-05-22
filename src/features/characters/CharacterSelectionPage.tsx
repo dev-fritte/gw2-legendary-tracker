@@ -14,7 +14,7 @@ import {
 import type { NavSection } from '@/components/Navbar';
 import { Navbar } from '@/components/Navbar';
 import { CharacterCard, CharacterCardSkeleton } from './CharacterCard';
-import { useCharacterDetails, useCharacterNames } from '@/hooks/useCharacters';
+import { useCharacters } from '@/hooks/useCharacters';
 import { storage } from '@/services/storage';
 import { getProfessionMeta } from '@/utils/professions';
 import { cn } from '@/utils/cn';
@@ -51,15 +51,13 @@ export function CharacterSelectionPage({
   const { t } = useTranslation();
 
   // ── Data fetching ──────────────────────────────────────────────
-  const namesQuery = useCharacterNames(apiKey);
-  const names = namesQuery.data ?? [];
-  const detailsQuery = useCharacterDetails(apiKey, names, namesQuery.isSuccess);
+  const charactersQuery = useCharacters(apiKey);
 
   // ── Sort state ─────────────────────────────────────────────────
   const [sortKey, setSortKey] = useState<SortKey>('playtime');
   const characters = useMemo(
-    () => sortCharacters(detailsQuery.data ?? [], sortKey),
-    [detailsQuery.data, sortKey]
+    () => sortCharacters(charactersQuery.data ?? [], sortKey),
+    [charactersQuery.data, sortKey]
   );
 
   // ── Selection state ────────────────────────────────────────────
@@ -96,10 +94,8 @@ export function CharacterSelectionPage({
   const selectedCharacters = characters.filter((c) => selected.has(c.name));
 
   // ── Loading / error ────────────────────────────────────────────
-  const isLoadingNames = namesQuery.isPending;
-  const isLoadingDetails = namesQuery.isSuccess && detailsQuery.isPending;
-  const skeletonCount = isLoadingDetails ? Math.min(names.length, 8) : 0;
-  const error = namesQuery.error ?? detailsQuery.error;
+  const isLoading = charactersQuery.isPending;
+  const error = charactersQuery.error;
 
   const SORT_OPTIONS: { key: SortKey; label: string }[] = [
     { key: 'playtime', label: t('characters.sortPlaytime') },
@@ -155,10 +151,7 @@ export function CharacterSelectionPage({
                 size="sm"
                 variant="outline"
                 className="h-7 text-xs border-red-800 text-red-400 hover:bg-red-950/40"
-                onClick={() => {
-                  namesQuery.refetch();
-                  detailsQuery.refetch();
-                }}
+                onClick={() => charactersQuery.refetch()}
               >
                 <RefreshCw className="w-3 h-3 mr-1" />
                 {t('characters.errorRetry')}
@@ -167,9 +160,12 @@ export function CharacterSelectionPage({
           </div>
         )}
 
-        {/* Loading: names */}
-        {isLoadingNames && (
+        {/* Loading */}
+        {isLoading && (
           <div className="space-y-3">
+            <p className="text-xs" style={{ color: '#8e8a9a' }}>
+              {t('characters.loadingCharacters')}
+            </p>
             {Array.from({ length: 5 }).map((_, i) => (
               <CharacterCardSkeleton key={i} />
             ))}
@@ -177,9 +173,9 @@ export function CharacterSelectionPage({
         )}
 
         {/* Character list */}
-        {!isLoadingNames && !error && (
+        {!isLoading && !error && (
           <>
-            {(characters.length > 0 || skeletonCount > 0) && (
+            {characters.length > 0 && (
               <div
                 className="flex items-center justify-between gap-4"
                 style={{
@@ -205,7 +201,9 @@ export function CharacterSelectionPage({
                   {/* Counter */}
                   {characters.length > 0 && (
                     <span className="text-sm" style={{ color: '#6a6478' }}>
-                      <span style={{ color: '#e8e4f0', fontWeight: 600 }}>{selected.size}</span>{' '}
+                      <span style={{ color: '#e8e4f0', fontWeight: 600 }}>
+                        {selectedCharacters.length}
+                      </span>{' '}
                       {t('characters.selectedCount', { total: characters.length })}
                     </span>
                   )}
@@ -241,16 +239,6 @@ export function CharacterSelectionPage({
               </div>
             )}
 
-            {/* Skeleton cards while details load */}
-            {skeletonCount > 0 && (
-              <div className="space-y-3">
-                <p className="text-xs text-zinc-500">{t('characters.loadingDetails')}</p>
-                {Array.from({ length: skeletonCount }).map((_, i) => (
-                  <CharacterCardSkeleton key={i} />
-                ))}
-              </div>
-            )}
-
             {/* Profession-grouped view */}
             {characters.length > 0 &&
               (sortKey === 'profession' ? (
@@ -273,7 +261,7 @@ export function CharacterSelectionPage({
               ))}
 
             {/* Empty state */}
-            {namesQuery.isSuccess && names.length === 0 && (
+            {charactersQuery.isSuccess && characters.length === 0 && (
               <div className="text-center py-12 text-zinc-500">
                 <Users className="w-10 h-10 mx-auto mb-3 opacity-30" />
                 <p className="text-sm">{t('characters.noCharacters')}</p>
