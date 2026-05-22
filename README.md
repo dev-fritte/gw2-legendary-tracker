@@ -75,3 +75,12 @@ All requests go directly to `https://api.guildwars2.com/v2` from the browser usi
 ## Privacy
 
 Your API key is stored only in your browser's `localStorage` and is never sent to any third-party server.
+
+### Roadmap
+
+- [x] Check ALL Weapons not only the one you have equipped
+- [ ] Number of character which are able to equip the weapon type
+- [ ] plain Roadmap
+- [ ] add starterkits to roadmap selection
+- [ ] add material/crafing calculations to check how expensive the legendary item is
+- [ ] scan snowcrows benchmarks for number of builds with the specific weapon
