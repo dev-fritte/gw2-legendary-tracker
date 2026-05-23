@@ -176,6 +176,7 @@ export default {
     title: 'Welche Vision soll diese Stelle füllen?',
     search: 'Suchen…',
     noResults: 'Keine Ergebnisse.',
+    starterKitHint: 'In einem deiner Starter Kits ausgewählt',
     tabs: {
       Waffen: 'Waffen',
       Rüstung: 'Rüstung',

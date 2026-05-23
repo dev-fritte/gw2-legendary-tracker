@@ -174,6 +174,7 @@ export default {
     title: 'Which vision should fill this slot?',
     search: 'Search…',
     noResults: 'No results.',
+    starterKitHint: 'Selected in one of your Starter Kits',
     tabs: {
       Waffen: 'Weapons',
       Rüstung: 'Armor',

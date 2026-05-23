@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { GENERATION_ORDER, type LegendaryGeneration } from '@/utils/legendaryGenerations';
+import { storage } from '@/services/storage';
 import type { LegendaryPickerItem } from './useAllLegendaryItems';
 import { GENERATION_TINT, GENERATION_TO_TAB } from './useAllLegendaryItems';
 import { getSubLabel } from './prophecyHelpers';
-import { PICKER_TABS, PURPLE, PURPLE_DEEP, TAB_GENERATIONS } from './prophecyTypes';
+import { GOLD, PICKER_TABS, PURPLE, PURPLE_DEEP, TAB_GENERATIONS } from './prophecyTypes';
 import type { PickerTab } from './prophecyTypes';
 
 // ─── ItemGroup ────────────────────────────────────────────────────────────────
@@ -15,10 +16,11 @@ interface ItemGroupProps {
   currentItem: string | null;
   onPick: (name: string) => void;
   t: TFunction;
+  kitChosenWeaponTypes: Set<string>;
   showGenLabel?: boolean;
 }
 
-function ItemGroup({ items, currentItem, onPick, t, showGenLabel }: ItemGroupProps) {
+function ItemGroup({ items, currentItem, onPick, t, kitChosenWeaponTypes, showGenLabel }: Readonly<ItemGroupProps>) {
   if (items.length === 0) return null;
 
   return (
@@ -27,6 +29,12 @@ function ItemGroup({ items, currentItem, onPick, t, showGenLabel }: ItemGroupPro
         const isCurrent = currentItem === it.name;
         const tint = GENERATION_TINT[it.generation];
         const subLabel = getSubLabel(it, t);
+
+        // Only mark Gen1 weapons the user has explicitly chosen in their starter kits
+        const isStarterKit =
+          it.generation === 'gen1' &&
+          !!it.detailType &&
+          kitChosenWeaponTypes.has(it.detailType);
 
         return (
           <button
@@ -57,31 +65,59 @@ function ItemGroup({ items, currentItem, onPick, t, showGenLabel }: ItemGroupPro
                 (e.currentTarget as HTMLElement).style.borderColor = 'rgba(147,73,204,0.15)';
             }}
           >
-            {/* Icon */}
-            <div
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 6,
-                flexShrink: 0,
-                background: it.icon
-                  ? '#0b0814'
-                  : `radial-gradient(circle at 30% 30%, ${tint}90, ${PURPLE_DEEP})`,
-                border: `1px solid ${tint}66`,
-                boxShadow: `0 0 8px ${tint}33`,
-                overflow: 'hidden',
-                display: 'grid',
-                placeItems: 'center',
-              }}
-            >
-              {it.icon ? (
-                <img
-                  src={it.icon}
-                  alt={it.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                <span style={{ fontSize: 18, color: '#fff' }}>✦</span>
+            {/* Icon — wrapped in relative container so the kit badge sits outside
+                the overflow:hidden box */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 6,
+                  background: it.icon
+                    ? '#0b0814'
+                    : `radial-gradient(circle at 30% 30%, ${tint}90, ${PURPLE_DEEP})`,
+                  border: isStarterKit ? `1px solid ${GOLD}99` : `1px solid ${tint}66`,
+                  boxShadow: isStarterKit ? `0 0 10px ${GOLD}55` : `0 0 8px ${tint}33`,
+                  overflow: 'hidden',
+                  display: 'grid',
+                  placeItems: 'center',
+                }}
+              >
+                {it.icon ? (
+                  <img
+                    src={it.icon}
+                    alt={it.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <span style={{ fontSize: 18, color: '#fff' }}>✦</span>
+                )}
+              </div>
+
+              {/* Gold pip — only for Starter Kit weapons */}
+              {isStarterKit && (
+                <div
+                  title="Erhältlich über ein Legendary Weapon Starter Kit"
+                  style={{
+                    position: 'absolute',
+                    top: -5,
+                    right: -5,
+                    width: 15,
+                    height: 15,
+                    borderRadius: '50%',
+                    background: GOLD,
+                    border: '1.5px solid #0b0814',
+                    display: 'grid',
+                    placeItems: 'center',
+                    fontSize: 8,
+                    lineHeight: 1,
+                    color: '#1a1000',
+                    fontWeight: 900,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  ⚒
+                </div>
               )}
             </div>
 
@@ -162,6 +198,19 @@ export function ProphecyPicker({ allItems, currentItem, onPick, onClose }: Picke
     tabCounts.set(tab, n);
   }
 
+  // Build the set of weapon types the user has actually chosen in their starter kits.
+  // Read once when the picker mounts (choices don't change while it's open).
+  const kitChosenWeaponTypes = useMemo(() => {
+    const choices = storage.getKitChoices();
+    const result = new Set<string>();
+    for (const slots of Object.values(choices)) {
+      for (const wt of slots) {
+        if (wt !== null) result.add(wt);
+      }
+    }
+    return result;
+  }, []);
+
   const isSearching = query.trim().length > 0;
   const searchResults = isSearching
     ? allItems.filter(
@@ -191,6 +240,7 @@ export function ProphecyPicker({ allItems, currentItem, onPick, onClose }: Picke
           currentItem={currentItem}
           onPick={onPick}
           t={t}
+          kitChosenWeaponTypes={kitChosenWeaponTypes}
           showGenLabel
         />
       );
@@ -226,6 +276,7 @@ export function ProphecyPicker({ allItems, currentItem, onPick, onClose }: Picke
           currentItem={currentItem}
           onPick={onPick}
           t={t}
+          kitChosenWeaponTypes={kitChosenWeaponTypes}
         />
       </div>
     ));
@@ -366,6 +417,40 @@ export function ProphecyPicker({ allItems, currentItem, onPick, onClose }: Picke
             }}
           />
         </div>
+
+        {/* Starter Kit legend — only when weapon items are visible and the user has configured kits */}
+        {(activeTab === 'Waffen' || isSearching) && kitChosenWeaponTypes.size > 0 && (
+          <div
+            style={{
+              padding: '5px 24px',
+              borderBottom: '1px solid rgba(147,73,204,0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+            }}
+          >
+            <div
+              style={{
+                width: 13,
+                height: 13,
+                borderRadius: '50%',
+                background: GOLD,
+                border: '1.5px solid #0b0814',
+                display: 'grid',
+                placeItems: 'center',
+                fontSize: 7,
+                color: '#1a1000',
+                fontWeight: 900,
+                flexShrink: 0,
+              }}
+            >
+              ⚒
+            </div>
+            <span style={{ fontSize: 10, color: '#6a6478', letterSpacing: 0.3 }}>
+              {t('picker.starterKitHint')}
+            </span>
+          </div>
+        )}
 
         {/* Item grid */}
         <div style={{ padding: '16px 24px 24px', overflowY: 'auto', flex: 1 }}>
