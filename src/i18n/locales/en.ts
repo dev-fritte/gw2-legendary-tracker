@@ -135,7 +135,7 @@ export default {
   },
   prophecy: {
     eyebrow: '✦ ROADMAP · CHAPTER V',
-    title: "'Glint\'s Prophecy'
+    title: 'Glint\'s Prophecy',
     subtitle:
       'The crystal dragon saw your journey long in advance. ' +
       'Set the orbs in the right order — and ignite each one when fate is fulfilled.',
