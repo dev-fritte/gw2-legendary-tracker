@@ -149,7 +149,6 @@ export default {
       path: '✦ THE STAR ROAD',
       chronicle: '✦ PATH CHRONICLE',
     },
-    scrollHint: '← scroll horizontally · in sync with Chronicle →',
     chronicle: {
       hint: 'Tap an orb to ignite it · tap an empty slot to choose a vision.',
     },

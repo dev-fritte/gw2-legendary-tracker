@@ -151,7 +151,6 @@ export default {
       path: '✦ DIE STERNENSTRASSE',
       chronicle: '✦ PFAD-CHRONIK',
     },
-    scrollHint: '← horizontal scrollen · synchron mit Chronik →',
     chronicle: {
       hint: 'Tippe auf eine Sphäre, um sie zu entzünden · auf einen leeren Slot, um eine Vision zu wählen.',
     },
