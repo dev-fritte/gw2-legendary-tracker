@@ -278,9 +278,37 @@ function ConstellationPath({
   onScrollSync,
   scrollRef,
 }: PathProps) {
-  const H = 360;
+  const H = 400;
   const innerW = Math.max(steps.length, 1) * STEP_W;
   const [scrollX, setScrollX] = useState(0);
+
+  // Drag-to-scroll — only initiated from the background layer, not from orbs
+  const handleBgMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      const startX = e.clientX;
+      const startScrollLeft = scrollRef.current?.scrollLeft ?? 0;
+
+      const onMove = (ev: MouseEvent) => {
+        const walk = startX - ev.clientX;
+        const next = startScrollLeft + walk;
+        if (scrollRef.current) {
+          scrollRef.current.scrollLeft = next;
+          setScrollX(next);
+          onScrollSync(next);
+        }
+      };
+
+      const onUp = () => {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+      };
+
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+    },
+    [onScrollSync, scrollRef],
+  );
 
   const positions = steps.map((_, i) => {
     const t = steps.length <= 1 ? 0.5 : i / (steps.length - 1);
@@ -362,10 +390,17 @@ function ConstellationPath({
         style={{ position: 'absolute', inset: 0, overflowX: 'auto', overflowY: 'hidden' }}
       >
         <div style={{ width: innerW, height: H, position: 'relative' }}>
+          {/* Transparent drag layer — sits below orbs in DOM order so orbs still receive clicks */}
+          <div
+            className="prophecy-drag-bg"
+            onMouseDown={handleBgMouseDown}
+            style={{ position: 'absolute', inset: 0, zIndex: 0 }}
+          />
+
           <svg
             viewBox={`0 0 ${innerW} ${H}`}
             preserveAspectRatio="none"
-            style={{ position: 'absolute', inset: 0, width: innerW, height: H }}
+            style={{ position: 'absolute', inset: 0, width: innerW, height: H, pointerEvents: 'none' }}
           >
             <defs>
               <linearGradient id="prophecy-line" x1="0" y1="0" x2="1" y2="0">
@@ -1158,17 +1193,19 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
     <div style={{ minHeight: '100vh', color: '#e8e4f0', position: 'relative' }}>
       <style>{`
         .prophecy-pathscroll::-webkit-scrollbar,
-        .prophecy-chronscroll::-webkit-scrollbar { height: 6px; }
+        .prophecy-chronscroll::-webkit-scrollbar { height: 3px; }
         .prophecy-pathscroll::-webkit-scrollbar-track,
         .prophecy-chronscroll::-webkit-scrollbar-track { background: transparent; }
         .prophecy-pathscroll::-webkit-scrollbar-thumb,
         .prophecy-chronscroll::-webkit-scrollbar-thumb {
-          background: rgba(147,73,204,0.25); border-radius: 3px;
+          background: rgba(147,73,204,0.25); border-radius: 2px;
         }
         .prophecy-pathscroll::-webkit-scrollbar-thumb:hover,
         .prophecy-chronscroll::-webkit-scrollbar-thumb:hover {
           background: rgba(147,73,204,0.45);
         }
+        .prophecy-drag-bg { cursor: grab; }
+        .prophecy-drag-bg:active { cursor: grabbing; }
       `}</style>
 
       <Navbar onLogout={onLogout} activeSection="prophecy" onNavigate={onNavigate} />
@@ -1345,9 +1382,6 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
           >
             <span style={{ fontSize: 10, letterSpacing: 2.5, color: '#6a6478', fontWeight: 600 }}>
               {t('prophecy.section.path')}
-            </span>
-            <span style={{ fontSize: 10, color: '#5a5468', letterSpacing: 0.5 }}>
-              {t('prophecy.scrollHint')}
             </span>
           </div>
           <ConstellationPath
