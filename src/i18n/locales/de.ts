@@ -5,6 +5,7 @@ export default {
     zommorosChoice: "Zommoros' Wahl",
     overview: 'Übersicht',
     starterKits: 'Starterkits',
+    prophecy: 'Glints Verheißung',
   },
   auth: {
     title: 'Legendary Mystic Forge',
@@ -134,6 +135,71 @@ export default {
     openWiki: 'Im Wiki öffnen',
     ownedInArmory: 'Bereits in der Rüstkammer',
     typeCovered: 'Waffentyp durch ein anderes Legendäres abgedeckt',
+  },
+  prophecy: {
+    eyebrow: '✦ ROADMAP · KAPITEL V',
+    title: 'Glints Verheißung',
+    subtitle:
+      'Die Kristalldrachin sah deine Reise lange voraus. Setze die Sphären in die richtige Ordnung — und entzünde jede, wenn das Schicksal vollbracht ist.',
+    addStep: '+ Vision hinzufügen',
+    stats: {
+      done: 'Vollendet',
+      planned: 'Geplant',
+      next: 'Nächste Vision',
+    },
+    section: {
+      path: '✦ DIE STERNENSTRASSE',
+      chronicle: '✦ PFAD-CHRONIK',
+    },
+    scrollHint: '← horizontal scrollen · synchron mit Chronik →',
+    chronicle: {
+      hint: 'Tippe auf eine Sphäre, um sie zu entzünden · auf einen leeren Slot, um eine Vision zu wählen.',
+    },
+    empty: '— leer —',
+    cta: {
+      choose: '+ Legendäres wählen',
+      ignite: '✓ Entzünden',
+      completed: '✓ Vollendet',
+    },
+    action: {
+      swap: 'Tauschen',
+      remove: 'Schritt entfernen',
+    },
+    status: {
+      done: 'Vollendet',
+      active: 'In Arbeit',
+      planned: 'Geplant',
+      empty: 'Leer',
+    },
+  },
+  picker: {
+    eyebrow: '✦ EIN LEGENDÄRES WÄHLEN',
+    title: 'Welche Vision soll diese Stelle füllen?',
+    search: 'Suchen…',
+    noResults: 'Keine Ergebnisse.',
+    tabs: {
+      Waffen: 'Waffen',
+      Rüstung: 'Rüstung',
+      Schmuck: 'Schmuck',
+      Rückenteil: 'Rückenteil',
+      'Runen & Sigille': 'Runen & Sigille',
+      Sonstige: 'Sonstige',
+    },
+  },
+  armorTypes: {
+    HeavyArmor: 'Schwer',
+    MediumArmor: 'Mittel',
+    LightArmor: 'Leicht',
+  },
+  trinketTypes: {
+    Amulet: 'Amulett',
+    Ring: 'Ring',
+    Accessory: 'Akzessoire',
+  },
+  upgradeTypes: {
+    Rune: 'Rune',
+    Sigil: 'Sigill',
+    Default: 'Upgrade',
   },
   weapons: {
     Axe: 'Axt',

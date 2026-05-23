@@ -5,6 +5,7 @@ export default {
     zommorosChoice: "Zommoros' Choice",
     overview: 'Overview',
     starterKits: 'Starter Kits',
+    prophecy: "Glint's Prophecy",
   },
   auth: {
     title: 'Legendary Mystic Forge',
@@ -131,6 +132,72 @@ export default {
     openWiki: 'Open on wiki',
     ownedInArmory: 'Already in armory',
     typeCovered: 'Weapon type covered by another legendary',
+  },
+  prophecy: {
+    eyebrow: '✦ ROADMAP · CHAPTER V',
+    title: "'Glint\'s Prophecy'
+    subtitle:
+      'The crystal dragon saw your journey long in advance. ' +
+      'Set the orbs in the right order — and ignite each one when fate is fulfilled.',
+    addStep: '+ Add Vision',
+    stats: {
+      done: 'Completed',
+      planned: 'Planned',
+      next: 'Next Vision',
+    },
+    section: {
+      path: '✦ THE STAR ROAD',
+      chronicle: '✦ PATH CHRONICLE',
+    },
+    scrollHint: '← scroll horizontally · in sync with Chronicle →',
+    chronicle: {
+      hint: 'Tap an orb to ignite it · tap an empty slot to choose a vision.',
+    },
+    empty: '— empty —',
+    cta: {
+      choose: '+ Choose Legendary',
+      ignite: '✓ Ignite',
+      completed: '✓ Completed',
+    },
+    action: {
+      swap: 'Swap',
+      remove: 'Remove step',
+    },
+    status: {
+      done: 'Completed',
+      active: 'In Progress',
+      planned: 'Planned',
+      empty: 'Empty',
+    },
+  },
+  picker: {
+    eyebrow: '✦ CHOOSE A LEGENDARY',
+    title: 'Which vision should fill this slot?',
+    search: 'Search…',
+    noResults: 'No results.',
+    tabs: {
+      Waffen: 'Weapons',
+      Rüstung: 'Armor',
+      Schmuck: 'Jewelry',
+      Rückenteil: 'Back Item',
+      'Runen & Sigille': 'Runes & Sigils',
+      Sonstige: 'Other',
+    },
+  },
+  armorTypes: {
+    HeavyArmor: 'Heavy',
+    MediumArmor: 'Medium',
+    LightArmor: 'Light',
+  },
+  trinketTypes: {
+    Amulet: 'Amulet',
+    Ring: 'Ring',
+    Accessory: 'Accessory',
+  },
+  upgradeTypes: {
+    Rune: 'Rune',
+    Sigil: 'Sigil',
+    Default: 'Upgrade',
   },
   weapons: {
     Axe: 'Axe',

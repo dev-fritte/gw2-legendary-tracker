@@ -4,6 +4,7 @@ import { CharacterSelectionPage } from '@/features/characters/CharacterSelection
 import { TrackerPage } from '@/features/tracker/TrackerPage';
 import { OverviewPage } from '@/features/overview/OverviewPage';
 import { StarterKitsPage } from '@/features/starterkits/StarterKitsPage';
+import { GlintsProphecyPage } from '@/features/prophecy/GlintsProphecyPage';
 import { useApiKey } from '@/hooks/useApiKey';
 import type { NavSection } from '@/components/Navbar';
 import type { Character } from '@/types/gw2-api';
@@ -14,6 +15,7 @@ function getSectionFromHash(): NavSection {
   const hash = window.location.hash.replace(/^#\/?/, '');
   if (hash === 'zommoros') return 'zommoros';
   if (hash === 'starterkits') return 'starterkits';
+  if (hash === 'prophecy') return 'prophecy';
   return 'overview';
 }
 
@@ -49,6 +51,12 @@ export default function App() {
 
   if (section === 'starterkits') {
     return <StarterKitsPage apiKey={apiKey} onLogout={clearApiKey} onNavigate={handleNavigate} />;
+  }
+
+  if (section === 'prophecy') {
+    return (
+      <GlintsProphecyPage apiKey={apiKey} onLogout={clearApiKey} onNavigate={handleNavigate} />
+    );
   }
 
   if (view === 'tracker') {
