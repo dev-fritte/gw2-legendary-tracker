@@ -1,4 +1,12 @@
 const API_KEY_STORAGE_KEY = 'gw2_legendary_tracker_api_key';
+const ROADMAP_KEY = 'lmf.roadmap.v1';
+
+export interface StoredStep {
+  id: number;
+  item: string | null;
+  done: boolean;
+  doneAt?: string;
+}
 const SELECTED_CHARS_KEY = 'gw2_legendary_tracker_selected_chars';
 const KIT_CHOICES_KEY = 'gw2_legendary_tracker_kit_choices';
 
@@ -58,6 +66,24 @@ export const storage = {
   setKitChoices(choices: Record<string, (string | null)[]>): void {
     try {
       localStorage.setItem(KIT_CHOICES_KEY, JSON.stringify(choices));
+    } catch {
+      // ignore
+    }
+  },
+
+  getRoadmap(): StoredStep[] {
+    try {
+      const raw = localStorage.getItem(ROADMAP_KEY);
+      if (!raw) return [];
+      return JSON.parse(raw) as StoredStep[];
+    } catch {
+      return [];
+    }
+  },
+
+  setRoadmap(steps: StoredStep[]): void {
+    try {
+      localStorage.setItem(ROADMAP_KEY, JSON.stringify(steps));
     } catch {
       // ignore
     }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, ArrowLeft, RefreshCw, Sparkles } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, RefreshCw, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { NavSection } from '@/components/Navbar';
@@ -13,6 +13,7 @@ import { useWeaponAnalysis } from '@/hooks/useWeaponAnalysis';
 import { useStarterKits } from '@/hooks/useStarterKits';
 import { useProfessionIconMap } from '@/hooks/useProfessions';
 import type { Character } from '@/types/gw2-api';
+import { TransferToProphecyModal } from './TransferToProphecyModal';
 
 interface TrackerPageProps {
   apiKey: string;
@@ -31,6 +32,7 @@ export function TrackerPage({
 }: Readonly<TrackerPageProps>) {
   const { t } = useTranslation();
   const [useStarterKitPriority, setUseStarterKitPriority] = useState(true);
+  const [showTransferModal, setShowTransferModal] = useState(false);
 
   const professionIcons = useProfessionIconMap(apiKey);
   const { kitMap } = useStarterKits(apiKey, characters);
@@ -201,11 +203,43 @@ export function TrackerPage({
 
             {result.recommendations.length > 0 && (
               <section className="space-y-3">
-                <SectionHeader
-                  label={t('tracker.sectionCraftNext')}
-                  count={result.recommendations.length}
-                  accent
-                />
+                <div className="flex items-center gap-3">
+                  <SectionHeader
+                    label={t('tracker.sectionCraftNext')}
+                    count={result.recommendations.length}
+                    accent
+                  />
+                  <button
+                    onClick={() => setShowTransferModal(true)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 5,
+                      padding: '3px 10px',
+                      fontSize: 11,
+                      fontWeight: 600,
+                      borderRadius: 6,
+                      border: '1px solid rgba(147,73,204,0.35)',
+                      background: 'rgba(147,73,204,0.1)',
+                      color: '#a78bca',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                      transition: 'all 0.15s',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(147,73,204,0.2)';
+                      (e.currentTarget as HTMLElement).style.color = '#d4c8e8';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(147,73,204,0.1)';
+                      (e.currentTarget as HTMLElement).style.color = '#a78bca';
+                    }}
+                  >
+                    {t('transfer.button')}
+                    <ArrowRight style={{ width: 11, height: 11 }} />
+                  </button>
+                </div>
                 {result.recommendations.map((rec, i) => (
                   <WeaponRecommendationCard
                     key={rec.weaponType}
@@ -242,6 +276,18 @@ export function TrackerPage({
           </>
         )}
       </main>
+
+      {showTransferModal && result?.recommendations && (
+        <TransferToProphecyModal
+          apiKey={apiKey}
+          recommendations={result.recommendations}
+          onClose={() => setShowTransferModal(false)}
+          onTransferred={() => {
+            setShowTransferModal(false);
+            onNavigate('prophecy');
+          }}
+        />
+      )}
     </div>
   );
 }
