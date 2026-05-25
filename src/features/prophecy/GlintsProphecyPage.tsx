@@ -267,6 +267,18 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
         <ProphecyPicker
           allItems={allItems}
           currentItem={pickerStep.item}
+          usedInRoadmap={{
+            done: new Set(
+              steps
+                .filter((s) => s.id !== pickerStep.id && s.done && s.item)
+                .map((s) => s.item as string),
+            ),
+            planned: new Set(
+              steps
+                .filter((s) => s.id !== pickerStep.id && !s.done && s.item)
+                .map((s) => s.item as string),
+            ),
+          }}
           onPick={(name) => {
             setItem(pickerStep.id, name);
             setPickerFor(null);

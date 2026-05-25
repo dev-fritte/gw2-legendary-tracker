@@ -175,6 +175,8 @@ export default {
     search: 'Search…',
     noResults: 'No results.',
     starterKitHint: 'Selected in one of your Starter Kits',
+    roadmapDone: 'Already completed in your Prophecy',
+    roadmapPlanned: 'Already planned in your Prophecy',
     tabs: {
       Waffen: 'Weapons',
       Rüstung: 'Armor',

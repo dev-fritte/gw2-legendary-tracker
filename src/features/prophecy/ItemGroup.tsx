@@ -3,6 +3,8 @@ import { GENERATION_TINT } from './useAllLegendaryItems';
 import type { LegendaryPickerItem } from './useAllLegendaryItems';
 import { getSubLabel } from './prophecyHelpers';
 import { GOLD, PURPLE, PURPLE_DEEP } from './prophecyTypes';
+import type { RoadmapUsage } from './ProphecyPicker';
+import { Tooltip } from '@/components/ui/tooltip';
 
 interface ItemGroupProps {
   items: LegendaryPickerItem[];
@@ -10,6 +12,7 @@ interface ItemGroupProps {
   onPick: (name: string) => void;
   t: TFunction;
   kitChosenWeaponTypes: Set<string>;
+  usedInRoadmap: RoadmapUsage;
   showGenLabel?: boolean;
 }
 
@@ -19,6 +22,7 @@ export function ItemGroup({
   onPick,
   t,
   kitChosenWeaponTypes,
+  usedInRoadmap,
   showGenLabel,
 }: Readonly<ItemGroupProps>) {
   if (items.length === 0) return null;
@@ -33,6 +37,9 @@ export function ItemGroup({
         // Only mark Gen1 weapons the user has explicitly chosen in their starter kits
         const isStarterKit =
           it.generation === 'gen1' && !!it.detailType && kitChosenWeaponTypes.has(it.detailType);
+
+        const isRoadmapDone = usedInRoadmap.done.has(it.name);
+        const isRoadmapPlanned = !isRoadmapDone && usedInRoadmap.planned.has(it.name);
 
         return (
           <button
@@ -94,28 +101,59 @@ export function ItemGroup({
 
               {/* Gold pip — only for Starter Kit weapons */}
               {isStarterKit && (
-                <div
-                  title="Erhältlich über ein Legendary Weapon Starter Kit"
-                  style={{
-                    position: 'absolute',
-                    top: -5,
-                    right: -5,
-                    width: 15,
-                    height: 15,
-                    borderRadius: '50%',
-                    background: GOLD,
-                    border: '1.5px solid #0b0814',
-                    display: 'grid',
-                    placeItems: 'center',
-                    fontSize: 8,
-                    lineHeight: 1,
-                    color: '#1a1000',
-                    fontWeight: 900,
-                    pointerEvents: 'none',
-                  }}
+                <Tooltip content={t('picker.starterKitHint')} side="top">
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: -5,
+                      right: -5,
+                      width: 15,
+                      height: 15,
+                      borderRadius: '50%',
+                      background: GOLD,
+                      border: '1.5px solid #0b0814',
+                      display: 'grid',
+                      placeItems: 'center',
+                      fontSize: 8,
+                      lineHeight: 1,
+                      color: '#1a1000',
+                      fontWeight: 900,
+                      cursor: 'default',
+                    }}
+                  >
+                    ⚒
+                  </div>
+                </Tooltip>
+              )}
+
+              {/* Roadmap badge — top-left; green = done, purple = planned */}
+              {(isRoadmapDone || isRoadmapPlanned) && (
+                <Tooltip
+                  content={isRoadmapDone ? t('picker.roadmapDone') : t('picker.roadmapPlanned')}
+                  side="top"
                 >
-                  ⚒
-                </div>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: -5,
+                      left: -5,
+                      width: 15,
+                      height: 15,
+                      borderRadius: '50%',
+                      background: isRoadmapDone ? '#16a34a' : PURPLE,
+                      border: '1.5px solid #0b0814',
+                      display: 'grid',
+                      placeItems: 'center',
+                      fontSize: 8,
+                      lineHeight: 1,
+                      color: '#fff',
+                      fontWeight: 900,
+                      cursor: 'default',
+                    }}
+                  >
+                    {isRoadmapDone ? '✓' : '◆'}
+                  </div>
+                </Tooltip>
               )}
             </div>
 

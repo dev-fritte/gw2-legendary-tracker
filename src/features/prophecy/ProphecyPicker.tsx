@@ -9,16 +9,29 @@ import type { PickerTab } from './prophecyTypes';
 import { ItemGroup } from './ItemGroup';
 import { PickerHeader } from './PickerHeader';
 import { PickerTabBar } from './PickerTabBar';
-import { StarterKitLegend } from './StarterKitLegend';
+
+export interface RoadmapUsage {
+  /** Item names that sit in already-done steps */
+  done: Set<string>;
+  /** Item names that sit in planned (not-yet-done) steps */
+  planned: Set<string>;
+}
 
 interface PickerProps {
   allItems: LegendaryPickerItem[];
   currentItem: string | null;
+  usedInRoadmap: RoadmapUsage;
   onPick: (name: string) => void;
   onClose: () => void;
 }
 
-export function ProphecyPicker({ allItems, currentItem, onPick, onClose }: Readonly<PickerProps>) {
+export function ProphecyPicker({
+  allItems,
+  currentItem,
+  usedInRoadmap,
+  onPick,
+  onClose,
+}: Readonly<PickerProps>) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<PickerTab>('Waffen');
   const [query, setQuery] = useState('');
@@ -81,9 +94,6 @@ export function ProphecyPicker({ allItems, currentItem, onPick, onClose }: Reado
     ...(tabMap.has('Sonstige') ? (['Sonstige'] as const) : []),
   ] as PickerTab[];
 
-  const showStarterKitLegend =
-    (activeTab === 'Waffen' || isSearching) && kitChosenWeaponTypes.size > 0;
-
   function renderItemGrid() {
     if (isSearching) {
       return (
@@ -93,6 +103,7 @@ export function ProphecyPicker({ allItems, currentItem, onPick, onClose }: Reado
           onPick={onPick}
           t={t}
           kitChosenWeaponTypes={kitChosenWeaponTypes}
+          usedInRoadmap={usedInRoadmap}
           showGenLabel
         />
       );
@@ -129,6 +140,7 @@ export function ProphecyPicker({ allItems, currentItem, onPick, onClose }: Reado
           onPick={onPick}
           t={t}
           kitChosenWeaponTypes={kitChosenWeaponTypes}
+          usedInRoadmap={usedInRoadmap}
         />
       </div>
     ));
@@ -179,9 +191,7 @@ export function ProphecyPicker({ allItems, currentItem, onPick, onClose }: Reado
           onQueryChange={setQuery}
         />
 
-        <StarterKitLegend visible={showStarterKitLegend} />
-
-        <div style={{ padding: '16px 24px 24px', overflowY: 'auto', flex: 1 }}>
+<div style={{ padding: '16px 24px 24px', overflowY: 'auto', flex: 1 }}>
           {renderItemGrid()}
         </div>
       </div>
