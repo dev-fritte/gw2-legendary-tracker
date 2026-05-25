@@ -28,16 +28,17 @@ export function getSubLabel(item: LegendaryPickerItem, t: TFunction): string {
       return String(t(`weapons.${dt}`, { defaultValue: dt }));
     case 'Armor': {
       const weight = String(t(`armorTypes.${dt}`, { defaultValue: dt }));
-      const mode =
+      const modeKey =
         item.generation === 'armor_pve'
-          ? 'Open World'
+          ? 'armorModes.openWorld'
           : item.generation === 'armor_raids'
-            ? 'Raids'
+            ? 'armorModes.raids'
             : item.generation === 'armor_pvp'
-              ? 'PvP'
+              ? 'armorModes.pvp'
               : item.generation === 'armor_wvw'
-                ? 'WvW'
-                : '';
+                ? 'armorModes.wvw'
+                : null;
+      const mode = modeKey ? String(t(modeKey)) : '';
       return mode ? `${weight} · ${mode}` : weight;
     }
     case 'Trinket':

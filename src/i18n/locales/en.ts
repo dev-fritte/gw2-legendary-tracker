@@ -183,13 +183,19 @@ export default {
       Schmuck: 'Jewelry',
       Rückenteil: 'Back Item',
       'Runen & Sigille': 'Runes & Sigils',
-      Sonstige: 'Other',
+      Other: 'Other',
     },
   },
   armorTypes: {
     HeavyArmor: 'Heavy',
     MediumArmor: 'Medium',
     LightArmor: 'Light',
+  },
+  armorModes: {
+    openWorld: 'Open World',
+    raids: 'Raids',
+    pvp: 'PvP',
+    wvw: 'WvW',
   },
   trinketTypes: {
     Amulet: 'Amulet',

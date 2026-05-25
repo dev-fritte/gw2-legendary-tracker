@@ -15,7 +15,11 @@ export const PICKER_TABS = [
   'Rückenteil',
   'Runen & Sigille',
 ] as const;
-export type PickerTab = (typeof PICKER_TABS)[number] | 'Sonstige';
+
+/** Internal key for the catch-all tab — translated via `picker.tabs.Other`. */
+export const OTHER_TAB = 'Other' as const;
+
+export type PickerTab = (typeof PICKER_TABS)[number] | typeof OTHER_TAB;
 
 export const TAB_GENERATIONS: Record<string, LegendaryGeneration[]> = {
   Waffen: ['gen1', 'gen2', 'gen3', 'standalone'],
@@ -23,7 +27,7 @@ export const TAB_GENERATIONS: Record<string, LegendaryGeneration[]> = {
   Schmuck: ['trinket'],
   Rückenteil: ['back'],
   'Runen & Sigille': ['upgrade'],
-  Sonstige: ['other'],
+  [OTHER_TAB]: ['other'],
 };
 
 // ─── Step types ───────────────────────────────────────────────────────────────

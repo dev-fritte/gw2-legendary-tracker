@@ -4,7 +4,7 @@ import { GENERATION_ORDER, type LegendaryGeneration } from '@/utils/legendaryGen
 import { storage } from '@/services/storage';
 import type { LegendaryPickerItem } from './useAllLegendaryItems';
 import { GENERATION_TO_TAB } from './useAllLegendaryItems';
-import { PICKER_TABS, PURPLE, TAB_GENERATIONS } from './prophecyTypes';
+import { OTHER_TAB, PICKER_TABS, PURPLE, TAB_GENERATIONS } from './prophecyTypes';
 import type { PickerTab } from './prophecyTypes';
 import { ItemGroup } from './ItemGroup';
 import { PickerHeader } from './PickerHeader';
@@ -33,7 +33,7 @@ export function ProphecyPicker({
   onClose,
 }: Readonly<PickerProps>) {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<PickerTab>('Waffen');
+  const [activeTab, setActiveTab] = useState<PickerTab>(PICKER_TABS[0]);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export function ProphecyPicker({
   // Build tab → generation → items map
   const tabMap = new Map<string, Map<LegendaryGeneration, LegendaryPickerItem[]>>();
   for (const item of allItems) {
-    const tab = GENERATION_TO_TAB[item.generation] ?? 'Sonstige';
+    const tab = GENERATION_TO_TAB[item.generation] ?? OTHER_TAB;
     if (!tabMap.has(tab)) tabMap.set(tab, new Map());
     const genMap = tabMap.get(tab)!;
     if (!genMap.has(item.generation)) genMap.set(item.generation, []);
@@ -91,7 +91,7 @@ export function ProphecyPicker({
 
   const allVisibleTabs = [
     ...PICKER_TABS,
-    ...(tabMap.has('Sonstige') ? (['Sonstige'] as const) : []),
+    ...(tabMap.has(OTHER_TAB) ? ([OTHER_TAB] as const) : []),
   ] as PickerTab[];
 
   function renderItemGrid() {

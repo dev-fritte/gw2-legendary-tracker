@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { LegendaryPickerItem } from './useAllLegendaryItems';
 import { GENERATION_TINT } from './useAllLegendaryItems';
 import { ROMAN } from './prophecyCatalog';
@@ -26,6 +27,7 @@ export function ConstellationPath({
   onScrollSync,
   scrollRef,
 }: PathProps) {
+  const { t } = useTranslation();
   const innerW = Math.max(steps.length, 1) * STEP_W;
   const [scrollX, setScrollX] = useState(0);
 
@@ -238,7 +240,7 @@ export function ConstellationPath({
                     }}
                   >
                     {step.item ?? (
-                      <span style={{ color: '#5a5468', fontStyle: 'italic' }}>— leer —</span>
+                      <span style={{ color: '#5a5468', fontStyle: 'italic' }}>{t('prophecy.empty')}</span>
                     )}
                   </div>
                   {pickerIt && (
