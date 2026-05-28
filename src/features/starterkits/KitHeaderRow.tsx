@@ -180,8 +180,9 @@ export function KitHeaderRow({
               key={wt}
               style={{
                 fontSize: 11,
-                color: '#3a3448',
-                background: 'rgba(58,52,72,0.25)',
+                color: '#9d93b0',
+                background: 'rgba(147,73,204,0.12)',
+                border: '1px solid rgba(147,73,204,0.28)',
                 borderRadius: 4,
                 padding: '1px 6px',
                 whiteSpace: 'nowrap',
