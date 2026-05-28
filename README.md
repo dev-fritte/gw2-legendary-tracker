@@ -79,8 +79,10 @@ Your API key is stored only in your browser's `localStorage` and is never sent t
 ### Roadmap
 
 - [x] Check ALL Weapons not only the one you have equipped
-- [ ] Number of character which are able to equip the weapon type
-- [ ] plain Roadmap
-- [ ] add starterkits to roadmap selection
+- [x] Number of character which are able to equip the weapon type
+- [x] plain Roadmap
+- [x] add starterkits to roadmap selection
+- [ ] remove default data from glint's prophecy
+- [ ] expand starterkits which are not owned (to plan)
 - [ ] add material/crafing calculations to check how expensive the legendary item is
 - [ ] scan snowcrows benchmarks for number of builds with the specific weapon
