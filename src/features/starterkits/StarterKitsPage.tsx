@@ -305,7 +305,7 @@ function KitListContent({
           onToggle={() => onToggle(kitId)}
         />
 
-        {isOwned && isExpanded && (
+        {isExpanded && (
           <div
             style={{
               borderTop: '1px solid rgba(147,73,204,0.1)',
@@ -314,22 +314,38 @@ function KitListContent({
               display: 'flex',
               flexDirection: 'column',
               gap: 8,
+              opacity: isOwned ? 1 : 0.5,
             }}
           >
-            {kitChoices.map((choice, slotIdx) => (
+            {isOwned ? (
+              kitChoices.map((choice, slotIdx) => (
+                <SlotRow
+                  key={slotIdx}
+                  slotIndex={slotIdx + 1}
+                  totalSlots={count}
+                  choice={choice}
+                  availableWeapons={availableWeapons}
+                  weaponCardMap={weaponCardMap}
+                  unlockedItemIds={unlockedItemIds}
+                  partiallyCoveredWeaponTypes={partiallyCoveredWeaponTypes}
+                  coveredWeaponTypes={coveredWeaponTypes}
+                  onChange={(weapon) => onSlotChange(kitId, slotIdx, weapon)}
+                />
+              ))
+            ) : (
               <SlotRow
-                key={slotIdx}
-                slotIndex={slotIdx + 1}
-                totalSlots={count}
-                choice={choice}
+                slotIndex={1}
+                totalSlots={1}
+                choice={null}
                 availableWeapons={availableWeapons}
                 weaponCardMap={weaponCardMap}
                 unlockedItemIds={unlockedItemIds}
                 partiallyCoveredWeaponTypes={partiallyCoveredWeaponTypes}
                 coveredWeaponTypes={coveredWeaponTypes}
-                onChange={(weapon) => onSlotChange(kitId, slotIdx, weapon)}
+                disabled
+                onChange={() => {}}
               />
-            ))}
+            )}
           </div>
         )}
       </div>

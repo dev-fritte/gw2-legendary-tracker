@@ -36,47 +36,42 @@ export function KitHeaderRow({
 
   return (
     <div
-      role={isOwned ? 'button' : undefined}
-      tabIndex={isOwned ? 0 : undefined}
-      onClick={isOwned ? onToggle : undefined}
-      onKeyDown={
-        isOwned
-          ? (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onToggle();
-              }
-            }
-          : undefined
-      }
+      role="button"
+      tabIndex={0}
+      onClick={onToggle}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onToggle();
+        }
+      }}
       style={{
         display: 'flex',
         alignItems: 'center',
         gap: 10,
         padding: '11px 16px',
-        cursor: isOwned ? 'pointer' : 'default',
+        cursor: 'pointer',
         background: isExpanded ? 'rgba(147,73,204,0.07)' : 'transparent',
-        opacity: isOwned ? 1 : 0.35,
+        opacity: isOwned ? 1 : 0.4,
         transition: 'background 0.15s',
         userSelect: 'none',
         outline: 'none',
       }}
       onMouseEnter={(e) => {
-        if (isOwned && !isExpanded)
+        if (!isExpanded)
           (e.currentTarget as HTMLDivElement).style.background = 'rgba(147,73,204,0.04)';
       }}
       onMouseLeave={(e) => {
-        if (isOwned && !isExpanded)
+        if (!isExpanded)
           (e.currentTarget as HTMLDivElement).style.background = 'transparent';
       }}
     >
       <div style={{ width: 14, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-        {isOwned &&
-          (isExpanded ? (
-            <ChevronDown style={{ width: 14, height: 14, color: '#9349CC' }} />
-          ) : (
-            <ChevronRight style={{ width: 14, height: 14, color: '#5a5468' }} />
-          ))}
+        {isExpanded ? (
+          <ChevronDown style={{ width: 14, height: 14, color: '#9349CC' }} />
+        ) : (
+          <ChevronRight style={{ width: 14, height: 14, color: '#5a5468' }} />
+        )}
       </div>
 
       <span

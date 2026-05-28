@@ -12,6 +12,7 @@ export interface SlotRowProps {
   unlockedItemIds: Set<number>;
   partiallyCoveredWeaponTypes: Set<WeaponType>;
   coveredWeaponTypes: Set<WeaponType>;
+  disabled?: boolean;
   onChange: (weapon: WeaponType | null) => void;
 }
 
@@ -24,6 +25,7 @@ export function SlotRow({
   unlockedItemIds,
   partiallyCoveredWeaponTypes,
   coveredWeaponTypes,
+  disabled = false,
   onChange,
 }: SlotRowProps) {
   const { t } = useTranslation();
@@ -40,17 +42,19 @@ export function SlotRow({
         gap: 8,
       }}
     >
-      <span
-        style={{
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          color: '#4a4458',
-        }}
-      >
-        {t('starterKits.slotLabel', { index: slotIndex, total: totalSlots })}
-      </span>
+      {!disabled && (
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: '#4a4458',
+          }}
+        >
+          {t('starterKits.slotLabel', { index: slotIndex, total: totalSlots })}
+        </span>
+      )}
 
       <div style={{ display: 'flex', gap: 8 }}>
         {availableWeapons.map((wt) => {
@@ -64,6 +68,7 @@ export function SlotRow({
               isItemOwned={info ? unlockedItemIds.has(info.id) : false}
               isPartiallyCovered={partiallyCoveredWeaponTypes.has(wt)}
               isTypeCovered={coveredWeaponTypes.has(wt)}
+              disabled={disabled}
               onSelect={() => onChange(choice === wt ? null : wt)}
             />
           );

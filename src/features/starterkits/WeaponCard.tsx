@@ -12,6 +12,7 @@ interface WeaponCardProps {
   isItemOwned: boolean;
   isPartiallyCovered: boolean;
   isTypeCovered: boolean;
+  disabled?: boolean;
   onSelect: () => void;
 }
 
@@ -22,6 +23,7 @@ export function WeaponCard({
   isItemOwned,
   isPartiallyCovered,
   isTypeCovered,
+  disabled = false,
   onSelect,
 }: WeaponCardProps) {
   const { t, i18n } = useTranslation();
@@ -30,7 +32,7 @@ export function WeaponCard({
 
   return (
     <div
-      onClick={onSelect}
+      onClick={disabled ? undefined : onSelect}
       style={{
         flex: '1 1 0',
         minWidth: 0,
@@ -39,18 +41,18 @@ export function WeaponCard({
         gap: 6,
         padding: 8,
         borderRadius: 8,
-        cursor: 'pointer',
+        cursor: disabled ? 'default' : 'pointer',
         border: `1.5px solid ${styles.borderColor}`,
         background: styles.bgColor,
         transition: 'all 0.15s',
         boxShadow: styles.boxShadow,
       }}
       onMouseEnter={(e) => {
-        if (!isSelected)
+        if (!disabled && !isSelected)
           (e.currentTarget as HTMLDivElement).style.borderColor = styles.hoverBorderColor;
       }}
       onMouseLeave={(e) => {
-        if (!isSelected)
+        if (!disabled && !isSelected)
           (e.currentTarget as HTMLDivElement).style.borderColor = styles.borderColor;
       }}
     >
