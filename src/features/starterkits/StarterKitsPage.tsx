@@ -30,7 +30,7 @@ export function StarterKitsPage({ apiKey, onLogout, onNavigate }: Readonly<Props
     apiKey,
     useTranslation().i18n.language.startsWith('de') ? 'de' : 'en',
   );
-  const { unlockedItemIds, coveredWeaponTypes } = useArmoryStatus(apiKey);
+  const { unlockedItemIds, partiallyCoveredWeaponTypes, coveredWeaponTypes } = useArmoryStatus(apiKey);
 
   const [filterMode, setFilterMode] = useState<FilterMode>('all');
   const [expandedKits, setExpandedKits] = useState<Set<number>>(new Set());
@@ -226,6 +226,7 @@ export function StarterKitsPage({ apiKey, onLogout, onNavigate }: Readonly<Props
               choices={choices}
               weaponCardMap={weaponCardMap}
               unlockedItemIds={unlockedItemIds}
+              partiallyCoveredWeaponTypes={partiallyCoveredWeaponTypes}
               coveredWeaponTypes={coveredWeaponTypes}
               onToggle={toggleExpanded}
               onSlotChange={setSlotChoice}
@@ -248,6 +249,7 @@ interface KitListContentProps {
   choices: KitChoices;
   weaponCardMap: Map<WeaponType, WeaponCardInfo>;
   unlockedItemIds: Set<number>;
+  partiallyCoveredWeaponTypes: Set<WeaponType>;
   coveredWeaponTypes: Set<WeaponType>;
   onToggle: (kitId: number) => void;
   onSlotChange: (kitId: number, slotIdx: number, weapon: WeaponType | null) => void;
@@ -262,6 +264,7 @@ function KitListContent({
   choices,
   weaponCardMap,
   unlockedItemIds,
+  partiallyCoveredWeaponTypes,
   coveredWeaponTypes,
   onToggle,
   onSlotChange,
@@ -297,6 +300,7 @@ function KitListContent({
           availableWeapons={availableWeapons}
           weaponCardMap={weaponCardMap}
           unlockedItemIds={unlockedItemIds}
+          partiallyCoveredWeaponTypes={partiallyCoveredWeaponTypes}
           coveredWeaponTypes={coveredWeaponTypes}
           onToggle={() => onToggle(kitId)}
         />
@@ -321,6 +325,7 @@ function KitListContent({
                 availableWeapons={availableWeapons}
                 weaponCardMap={weaponCardMap}
                 unlockedItemIds={unlockedItemIds}
+                partiallyCoveredWeaponTypes={partiallyCoveredWeaponTypes}
                 coveredWeaponTypes={coveredWeaponTypes}
                 onChange={(weapon) => onSlotChange(kitId, slotIdx, weapon)}
               />

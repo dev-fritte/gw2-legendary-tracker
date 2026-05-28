@@ -5,6 +5,7 @@ import type {
   LegendaryWeaponRecommendation,
   WeaponType,
 } from '@/types/gw2-api';
+import { DUAL_WIELD_WEAPON_TYPES } from '@/utils/weaponProperties';
 
 export interface CalculationOptions {
   /** Weapon types → kit count map from useStarterKits. Empty map = disabled. */
@@ -163,9 +164,25 @@ export function calculateRecommendations(
       sampleItemId: acc.sampleItemId,
     };
 
-    // "Covered" = armory has a legendary of this type OR at least one slot
-    // already has a legendary equipped (old-style, pre-armory legendaries).
-    if (armoryCount > 0 || acc.hasEquippedLegendary) {
+    // Determine whether this weapon type is fully covered and should move to
+    // the "already have" section rather than "craft next".
+    //
+    // Dual-wield types (Axe, Dagger, Mace, Pistol, Sword) need 2 legendary
+    // copies to fill both slots simultaneously in the same equipment template.
+    // hasEquippedLegendary is intentionally excluded for these types because
+    // it is usually set by the 1 armory copy the user already equipped — it
+    // does NOT mean the second slot is covered.
+    //
+    // Covered when:
+    //   dual-wield  →  all slots are already legendary (impact=0)
+    //                  OR 2+ copies in the armory
+    //   everything else → at least 1 armory copy OR any slot has a legendary
+    const isDualWield = DUAL_WIELD_WEAPON_TYPES.has(weaponType);
+    const isCovered = isDualWield
+      ? impact === 0 || armoryCount >= 2
+      : armoryCount > 0 || acc.hasEquippedLegendary;
+
+    if (isCovered) {
       coveredByArmory.push(rec);
     } else {
       recommendations.push(rec);

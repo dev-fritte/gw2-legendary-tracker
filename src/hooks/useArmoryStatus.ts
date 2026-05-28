@@ -2,12 +2,24 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getApiClient } from '@/services/apiClient';
 import type { WeaponType } from '@/types/gw2-api';
+import { DUAL_WIELD_WEAPON_TYPES } from '@/utils/weaponProperties';
+
+export { DUAL_WIELD_WEAPON_TYPES };
 
 export interface ArmoryStatus {
-  /** Item IDs of legendaries the account has unlocked (count > 0). */
+  /** Item IDs of legendaries the account has unlocked (count ≥ 1). */
   unlockedItemIds: Set<number>;
-  /** Weapon types covered by at least one legendary in the armory. */
+  /**
+   * Weapon types fully covered by the armory:
+   * - Non-dual-wield types: ≥ 1 copy in armory.
+   * - Dual-wield types: ≥ 2 copies in armory (so both slots are filled).
+   */
   coveredWeaponTypes: Set<WeaponType>;
+  /**
+   * Dual-wield weapon types where the armory has exactly 1 copy — one slot
+   * is covered, but a second legendary would fill the other slot too.
+   */
+  partiallyCoveredWeaponTypes: Set<WeaponType>;
 }
 
 export function useArmoryStatus(apiKey: string): ArmoryStatus & { isLoading: boolean } {
@@ -36,20 +48,36 @@ export function useArmoryStatus(apiKey: string): ArmoryStatus & { isLoading: boo
   const status = useMemo((): ArmoryStatus => {
     const unlockedItemIds = new Set<number>();
     const coveredWeaponTypes = new Set<WeaponType>();
+    const partiallyCoveredWeaponTypes = new Set<WeaponType>();
 
     const accountMap = new Map<number, number>(
       (accountArmoryQuery.data ?? []).map((e) => [e.id, e.count])
     );
 
+    // Tally total legendary copies per weapon type across all item IDs.
+    // (e.g. 1× Twilight + 1× Dusk both contribute to Greatsword count)
+    const countByWeaponType = new Map<WeaponType, number>();
     for (const item of itemsQuery.data ?? []) {
       if (item.type !== 'Weapon') continue;
-      if ((accountMap.get(item.id) ?? 0) === 0) continue;
+      const count = accountMap.get(item.id) ?? 0;
+      if (count === 0) continue;
       unlockedItemIds.add(item.id);
       const wt = item.details?.type as WeaponType | undefined;
-      if (wt) coveredWeaponTypes.add(wt);
+      if (wt) countByWeaponType.set(wt, (countByWeaponType.get(wt) ?? 0) + count);
     }
 
-    return { unlockedItemIds, coveredWeaponTypes };
+    for (const [wt, count] of countByWeaponType) {
+      if (DUAL_WIELD_WEAPON_TYPES.has(wt)) {
+        // Dual-wield types need 2 copies for full coverage
+        if (count >= 2) coveredWeaponTypes.add(wt);
+        else partiallyCoveredWeaponTypes.add(wt);
+      } else {
+        // Two-handed / off-hand-only weapons: 1 copy is enough
+        coveredWeaponTypes.add(wt);
+      }
+    }
+
+    return { unlockedItemIds, coveredWeaponTypes, partiallyCoveredWeaponTypes };
   }, [accountArmoryQuery.data, itemsQuery.data]);
 
   return {

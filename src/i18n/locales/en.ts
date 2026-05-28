@@ -98,6 +98,7 @@ export default {
     weaponAlreadyLegendary: 'Already legendary',
     affectedCharacters: 'Affected characters',
     armoryCount: '{{count}} in armory',
+    armoryCountDualWield: '{{count}} of 2 in armory — craft 2nd for dual-wield',
     sectionCraftNext: 'Craft next',
     sectionAlreadyHave: 'Already have',
     errorTitle: 'Failed to load tracker data',
@@ -131,6 +132,7 @@ export default {
     errorRetry: 'Retry',
     openWiki: 'Open on wiki',
     ownedInArmory: 'Already in armory',
+    partiallyOwned: '1 of 2 in armory — a second copy lets you dual-wield',
     typeCovered: 'Weapon type covered by another legendary',
   },
   prophecy: {

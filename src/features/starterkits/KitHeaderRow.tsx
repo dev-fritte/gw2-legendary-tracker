@@ -13,6 +13,7 @@ export interface KitHeaderRowProps {
   availableWeapons: WeaponType[];
   weaponCardMap: Map<WeaponType, WeaponCardInfo>;
   unlockedItemIds: Set<number>;
+  partiallyCoveredWeaponTypes: Set<WeaponType>;
   coveredWeaponTypes: Set<WeaponType>;
   onToggle: () => void;
 }
@@ -26,6 +27,7 @@ export function KitHeaderRow({
   availableWeapons,
   weaponCardMap,
   unlockedItemIds,
+  partiallyCoveredWeaponTypes,
   coveredWeaponTypes,
   onToggle,
 }: KitHeaderRowProps) {
@@ -136,8 +138,9 @@ export function KitHeaderRow({
               if (!choice) return null;
               const cardInfo = weaponCardMap.get(choice);
               const isItemOwned = cardInfo ? unlockedItemIds.has(cardInfo.id) : false;
+              const isPartiallyCovered = partiallyCoveredWeaponTypes.has(choice);
               const isTypeCovered = coveredWeaponTypes.has(choice);
-              const chipStyle = CHIP_STYLES[getChipVariant(isItemOwned, isTypeCovered)];
+              const chipStyle = CHIP_STYLES[getChipVariant(isItemOwned, isPartiallyCovered, isTypeCovered)];
               return (
                 <span
                   key={i}

@@ -10,6 +10,7 @@ interface WeaponCardProps {
   cardInfo: WeaponCardInfo | undefined;
   isSelected: boolean;
   isItemOwned: boolean;
+  isPartiallyCovered: boolean;
   isTypeCovered: boolean;
   onSelect: () => void;
 }
@@ -19,11 +20,12 @@ export function WeaponCard({
   cardInfo,
   isSelected,
   isItemOwned,
+  isPartiallyCovered,
   isTypeCovered,
   onSelect,
 }: WeaponCardProps) {
   const { t, i18n } = useTranslation();
-  const variant = getCardVariant(isSelected, isItemOwned, isTypeCovered);
+  const variant = getCardVariant(isSelected, isItemOwned, isPartiallyCovered, isTypeCovered);
   const styles = CARD_STYLES[variant];
 
   return (
@@ -71,9 +73,15 @@ export function WeaponCard({
             />
 
             {/* Armory status badge — top-left */}
-            {(isItemOwned || isTypeCovered) && (
+            {(isItemOwned || isPartiallyCovered || isTypeCovered) && (
               <div
-                title={isItemOwned ? t('starterKits.ownedInArmory') : t('starterKits.typeCovered')}
+                title={
+                  isItemOwned
+                    ? t('starterKits.ownedInArmory')
+                    : isPartiallyCovered
+                      ? t('starterKits.partiallyOwned')
+                      : t('starterKits.typeCovered')
+                }
                 style={{
                   position: 'absolute',
                   top: 3,
@@ -81,17 +89,21 @@ export function WeaponCard({
                   width: 16,
                   height: 16,
                   borderRadius: 3,
-                  background: isItemOwned ? 'rgba(22,163,74,0.85)' : 'rgba(180,130,0,0.85)',
+                  background: isItemOwned
+                    ? 'rgba(22,163,74,0.85)'
+                    : isPartiallyCovered
+                      ? 'rgba(14,165,233,0.85)'
+                      : 'rgba(180,130,0,0.85)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 10,
+                  fontSize: 9,
                   fontWeight: 700,
                   color: '#fff',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.5)',
                 }}
               >
-                {isItemOwned ? '✓' : '~'}
+                {isItemOwned ? '✓' : isPartiallyCovered ? '½' : '~'}
               </div>
             )}
 

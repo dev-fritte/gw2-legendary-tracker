@@ -10,6 +10,7 @@ export interface SlotRowProps {
   availableWeapons: WeaponType[];
   weaponCardMap: Map<WeaponType, WeaponCardInfo>;
   unlockedItemIds: Set<number>;
+  partiallyCoveredWeaponTypes: Set<WeaponType>;
   coveredWeaponTypes: Set<WeaponType>;
   onChange: (weapon: WeaponType | null) => void;
 }
@@ -21,6 +22,7 @@ export function SlotRow({
   availableWeapons,
   weaponCardMap,
   unlockedItemIds,
+  partiallyCoveredWeaponTypes,
   coveredWeaponTypes,
   onChange,
 }: SlotRowProps) {
@@ -60,6 +62,7 @@ export function SlotRow({
               cardInfo={info}
               isSelected={choice === wt}
               isItemOwned={info ? unlockedItemIds.has(info.id) : false}
+              isPartiallyCovered={partiallyCoveredWeaponTypes.has(wt)}
               isTypeCovered={coveredWeaponTypes.has(wt)}
               onSelect={() => onChange(choice === wt ? null : wt)}
             />

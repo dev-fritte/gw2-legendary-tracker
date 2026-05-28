@@ -4,6 +4,7 @@ import { ProfessionIcon } from '@/components/ProfessionIcon';
 import { getProfessionMeta } from '@/utils/professions';
 import { cn } from '@/utils/cn';
 import type { LegendaryWeaponRecommendation } from '@/types/gw2-api';
+import { DUAL_WIELD_WEAPON_TYPES } from '@/utils/weaponProperties';
 
 interface WeaponRecommendationCardProps {
   recommendation: LegendaryWeaponRecommendation;
@@ -30,6 +31,7 @@ export function WeaponRecommendationCard({
   } = recommendation;
 
   const uniqueChars = [...new Map(affectedCharacters.map((c) => [c.name, c])).values()];
+  const isDualWield = DUAL_WIELD_WEAPON_TYPES.has(weaponType);
 
   const weaponLabel = t(`weapons.${weaponType}`, { defaultValue: weaponType });
 
@@ -94,7 +96,9 @@ export function WeaponRecommendationCard({
                   {existingLegendaryCount > 0 && (
                     <p className="text-xs flex items-center gap-1" style={{ color: '#e9c66b' }}>
                       <Sparkles className="w-3 h-3" />
-                      {t('tracker.armoryCount', { count: existingLegendaryCount })}
+                      {isDualWield && existingLegendaryCount < 2
+                        ? t('tracker.armoryCountDualWield', { count: existingLegendaryCount })
+                        : t('tracker.armoryCount', { count: existingLegendaryCount })}
                     </p>
                   )}
                   {hasEquippedLegendary && existingLegendaryCount === 0 && (

@@ -101,6 +101,7 @@ export default {
     weaponAlreadyLegendary: 'Bereits legendär',
     affectedCharacters: 'Betroffene Charaktere',
     armoryCount: '{{count}} in Rüstkammer',
+    armoryCountDualWield: '{{count}} von 2 in Rüstkammer — 2. Kopie für Dual-Wield herstellen',
     sectionCraftNext: 'Als nächstes herstellen',
     sectionAlreadyHave: 'Bereits vorhanden',
     errorTitle: 'Tracker-Daten konnten nicht geladen werden',
@@ -134,6 +135,7 @@ export default {
     errorRetry: 'Erneut versuchen',
     openWiki: 'Im Wiki öffnen',
     ownedInArmory: 'Bereits in der Rüstkammer',
+    partiallyOwned: '1 von 2 in der Rüstkammer — eine zweite Kopie ermöglicht Dual-Wield',
     typeCovered: 'Waffentyp durch ein anderes Legendäres abgedeckt',
   },
   prophecy: {

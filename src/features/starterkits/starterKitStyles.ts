@@ -2,7 +2,7 @@ import type { WeaponType } from '@/types/gw2-api';
 
 // ─── Card styles ──────────────────────────────────────────────────────────────
 
-export type CardVariant = 'selected' | 'owned' | 'covered' | 'default';
+export type CardVariant = 'selected' | 'owned' | 'partiallyCovered' | 'covered' | 'default';
 
 export interface CardStyles {
   borderColor: string;
@@ -33,6 +33,15 @@ export const CARD_STYLES: Record<CardVariant, CardStyles> = {
     typeColor: 'rgba(74,222,128,0.6)',
     hoverBorderColor: 'rgba(147,73,204,0.3)',
   },
+  partiallyCovered: {
+    borderColor: 'rgba(56,189,248,0.2)',
+    bgColor: 'rgba(56,189,248,0.04)',
+    boxShadow: 'none',
+    imgFilter: 'none',
+    nameColor: '#7dd3fc',
+    typeColor: 'rgba(56,189,248,0.55)',
+    hoverBorderColor: 'rgba(56,189,248,0.4)',
+  },
   covered: {
     borderColor: 'rgba(147,73,204,0.12)',
     bgColor: 'rgba(251,191,36,0.04)',
@@ -56,17 +65,19 @@ export const CARD_STYLES: Record<CardVariant, CardStyles> = {
 export function getCardVariant(
   isSelected: boolean,
   isItemOwned: boolean,
+  isPartiallyCovered: boolean,
   isTypeCovered: boolean,
 ): CardVariant {
   if (isSelected) return 'selected';
   if (isItemOwned) return 'owned';
+  if (isPartiallyCovered) return 'partiallyCovered';
   if (isTypeCovered) return 'covered';
   return 'default';
 }
 
 // ─── Chip styles ──────────────────────────────────────────────────────────────
 
-export type ChipVariant = 'owned' | 'covered' | 'default';
+export type ChipVariant = 'owned' | 'partiallyCovered' | 'covered' | 'default';
 
 export const CHIP_STYLES: Record<
   ChipVariant,
@@ -76,6 +87,11 @@ export const CHIP_STYLES: Record<
     color: '#86efac',
     background: 'rgba(74,222,128,0.08)',
     border: '1px solid rgba(74,222,128,0.25)',
+  },
+  partiallyCovered: {
+    color: '#7dd3fc',
+    background: 'rgba(56,189,248,0.08)',
+    border: '1px solid rgba(56,189,248,0.25)',
   },
   covered: {
     color: '#fcd34d',
@@ -89,8 +105,13 @@ export const CHIP_STYLES: Record<
   },
 };
 
-export function getChipVariant(isItemOwned: boolean, isTypeCovered: boolean): ChipVariant {
+export function getChipVariant(
+  isItemOwned: boolean,
+  isPartiallyCovered: boolean,
+  isTypeCovered: boolean,
+): ChipVariant {
   if (isItemOwned) return 'owned';
+  if (isPartiallyCovered) return 'partiallyCovered';
   if (isTypeCovered) return 'covered';
   return 'default';
 }
