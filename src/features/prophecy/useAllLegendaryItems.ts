@@ -11,6 +11,7 @@ export interface LegendaryPickerItem {
   id: number;
   name: string;
   icon: string;
+  description?: string;
   itemType: string; // 'Weapon' | 'Armor' | 'Trinket' | 'Back' | 'UpgradeComponent'
   generation: LegendaryGeneration;
   /** Weapon type, armor weight, trinket slot, etc. — from GW2 item details */
@@ -78,6 +79,7 @@ export function useAllLegendaryItems(apiKey: string) {
     id: raw.id,
     name: raw.name,
     icon: raw.icon,
+    description: raw.description,
     itemType: raw.type,
     generation: getLegendaryGeneration(raw.id, raw.type),
     detailType: raw.details?.type,

@@ -5,6 +5,7 @@ import { getSubLabel } from './prophecyHelpers';
 import { GOLD, PURPLE, PURPLE_DEEP } from './prophecyTypes';
 import type { RoadmapUsage } from './ProphecyPicker';
 import { Tooltip } from '@/components/ui/tooltip';
+import { LegendaryItemPopover } from '@/components/ui/LegendaryItemPopover';
 
 interface ItemGroupProps {
   items: LegendaryPickerItem[];
@@ -42,8 +43,13 @@ export function ItemGroup({
         const isRoadmapPlanned = !isRoadmapDone && usedInRoadmap.planned.has(it.name);
 
         return (
-          <button
+          <LegendaryItemPopover
             key={it.id}
+            name={it.name}
+            icon={it.icon}
+            description={it.description}
+          >
+          <button
             onClick={() => onPick(it.name)}
             style={{
               height: 72,
@@ -189,6 +195,7 @@ export function ItemGroup({
 
             {isCurrent && <span style={{ color: PURPLE, fontSize: 16, flexShrink: 0 }}>✓</span>}
           </button>
+          </LegendaryItemPopover>
         );
       })}
     </div>

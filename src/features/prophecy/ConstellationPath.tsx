@@ -7,6 +7,7 @@ import { stepStatus } from './prophecyHelpers';
 import { GOLD, PURPLE, STEP_W } from './prophecyTypes';
 import type { Step } from './prophecyTypes';
 import { ProphecyOrb } from './ProphecyOrb';
+import { LegendaryItemPopover } from '@/components/ui/LegendaryItemPopover';
 
 interface PathProps {
   steps: Step[];
@@ -187,8 +188,13 @@ export function ConstellationPath({
             const orbSize = status === 'active' ? 92 : 76;
 
             return (
-              <div
+              <LegendaryItemPopover
                 key={step.id}
+                name={pickerIt?.name}
+                icon={pickerIt?.icon}
+                description={pickerIt?.description}
+              >
+              <div
                 onClick={() => (step.item ? onToggle(step.id) : onSlotClick(step.id))}
                 style={{
                   position: 'absolute',
@@ -250,6 +256,7 @@ export function ConstellationPath({
                   )}
                 </div>
               </div>
+              </LegendaryItemPopover>
             );
           })}
         </div>

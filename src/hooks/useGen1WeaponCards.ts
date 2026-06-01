@@ -8,6 +8,7 @@ export interface WeaponCardInfo {
   id: number;
   name: string;
   icon: string;
+  description?: string;
 }
 
 export function useGen1WeaponCards(
@@ -48,7 +49,7 @@ export function useGen1WeaponCards(
       const weaponType = item.details?.type as WeaponType | undefined;
       if (!weaponType) continue;
       if (!map.has(weaponType)) {
-        map.set(weaponType, { id: item.id, name: item.name, icon: item.icon });
+        map.set(weaponType, { id: item.id, name: item.name, icon: item.icon, description: item.description });
       }
     }
     return map;

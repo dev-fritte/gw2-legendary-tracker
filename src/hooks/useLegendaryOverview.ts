@@ -6,6 +6,7 @@ export interface LegendaryGridItem {
   id: number;
   name: string;
   icon: string;
+  description?: string;
   count: number;
   maxCount: number;
   itemType: string;
@@ -54,6 +55,7 @@ export function useLegendaryOverview(apiKey: string) {
       id: item.id,
       name: item.name,
       icon: item.icon,
+      description: item.description,
       count: accountMap.get(item.id) ?? 0,
       maxCount: maxCountMap.get(item.id) ?? 1,
       itemType: item.type,

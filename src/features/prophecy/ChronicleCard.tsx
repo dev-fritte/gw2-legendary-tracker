@@ -6,6 +6,7 @@ import { getSubLabel, stepStatus } from './prophecyHelpers';
 import { GOLD, PURPLE, STEP_W } from './prophecyTypes';
 import type { Step } from './prophecyTypes';
 import { ProphecyOrb } from './ProphecyOrb';
+import { LegendaryItemPopover } from '@/components/ui/LegendaryItemPopover';
 
 interface CardProps {
   step: Step;
@@ -94,6 +95,11 @@ export function ChronicleCard({
         </div>
 
         {/* Body */}
+        <LegendaryItemPopover
+          name={pickerIt?.name}
+          icon={pickerIt?.icon}
+          description={pickerIt?.description}
+        >
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flex: 1, minHeight: 0 }}>
           <ProphecyOrb status={status} tint={tint} size={44} icon={pickerIt?.icon} />
           <div style={{ minWidth: 0, flex: 1 }}>
@@ -149,6 +155,7 @@ export function ChronicleCard({
             )}
           </div>
         </div>
+        </LegendaryItemPopover>
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: 6 }}>

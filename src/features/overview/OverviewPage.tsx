@@ -11,6 +11,7 @@ import {
   getLegendaryGeneration,
   type LegendaryGeneration,
 } from '@/utils/legendaryGenerations';
+import { LegendaryItemPopover } from '@/components/ui/LegendaryItemPopover';
 
 interface OverviewPageProps {
   apiKey: string;
@@ -279,8 +280,12 @@ function LegendaryGrid({ items }: { items: LegendaryGridItem[] }) {
 function LegendaryTile({ item }: { item: LegendaryGridItem }) {
   const unlocked = item.count > 0;
   return (
+    <LegendaryItemPopover
+      name={item.name}
+      icon={item.icon}
+      description={item.description}
+    >
     <div
-      title={`${item.name}${item.count > 0 ? ` (×${item.count})` : ''}`}
       style={{
         position: 'relative',
         width: '100%',
@@ -320,6 +325,7 @@ function LegendaryTile({ item }: { item: LegendaryGridItem }) {
         </span>
       )}
     </div>
+    </LegendaryItemPopover>
   );
 }
 
