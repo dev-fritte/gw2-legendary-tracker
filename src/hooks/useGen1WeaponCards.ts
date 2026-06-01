@@ -17,20 +17,25 @@ export function useGen1WeaponCards(
   weaponCardMap: Map<WeaponType, WeaponCardInfo>;
   isLoading: boolean;
 } {
+  // The legendary armory catalogue is GW2 static data — it never changes once a
+  // legendary is released.  Cache indefinitely for the lifetime of the tab.
   const armoryQuery = useQuery({
     queryKey: ['legendaryArmory', 'all'],
     queryFn: () => getApiClient(apiKey).getAllLegendaryArmory(),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 
   const allIds = useMemo(() => (armoryQuery.data ?? []).map((e) => e.id), [armoryQuery.data]);
 
-  // Separate key from the language-neutral ['items', allIds] cache used by other hooks
+  // Item details (name, icon, description) are also static GW2 data.
+  // The lang suffix ensures the correct locale is cached independently.
   const itemsQuery = useQuery({
     queryKey: ['items', 'cards', allIds, lang],
     queryFn: () => getApiClient(apiKey).getItems(allIds, lang),
     enabled: allIds.length > 0,
-    staleTime: 60 * 60 * 1000,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 
   const weaponCardMap = useMemo((): Map<WeaponType, WeaponCardInfo> => {

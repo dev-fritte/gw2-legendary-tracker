@@ -64,13 +64,15 @@ src/
 
 All requests go directly to `https://api.guildwars2.com/v2` from the browser using the API key as an `access_token` query parameter (no server-side proxy needed). Data is cached via React Query:
 
-| Endpoint | Cache |
-|---|---|
-| `/v2/account` | session |
-| `/v2/characters` | 5 min |
-| `/v2/account/legendaryarmory` | 5 min |
-| `/v2/items` | 1 hour |
-| `/v2/professions` | permanent |
+| Endpoint | Cache | Note |
+|---|---|---|
+| `/v2/account` | session | |
+| `/v2/characters` | 5 min | |
+| `/v2/account/legendaryarmory` | 5 min | |
+| `/v2/items` | 1 hour | |
+| `/v2/professions` | permanent | |
+| `/v2/legendaries` (armory catalogue) | **∞** | GW2 static data — new legendaries are never removed |
+| `/v2/items` (Starter Kit weapon cards) | **∞** | Item names, icons and descriptions don't change in GW2 |
 
 ## Privacy
 
