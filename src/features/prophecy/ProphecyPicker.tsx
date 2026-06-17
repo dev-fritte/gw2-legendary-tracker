@@ -19,6 +19,7 @@ export interface RoadmapUsage {
 
 interface PickerProps {
   allItems: LegendaryPickerItem[];
+  unlockedItemIds: Set<number>;
   currentItem: string | null;
   usedInRoadmap: RoadmapUsage;
   onPick: (name: string) => void;
@@ -27,6 +28,7 @@ interface PickerProps {
 
 export function ProphecyPicker({
   allItems,
+  unlockedItemIds,
   currentItem,
   usedInRoadmap,
   onPick,
@@ -104,6 +106,7 @@ export function ProphecyPicker({
           t={t}
           kitChosenWeaponTypes={kitChosenWeaponTypes}
           usedInRoadmap={usedInRoadmap}
+          unlockedItemIds={unlockedItemIds}
           showGenLabel
         />
       );
@@ -141,6 +144,7 @@ export function ProphecyPicker({
           t={t}
           kitChosenWeaponTypes={kitChosenWeaponTypes}
           usedInRoadmap={usedInRoadmap}
+          unlockedItemIds={unlockedItemIds}
         />
       </div>
     ));

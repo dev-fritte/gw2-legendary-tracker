@@ -14,6 +14,7 @@ interface ItemGroupProps {
   t: TFunction;
   kitChosenWeaponTypes: Set<string>;
   usedInRoadmap: RoadmapUsage;
+  unlockedItemIds: Set<number>;
   showGenLabel?: boolean;
 }
 
@@ -24,6 +25,7 @@ export function ItemGroup({
   t,
   kitChosenWeaponTypes,
   usedInRoadmap,
+  unlockedItemIds,
   showGenLabel,
 }: Readonly<ItemGroupProps>) {
   if (items.length === 0) return null;
@@ -32,6 +34,7 @@ export function ItemGroup({
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
       {items.map((it) => {
         const isCurrent = currentItem === it.name;
+        const isOwned = unlockedItemIds.has(it.id);
         const tint = GENERATION_TINT[it.generation];
         const subLabel = getSubLabel(it, t);
 
@@ -64,8 +67,9 @@ export function ItemGroup({
               borderRadius: 8,
               color: '#e8e4f0',
               fontFamily: 'inherit',
-              transition: 'border-color 0.15s, background 0.15s',
+              transition: 'border-color 0.15s, background 0.15s, opacity 0.15s',
               minWidth: 0,
+              opacity: isOwned && !isCurrent ? 0.45 : 1,
             }}
             onMouseEnter={(e) => {
               if (!isCurrent)

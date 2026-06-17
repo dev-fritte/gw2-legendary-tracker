@@ -58,10 +58,10 @@ export function useArmoryStatus(apiKey: string): ArmoryStatus & { isLoading: boo
     // (e.g. 1× Twilight + 1× Dusk both contribute to Greatsword count)
     const countByWeaponType = new Map<WeaponType, number>();
     for (const item of itemsQuery.data ?? []) {
-      if (item.type !== 'Weapon') continue;
       const count = accountMap.get(item.id) ?? 0;
       if (count === 0) continue;
       unlockedItemIds.add(item.id);
+      if (item.type !== 'Weapon') continue;
       const wt = item.details?.type as WeaponType | undefined;
       if (wt) countByWeaponType.set(wt, (countByWeaponType.get(wt) ?? 0) + count);
     }

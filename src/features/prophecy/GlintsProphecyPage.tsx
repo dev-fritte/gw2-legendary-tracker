@@ -4,6 +4,7 @@ import type { NavSection } from '@/components/Navbar';
 import { Navbar } from '@/components/Navbar';
 import { useAllLegendaryItems } from './useAllLegendaryItems';
 import { useRoadmap } from './useRoadmap';
+import { useArmoryStatus } from '@/hooks/useArmoryStatus';
 import { ConstellationPath } from './ConstellationPath';
 import { ChronicleCard } from './ChronicleCard';
 import { ProphecyPicker } from './ProphecyPicker';
@@ -22,6 +23,7 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
   const { t } = useTranslation();
   const { steps, setItem, toggleDone, addStep, removeStep } = useRoadmap();
   const { items: allItems, itemsByName } = useAllLegendaryItems(apiKey);
+  const { unlockedItemIds } = useArmoryStatus(apiKey);
   const [pickerFor, setPickerFor] = useState<number | null>(null);
 
   // Scroll sync between ConstellationPath and Chronicle
@@ -266,6 +268,7 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
       {pickerStep != null && (
         <ProphecyPicker
           allItems={allItems}
+          unlockedItemIds={unlockedItemIds}
           currentItem={pickerStep.item}
           usedInRoadmap={{
             done: new Set(
