@@ -132,6 +132,7 @@ export interface ItemDetails {
   min_power?: number;
   max_power?: number;
   defense?: number;
+  weight_class?: string;
   infusion_slots?: InfusionSlot[];
   attribute_adjustment?: number;
   infix_upgrade?: InfixUpgrade;
@@ -239,6 +240,29 @@ export interface LegendaryTrinketRecommendation {
   hasEquippedLegendary: boolean;
   icon?: string;
   sampleItemId?: number;
+}
+
+import type { ArmorWeight } from '@/utils/professionArmorWeight';
+import type { ArmorMode, ArmorSlotType } from '@/utils/armorProperties';
+
+export interface LegendaryArmorRecommendation {
+  slot: ArmorSlotType;
+  weight: ArmorWeight;
+  impact: number;
+  affectedCharacters: Array<{
+    name: string;
+    profession: string;
+    isLegendary: boolean;
+  }>;
+  existingLegendaryCount: number;
+  hasEquippedLegendary: boolean;
+  coveredModes: ArmorMode[];
+  icon: string;
+}
+
+export interface ArmorAnalysisResult {
+  recommendations: LegendaryArmorRecommendation[];
+  coveredByArmory: LegendaryArmorRecommendation[];
 }
 
 /** A single item slot in the account bank (null = empty slot) */

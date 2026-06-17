@@ -10,9 +10,12 @@ import {
   WeaponRecommendationCardSkeleton,
 } from './WeaponRecommendationCard';
 import { TrinketRecommendationCard } from './TrinketRecommendationCard';
+import { ArmorRecommendationCard } from './ArmorRecommendationCard';
 import { useWeaponAnalysis } from '@/hooks/useWeaponAnalysis';
 import { useTrinketAnalysis } from '@/hooks/useTrinketAnalysis';
+import { useArmorAnalysis } from '@/hooks/useArmorAnalysis';
 import { useStarterKits } from '@/hooks/useStarterKits';
+import { ALL_ARMOR_WEIGHTS } from '@/utils/armorProperties';
 import { useProfessionIconMap } from '@/hooks/useProfessions';
 import type { Character } from '@/types/gw2-api';
 import { TransferToProphecyModal } from './TransferToProphecyModal';
@@ -33,7 +36,7 @@ export function TrackerPage({
   onNavigate,
 }: Readonly<TrackerPageProps>) {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'weapons' | 'trinkets'>('weapons');
+  const [activeTab, setActiveTab] = useState<'weapons' | 'trinkets' | 'armor'>('weapons');
   const [useStarterKitPriority, setUseStarterKitPriority] = useState(true);
   const [showTransferModal, setShowTransferModal] = useState(false);
 
@@ -47,6 +50,8 @@ export function TrackerPage({
   );
   const { result: trinketResult, isLoading: isTrinketLoading, error: trinketError } =
     useTrinketAnalysis(apiKey, characters);
+  const { result: armorResult, isLoading: isArmorLoading, error: armorError } =
+    useArmorAnalysis(apiKey, characters);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ color: '#e8e4f0' }}>
@@ -102,13 +107,16 @@ export function TrackerPage({
 
           {/* Tab bar */}
           <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid rgba(147,73,204,0.15)', paddingBottom: 0 }}>
-            {(['weapons', 'trinkets'] as const).map((tab) => {
+            {(['weapons', 'trinkets', 'armor'] as const).map((tab) => {
               const isActive = activeTab === tab;
               const pendingCount =
-                tab === 'weapons'
-                  ? (result?.recommendations.length ?? 0)
-                  : (trinketResult?.recommendations.length ?? 0);
-              const label = tab === 'weapons' ? t('tracker.tabWeapons') : t('tracker.tabTrinkets');
+                tab === 'weapons' ? (result?.recommendations.length ?? 0)
+                : tab === 'trinkets' ? (trinketResult?.recommendations.length ?? 0)
+                : (armorResult?.recommendations.length ?? 0);
+              const label =
+                tab === 'weapons' ? t('tracker.tabWeapons')
+                : tab === 'trinkets' ? t('tracker.tabTrinkets')
+                : t('tracker.tabArmor');
               return (
                 <button
                   key={tab}
@@ -401,6 +409,101 @@ export function TrackerPage({
             )}
           </>
         )}
+
+        {/* Error state — armor */}
+        {activeTab === 'armor' && armorError && (
+          <div
+            className="rounded-lg p-4 flex items-start gap-3"
+            style={{ border: '1px solid rgba(220,60,60,0.3)', background: 'rgba(220,60,60,0.06)' }}
+          >
+            <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+            <div className="flex-1 space-y-2">
+              <p className="text-sm font-medium text-red-300">{t('tracker.errorTitle')}</p>
+              <p className="text-xs text-red-400/80">{armorError.message}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Loading state — armor */}
+        {activeTab === 'armor' && isArmorLoading && !armorError && (
+          <div className="space-y-4">
+            <LoadingStatus isLoadingArmory={true} isLoadingItems={false} />
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-lg" />)}
+            </div>
+          </div>
+        )}
+
+        {/* Results — armor */}
+        {activeTab === 'armor' && armorResult && !armorError && (
+          <>
+            {armorResult.recommendations.length > 0 && (
+              <section className="space-y-5">
+                <SectionHeader label={t('tracker.sectionCraftNext')} count={armorResult.recommendations.length} accent />
+                {ALL_ARMOR_WEIGHTS.map((weight) => {
+                  const recs = armorResult.recommendations.filter((r) => r.weight === weight);
+                  if (recs.length === 0) return null;
+                  const weightLabel = weight === 'Heavy' ? t('armorTypes.HeavyArmor') : weight === 'Medium' ? t('armorTypes.MediumArmor') : t('armorTypes.LightArmor');
+                  return (
+                    <div key={weight} className="space-y-3">
+                      <WeightGroupHeader weight={weight} label={weightLabel} count={recs.length} />
+                      {recs.map((rec, i) => (
+                        <ArmorRecommendationCard
+                          key={`${rec.weight}:${rec.slot}`}
+                          recommendation={rec}
+                          rank={i + 1}
+                          professionIcons={professionIcons}
+                        />
+                      ))}
+                    </div>
+                  );
+                })}
+              </section>
+            )}
+
+            {armorResult.recommendations.length === 0 && armorResult.coveredByArmory.length > 0 && (
+              <div
+                className="rounded-lg py-14 text-center space-y-3"
+                style={{ border: '1px solid rgba(147,73,204,0.15)', background: 'rgba(20,16,28,0.6)' }}
+              >
+                <Sparkles className="w-10 h-10 mx-auto" style={{ color: 'rgba(147,73,204,0.35)' }} />
+                <p className="text-sm max-w-sm mx-auto px-4" style={{ color: '#8e8a9a' }}>
+                  {t('tracker.noRecommendations')}
+                </p>
+              </div>
+            )}
+
+            {armorResult.coveredByArmory.length > 0 && (
+              <>
+                {armorResult.recommendations.length > 0 && (
+                  <hr style={{ border: 'none', borderTop: '1px solid rgba(147,73,204,0.12)' }} />
+                )}
+                <section className="space-y-5">
+                  <SectionHeader label={t('tracker.sectionAlreadyHave')} count={armorResult.coveredByArmory.length} />
+                  {ALL_ARMOR_WEIGHTS.map((weight) => {
+                    const recs = armorResult.coveredByArmory.filter((r) => r.weight === weight);
+                    if (recs.length === 0) return null;
+                    const weightLabel = weight === 'Heavy' ? t('armorTypes.HeavyArmor') : weight === 'Medium' ? t('armorTypes.MediumArmor') : t('armorTypes.LightArmor');
+                    return (
+                      <div key={weight} className="space-y-3">
+                        <WeightGroupHeader weight={weight} label={weightLabel} count={recs.length} />
+                        {recs.map((rec, i) => (
+                          <ArmorRecommendationCard
+                            key={`${rec.weight}:${rec.slot}`}
+                            recommendation={rec}
+                            rank={i + 1}
+                            isCovered
+                            professionIcons={professionIcons}
+                          />
+                        ))}
+                      </div>
+                    );
+                  })}
+                </section>
+              </>
+            )}
+          </>
+        )}
       </main>
 
       {showTransferModal && result?.recommendations && (
@@ -414,6 +517,25 @@ export function TrackerPage({
           }}
         />
       )}
+    </div>
+  );
+}
+
+const WEIGHT_HEADER_COLORS: Record<string, string> = {
+  Heavy: '#c8a0f0',
+  Medium: '#b0c870',
+  Light: '#80c8e0',
+};
+
+function WeightGroupHeader({ weight, label, count }: { weight: string; label: string; count: number }) {
+  const color = WEIGHT_HEADER_COLORS[weight] ?? '#8e8a9a';
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-xs font-bold uppercase tracking-wider" style={{ color }}>
+        {label}
+      </span>
+      <span className="text-xs" style={{ color: '#5a5468' }}>({count})</span>
+      <div className="flex-1 h-px" style={{ background: 'rgba(147,73,204,0.1)' }} />
     </div>
   );
 }
