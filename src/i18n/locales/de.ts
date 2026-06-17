@@ -106,6 +106,9 @@ export default {
     sectionAlreadyHave: 'Bereits vorhanden',
     errorTitle: 'Tracker-Daten konnten nicht geladen werden',
     errorRetry: 'Erneut versuchen',
+    tabWeapons: 'Waffen',
+    tabTrinkets: 'Schmuck & Rücken',
+    dualCoverageNote: '2 Kopien für volle Abdeckung benötigt',
     useStarterKits: 'Waffen mit vorhandenen Starter-Kits priorisieren',
     starterKitAvailable: 'Starter-Kit vorhanden',
     starterKitAvailable_other: '{{count}} Starter-Kits vorhanden',
@@ -205,6 +208,7 @@ export default {
     Amulet: 'Amulett',
     Ring: 'Ring',
     Accessory: 'Akzessoire',
+    Back: 'Rückenteil',
   },
   upgradeTypes: {
     Rune: 'Rune',

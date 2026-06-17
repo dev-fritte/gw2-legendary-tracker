@@ -2,10 +2,19 @@ import type {
   Character,
   GW2Item,
   LegendaryArmoryItem,
+  LegendaryTrinketRecommendation,
   LegendaryWeaponRecommendation,
+  TrinketSlot,
+  TrinketSlotType,
   WeaponType,
 } from '@/types/gw2-api';
 import { DUAL_WIELD_WEAPON_TYPES } from '@/utils/weaponProperties';
+import {
+  ALL_TRINKET_SLOT_TYPES,
+  DUAL_TRINKET_SLOT_TYPES,
+  SLOT_TO_TRINKET_TYPE,
+  TRINKET_SLOTS,
+} from '@/utils/trinketProperties';
 
 export interface CalculationOptions {
   /** Weapon types → kit count map from useStarterKits. Empty map = disabled. */
@@ -205,14 +214,155 @@ export function calculateRecommendations(
   return { recommendations, coveredByArmory };
 }
 
-/** Collect all unique item IDs needed for an analysis run */
+/** Collect all unique item IDs needed for an analysis run (weapons + trinkets/back) */
 export function collectItemIds(characters: Character[], armory: LegendaryArmoryItem[]): number[] {
   const ids = new Set<number>();
   for (const char of characters) {
     for (const eq of char.equipment) {
-      if (WEAPON_SLOTS.has(eq.slot)) ids.add(eq.id);
+      if (WEAPON_SLOTS.has(eq.slot) || TRINKET_SLOTS.has(eq.slot)) ids.add(eq.id);
     }
   }
   for (const entry of armory) ids.add(entry.id);
   return [...ids];
+}
+
+// ─── Trinket & Back analysis ──────────────────────────────────────────────────
+
+interface TrinketAccumulator {
+  allChars: LegendaryTrinketRecommendation['affectedCharacters'];
+  hasEquippedLegendary: boolean;
+  icon: string | undefined;
+  sampleItemId: number | undefined;
+}
+
+export interface TrinketAnalysisResult {
+  recommendations: LegendaryTrinketRecommendation[];
+  coveredByArmory: LegendaryTrinketRecommendation[];
+}
+
+export function calculateTrinketRecommendations(
+  characters: Character[],
+  itemMap: Map<number, GW2Item>,
+  armory: LegendaryArmoryItem[],
+): TrinketAnalysisResult {
+  // Build armory map: TrinketSlotType → legendary count + icon
+  const armoryBySlotType = new Map<TrinketSlotType, number>();
+  const armoryIconBySlotType = new Map<TrinketSlotType, { icon: string; id: number }>();
+
+  for (const entry of armory) {
+    const item = itemMap.get(entry.id);
+    if (!item) continue;
+
+    let slotType: TrinketSlotType | null = null;
+    if (item.type === 'Back') {
+      slotType = 'Back';
+    } else if (item.type === 'Trinket' && item.details?.type) {
+      const dt = item.details.type;
+      if (dt === 'Amulet' || dt === 'Ring' || dt === 'Accessory') slotType = dt as TrinketSlotType;
+    }
+    if (!slotType) continue;
+
+    armoryBySlotType.set(slotType, (armoryBySlotType.get(slotType) ?? 0) + entry.count);
+    if (!armoryIconBySlotType.has(slotType))
+      armoryIconBySlotType.set(slotType, { icon: item.icon, id: item.id });
+  }
+
+  // Walk all trinket/back equipment slots
+  const usageMap = new Map<TrinketSlotType, TrinketAccumulator>();
+
+  for (const char of characters) {
+    for (const eq of char.equipment) {
+      const slotType = SLOT_TO_TRINKET_TYPE[eq.slot];
+      if (!slotType) continue;
+
+      const item = itemMap.get(eq.id);
+      if (!item) continue;
+
+      const isLegendary = item.rarity === 'Legendary';
+      const tabCount = eq.tabs?.length ?? 1;
+
+      const acc: TrinketAccumulator = usageMap.get(slotType) ?? {
+        allChars: [],
+        hasEquippedLegendary: false,
+        icon: undefined,
+        sampleItemId: undefined,
+      };
+
+      for (let i = 0; i < tabCount; i++) {
+        acc.allChars.push({
+          name: char.name,
+          profession: char.profession,
+          slot: eq.slot as TrinketSlot,
+          isLegendary,
+        });
+      }
+
+      if (isLegendary) acc.hasEquippedLegendary = true;
+      if (!isLegendary && !acc.icon) {
+        acc.icon = item.icon;
+        acc.sampleItemId = item.id;
+      }
+
+      usageMap.set(slotType, acc);
+    }
+  }
+
+  // Ensure every slot type appears, using armory/itemMap icons as fallback
+  const itemMapIconBySlotType = new Map<TrinketSlotType, { icon: string; id: number }>();
+  for (const [id, item] of itemMap) {
+    let slotType: TrinketSlotType | null = null;
+    if (item.type === 'Back') slotType = 'Back';
+    else if (item.type === 'Trinket' && item.details?.type) {
+      const dt = item.details.type;
+      if (dt === 'Amulet' || dt === 'Ring' || dt === 'Accessory') slotType = dt as TrinketSlotType;
+    }
+    if (slotType && !itemMapIconBySlotType.has(slotType))
+      itemMapIconBySlotType.set(slotType, { icon: item.icon, id });
+  }
+
+  for (const slotType of ALL_TRINKET_SLOT_TYPES) {
+    if (!usageMap.has(slotType)) {
+      const info = armoryIconBySlotType.get(slotType) ?? itemMapIconBySlotType.get(slotType);
+      usageMap.set(slotType, {
+        allChars: [],
+        hasEquippedLegendary: false,
+        icon: info?.icon,
+        sampleItemId: info?.id,
+      });
+    }
+  }
+
+  const recommendations: LegendaryTrinketRecommendation[] = [];
+  const coveredByArmory: LegendaryTrinketRecommendation[] = [];
+
+  for (const [slotType, acc] of usageMap.entries()) {
+    const armoryCount = armoryBySlotType.get(slotType) ?? 0;
+    const impact = acc.allChars.filter((c) => !c.isLegendary).length;
+
+    const rec: LegendaryTrinketRecommendation = {
+      slotType,
+      impact,
+      affectedCharacters: acc.allChars,
+      existingLegendaryCount: armoryCount,
+      hasEquippedLegendary: acc.hasEquippedLegendary,
+      icon: acc.icon,
+      sampleItemId: acc.sampleItemId,
+    };
+
+    const isDual = DUAL_TRINKET_SLOT_TYPES.has(slotType);
+    const isCovered = isDual
+      ? impact === 0 || armoryCount >= 2
+      : armoryCount > 0 || acc.hasEquippedLegendary;
+
+    if (isCovered) coveredByArmory.push(rec);
+    else recommendations.push(rec);
+  }
+
+  const byImpact = (a: LegendaryTrinketRecommendation, b: LegendaryTrinketRecommendation) =>
+    b.impact - a.impact || a.slotType.localeCompare(b.slotType);
+
+  recommendations.sort(byImpact);
+  coveredByArmory.sort(byImpact);
+
+  return { recommendations, coveredByArmory };
 }

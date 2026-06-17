@@ -9,7 +9,9 @@ import {
   WeaponRecommendationCard,
   WeaponRecommendationCardSkeleton,
 } from './WeaponRecommendationCard';
+import { TrinketRecommendationCard } from './TrinketRecommendationCard';
 import { useWeaponAnalysis } from '@/hooks/useWeaponAnalysis';
+import { useTrinketAnalysis } from '@/hooks/useTrinketAnalysis';
 import { useStarterKits } from '@/hooks/useStarterKits';
 import { useProfessionIconMap } from '@/hooks/useProfessions';
 import type { Character } from '@/types/gw2-api';
@@ -31,6 +33,7 @@ export function TrackerPage({
   onNavigate,
 }: Readonly<TrackerPageProps>) {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<'weapons' | 'trinkets'>('weapons');
   const [useStarterKitPriority, setUseStarterKitPriority] = useState(true);
   const [showTransferModal, setShowTransferModal] = useState(false);
 
@@ -40,8 +43,10 @@ export function TrackerPage({
     apiKey,
     characters,
     kitMap,
-    useStarterKitPriority
+    useStarterKitPriority,
   );
+  const { result: trinketResult, isLoading: isTrinketLoading, error: trinketError } =
+    useTrinketAnalysis(apiKey, characters);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ color: '#e8e4f0' }}>
@@ -95,8 +100,55 @@ export function TrackerPage({
             ))}
           </div>
 
-          {/* Starter Kit toggle */}
-          <label
+          {/* Tab bar */}
+          <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid rgba(147,73,204,0.15)', paddingBottom: 0 }}>
+            {(['weapons', 'trinkets'] as const).map((tab) => {
+              const isActive = activeTab === tab;
+              const pendingCount =
+                tab === 'weapons'
+                  ? (result?.recommendations.length ?? 0)
+                  : (trinketResult?.recommendations.length ?? 0);
+              const label = tab === 'weapons' ? t('tracker.tabWeapons') : t('tracker.tabTrinkets');
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    border: 'none',
+                    borderBottom: isActive ? '2px solid #9349CC' : '2px solid transparent',
+                    background: 'transparent',
+                    color: isActive ? '#d4b8f0' : '#6a6478',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    transition: 'color 0.15s',
+                    marginBottom: -1,
+                  }}
+                >
+                  {label}
+                  {pendingCount > 0 && (
+                    <span style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      padding: '1px 5px',
+                      borderRadius: 8,
+                      background: isActive ? 'rgba(147,73,204,0.25)' : 'rgba(147,73,204,0.12)',
+                      color: isActive ? '#c8a0f0' : '#5a5468',
+                    }}>
+                      {pendingCount}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Starter Kit toggle — weapons tab only */}
+          {activeTab === 'weapons' && <label
             className="inline-flex items-center gap-2.5 cursor-pointer select-none"
             style={{ width: 'fit-content' }}
           >
@@ -142,11 +194,11 @@ export function TrackerPage({
             <span className="text-xs" style={{ color: '#a89cc0' }}>
               {t('tracker.useStarterKits')}
             </span>
-          </label>
+          </label>}
         </div>
 
-        {/* Error state */}
-        {error && (
+        {/* Error state — weapons */}
+        {activeTab === 'weapons' && error && (
           <div
             className="rounded-lg p-4 flex items-start gap-3"
             style={{ border: '1px solid rgba(220,60,60,0.3)', background: 'rgba(220,60,60,0.06)' }}
@@ -168,8 +220,8 @@ export function TrackerPage({
           </div>
         )}
 
-        {/* Loading state */}
-        {isLoading && !error && (
+        {/* Loading state — weapons */}
+        {activeTab === 'weapons' && isLoading && !error && (
           <div className="space-y-4">
             <LoadingStatus isLoadingArmory={isLoadingArmory} isLoadingItems={isLoadingItems} />
             <div className="space-y-3">
@@ -180,8 +232,8 @@ export function TrackerPage({
           </div>
         )}
 
-        {/* Results */}
-        {result && !error && (
+        {/* Results — weapons */}
+        {activeTab === 'weapons' && result && !error && (
           <>
             {result.recommendations.length === 0 && result.coveredByArmory.length === 0 && (
               <div
@@ -264,6 +316,80 @@ export function TrackerPage({
                   {result.coveredByArmory.map((rec, i) => (
                     <WeaponRecommendationCard
                       key={rec.weaponType}
+                      recommendation={rec}
+                      rank={i + 1}
+                      isCovered
+                      professionIcons={professionIcons}
+                    />
+                  ))}
+                </section>
+              </>
+            )}
+          </>
+        )}
+
+        {/* Error state — trinkets */}
+        {activeTab === 'trinkets' && trinketError && (
+          <div
+            className="rounded-lg p-4 flex items-start gap-3"
+            style={{ border: '1px solid rgba(220,60,60,0.3)', background: 'rgba(220,60,60,0.06)' }}
+          >
+            <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+            <p className="text-sm font-medium text-red-300">{t('tracker.errorTitle')}</p>
+          </div>
+        )}
+
+        {/* Loading state — trinkets */}
+        {activeTab === 'trinkets' && isTrinketLoading && !trinketError && (
+          <div className="space-y-4">
+            <LoadingStatus isLoadingArmory={true} isLoadingItems={false} />
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <WeaponRecommendationCardSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Results — trinkets */}
+        {activeTab === 'trinkets' && trinketResult && !trinketError && (
+          <>
+            {trinketResult.recommendations.length === 0 && trinketResult.coveredByArmory.length === 0 && (
+              <div
+                className="rounded-lg py-14 text-center space-y-3"
+                style={{ border: '1px solid rgba(147,73,204,0.15)', background: 'rgba(20,16,28,0.6)' }}
+              >
+                <Sparkles className="w-10 h-10 mx-auto" style={{ color: 'rgba(147,73,204,0.35)' }} />
+                <p className="text-sm max-w-sm mx-auto px-4" style={{ color: '#8e8a9a' }}>
+                  {t('tracker.noRecommendations')}
+                </p>
+              </div>
+            )}
+
+            {trinketResult.recommendations.length > 0 && (
+              <section className="space-y-3">
+                <SectionHeader label={t('tracker.sectionCraftNext')} count={trinketResult.recommendations.length} accent />
+                {trinketResult.recommendations.map((rec, i) => (
+                  <TrinketRecommendationCard
+                    key={rec.slotType}
+                    recommendation={rec}
+                    rank={i + 1}
+                    professionIcons={professionIcons}
+                  />
+                ))}
+              </section>
+            )}
+
+            {trinketResult.coveredByArmory.length > 0 && (
+              <>
+                {trinketResult.recommendations.length > 0 && (
+                  <hr style={{ border: 'none', borderTop: '1px solid rgba(147,73,204,0.12)' }} />
+                )}
+                <section className="space-y-3">
+                  <SectionHeader label={t('tracker.sectionAlreadyHave')} count={trinketResult.coveredByArmory.length} />
+                  {trinketResult.coveredByArmory.map((rec, i) => (
+                    <TrinketRecommendationCard
+                      key={rec.slotType}
                       recommendation={rec}
                       rank={i + 1}
                       isCovered

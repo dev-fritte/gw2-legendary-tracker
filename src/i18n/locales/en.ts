@@ -103,6 +103,9 @@ export default {
     sectionAlreadyHave: 'Already have',
     errorTitle: 'Failed to load tracker data',
     errorRetry: 'Retry',
+    tabWeapons: 'Weapons',
+    tabTrinkets: 'Trinkets & Back',
+    dualCoverageNote: '2 copies needed for full coverage',
     useStarterKits: 'Prioritise weapons with owned Starter Kits',
     starterKitAvailable: 'Starter Kit available',
     starterKitAvailable_other: '{{count}} Starter Kits available',
@@ -203,6 +206,7 @@ export default {
     Amulet: 'Amulet',
     Ring: 'Ring',
     Accessory: 'Accessory',
+    Back: 'Back Item',
   },
   upgradeTypes: {
     Rune: 'Rune',
