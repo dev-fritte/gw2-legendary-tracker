@@ -207,7 +207,7 @@ export default {
   trinketTypes: {
     Amulet: 'Amulett',
     Ring: 'Ring',
-    Accessory: 'Akzessoire',
+    Accessory: 'Accessoire',
     Back: 'Rückenteil',
   },
   upgradeTypes: {
