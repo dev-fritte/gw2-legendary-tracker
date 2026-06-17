@@ -41,10 +41,8 @@ export interface Step {
 export type StepStatus = 'done' | 'active' | 'planned' | 'empty';
 
 export const DEMO_ROADMAP: Step[] = [
-  { id: 1, item: 'Bolt', done: true, doneAt: '14. März 2026' },
-  { id: 2, item: 'Aurora', done: true, doneAt: '02. Mai 2026' },
-  { id: 3, item: 'Frostfang', done: false },
-  { id: 4, item: 'Ad Infinitum', done: false },
-  { id: 5, item: 'Twilight', done: false },
-  { id: 6, item: null, done: false },
+  { id: 1, item: null, done: false },
+  { id: 2, item: null, done: false },
+  { id: 3, item: null, done: false },
+  { id: 4, item: null, done: false },
 ];
