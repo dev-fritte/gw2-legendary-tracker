@@ -85,7 +85,9 @@ Your API key is stored only in your browser's `localStorage` and is never sent t
 - [x] plain Roadmap
 - [x] add starterkits to roadmap selection
 - [x] remove default data from glint's prophecy
-- [ ] expand starterkits which are not owned (to plan)
-- [ ] settings for default wiki language
-- [ ] add material/crafing calculations to check how expensive the legendary item is
+- [x] expand starterkits which are not owned (to plan)
+- [ ] cache starterkits
 - [ ] scan snowcrows benchmarks for number of builds with the specific weapon
+- [ ] add gen3 legendary skins
+- [ ] add material/crafing calculations to check how expensive the legendary item is
+- [ ] settings for default wiki language
