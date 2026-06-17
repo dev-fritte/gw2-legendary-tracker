@@ -78,13 +78,13 @@ export function KitHeaderRow({
         style={{
           fontSize: 12,
           fontWeight: 600,
-          color: '#5a5468',
+          color: isOwned ? '#9349CC' : '#3a3448',
           width: 16,
           flexShrink: 0,
           textAlign: 'right',
         }}
       >
-        {setNum}
+        {count}
       </span>
 
       <span
