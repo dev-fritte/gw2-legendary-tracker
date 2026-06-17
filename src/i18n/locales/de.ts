@@ -130,6 +130,7 @@ export default {
     clear: 'Löschen',
     openSlots: '{{count}} offen',
     openSlots_other: '{{count}} offen',
+    loadingAccount: 'Account-Daten werden geladen…',
     noOwned: 'Keine Starterkits in Bank oder Inventar gefunden.',
     errorTitle: 'Starterkit-Daten konnten nicht geladen werden',
     errorRetry: 'Erneut versuchen',

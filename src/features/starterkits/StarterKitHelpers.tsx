@@ -72,22 +72,22 @@ export function FilterToggle({
   );
 }
 
-// ─── KitListSkeleton ──────────────────────────────────────────────────────────
+// ─── AccountLoadingIndicator ──────────────────────────────────────────────────
 
-export function KitListSkeleton() {
+export function AccountLoadingIndicator({ label }: { label: string }) {
   return (
-    <div>
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className="animate-pulse"
-          style={{
-            height: 46,
-            borderBottom: i < 5 ? '1px solid rgba(147,73,204,0.1)' : undefined,
-            background: 'rgba(147,73,204,0.03)',
-          }}
-        />
-      ))}
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        style={{ flexShrink: 0, animation: 'spin 1s linear infinite' }}
+      >
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <circle cx="7" cy="7" r="5.5" fill="none" stroke="rgba(147,73,204,0.25)" strokeWidth="1.5" />
+        <path d="M7 1.5A5.5 5.5 0 0 1 12.5 7" fill="none" stroke="#9349CC" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+      <span style={{ fontSize: 13, color: '#8e8a9a', fontWeight: 500 }}>{label}</span>
     </div>
   );
 }

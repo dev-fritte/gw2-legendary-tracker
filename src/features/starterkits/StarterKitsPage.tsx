@@ -15,7 +15,7 @@ import type { KitChoices, FilterMode } from './starterKitTypes';
 import { normalizeChoices } from './starterKitUtils';
 import { KitHeaderRow } from './KitHeaderRow';
 import { SlotRow } from './SlotRow';
-import { StatPill, FilterToggle, KitListSkeleton } from './StarterKitHelpers';
+import { StatPill, FilterToggle, AccountLoadingIndicator } from './StarterKitHelpers';
 
 interface Props {
   apiKey: string;
@@ -26,10 +26,7 @@ interface Props {
 export function StarterKitsPage({ apiKey, onLogout, onNavigate }: Readonly<Props>) {
   const { t } = useTranslation();
   const { ownedCounts, isLoading: isLoadingOwned, error, refetch } = useOwnedStarterKits(apiKey);
-  const { weaponCardMap, isLoading: isLoadingCards } = useGen1WeaponCards(
-    apiKey,
-    useTranslation().i18n.language.startsWith('de') ? 'de' : 'en',
-  );
+  const { weaponCardMap } = useGen1WeaponCards();
   const { unlockedItemIds, partiallyCoveredWeaponTypes, coveredWeaponTypes } = useArmoryStatus(apiKey);
 
   const [filterMode, setFilterMode] = useState<FilterMode>('all');
@@ -42,8 +39,6 @@ export function StarterKitsPage({ apiKey, onLogout, onNavigate }: Readonly<Props
     }
     return result;
   });
-
-  const isLoading = isLoadingOwned || isLoadingCards;
 
   const toggleExpanded = (kitId: number) => {
     setExpandedKits((prev) => {
@@ -75,8 +70,9 @@ export function StarterKitsPage({ apiKey, onLogout, onNavigate }: Readonly<Props
     return sum + normalizeChoices(choices[id], count).filter((c) => c !== null).length;
   }, 0);
 
-  const displayedKits =
-    filterMode === 'owned'
+  const displayedKits = isLoadingOwned
+    ? STARTER_KIT_ORDER
+    : filterMode === 'owned'
       ? STARTER_KIT_ORDER.filter((id) => (ownedCounts.get(id) ?? 0) > 0)
       : STARTER_KIT_ORDER;
 
@@ -173,14 +169,20 @@ export function StarterKitsPage({ apiKey, onLogout, onNavigate }: Readonly<Props
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
-              <StatPill
-                label={t('starterKits.ownedKits')}
-                value={isLoadingOwned ? '…' : `${ownedKitTypes} / ${STARTER_KIT_ORDER.length}`}
-              />
-              <StatPill
-                label={t('starterKits.slotsFilled')}
-                value={isLoadingOwned ? '…' : `${filledSlots} / ${totalSlots}`}
-              />
+              {isLoadingOwned ? (
+                <AccountLoadingIndicator label={t('starterKits.loadingAccount')} />
+              ) : (
+                <>
+                  <StatPill
+                    label={t('starterKits.ownedKits')}
+                    value={`${ownedKitTypes} / ${STARTER_KIT_ORDER.length}`}
+                  />
+                  <StatPill
+                    label={t('starterKits.slotsFilled')}
+                    value={`${filledSlots} / ${totalSlots}`}
+                  />
+                </>
+              )}
               <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 5 }}>
                 <Save style={{ width: 11, height: 11, color: '#3a3448' }} />
                 <span style={{ fontSize: 11, color: '#3a3448' }}>{t('starterKits.autoSaved')}</span>
@@ -219,7 +221,6 @@ export function StarterKitsPage({ apiKey, onLogout, onNavigate }: Readonly<Props
             }}
           >
             <KitListContent
-              isLoading={isLoading}
               displayedKits={displayedKits}
               ownedCounts={ownedCounts}
               expandedKits={expandedKits}
@@ -242,7 +243,6 @@ export function StarterKitsPage({ apiKey, onLogout, onNavigate }: Readonly<Props
 // ─── KitListContent ───────────────────────────────────────────────────────────
 
 interface KitListContentProps {
-  isLoading: boolean;
   displayedKits: number[];
   ownedCounts: Map<number, number>;
   expandedKits: Set<number>;
@@ -257,7 +257,6 @@ interface KitListContentProps {
 }
 
 function KitListContent({
-  isLoading,
   displayedKits,
   ownedCounts,
   expandedKits,
@@ -270,8 +269,6 @@ function KitListContent({
   onSlotChange,
   noOwnedLabel,
 }: Readonly<KitListContentProps>) {
-  if (isLoading) return <KitListSkeleton />;
-
   if (displayedKits.length === 0) {
     return (
       <div style={{ padding: '32px 24px', textAlign: 'center', color: '#5a5468', fontSize: 14 }}>

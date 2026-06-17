@@ -127,6 +127,7 @@ export default {
     clear: 'Clear',
     openSlots: '{{count}} open',
     openSlots_other: '{{count}} open',
+    loadingAccount: 'Loading account data…',
     noOwned: 'No starter kits found in bank or inventory.',
     errorTitle: 'Failed to load starter kit data',
     errorRetry: 'Retry',
