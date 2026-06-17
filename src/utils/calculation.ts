@@ -13,6 +13,7 @@ import {
   ALL_TRINKET_SLOT_TYPES,
   DUAL_TRINKET_SLOT_TYPES,
   SLOT_TO_TRINKET_TYPE,
+  TRINKET_SLOT_DEFAULT_ICONS,
   TRINKET_SLOTS,
 } from '@/utils/trinketProperties';
 
@@ -345,7 +346,7 @@ export function calculateTrinketRecommendations(
       affectedCharacters: acc.allChars,
       existingLegendaryCount: armoryCount,
       hasEquippedLegendary: acc.hasEquippedLegendary,
-      icon: acc.icon,
+      icon: TRINKET_SLOT_DEFAULT_ICONS[slotType],
       sampleItemId: acc.sampleItemId,
     };
 
