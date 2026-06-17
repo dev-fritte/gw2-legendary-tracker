@@ -30,9 +30,11 @@ export function KitHeaderRow({
   partiallyCoveredWeaponTypes,
   coveredWeaponTypes,
   onToggle,
-}: KitHeaderRowProps) {
+}: Readonly<KitHeaderRowProps>) {
   const { t } = useTranslation();
-  const openCount = kitChoices.filter((c) => c === null).length;
+
+  // Set of selected weapon types across all slots (for chip highlighting)
+  const selectedWeapons = new Set(kitChoices.filter((c): c is WeaponType => c !== null));
 
   return (
     <div
@@ -62,8 +64,7 @@ export function KitHeaderRow({
           (e.currentTarget as HTMLDivElement).style.background = 'rgba(147,73,204,0.04)';
       }}
       onMouseLeave={(e) => {
-        if (!isExpanded)
-          (e.currentTarget as HTMLDivElement).style.background = 'transparent';
+        if (!isExpanded) (e.currentTarget as HTMLDivElement).style.background = 'transparent';
       }}
     >
       <div style={{ width: 14, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
@@ -116,7 +117,7 @@ export function KitHeaderRow({
         </span>
       )}
 
-      {/* Summary chips */}
+      {/* Available weapon chips — always visible, selected ones highlighted */}
       <div
         style={{
           display: 'flex',
@@ -127,67 +128,87 @@ export function KitHeaderRow({
           minWidth: 0,
         }}
       >
-        {isOwned ? (
-          <>
-            {kitChoices.map((choice, i) => {
-              if (!choice) return null;
-              const cardInfo = weaponCardMap.get(choice);
-              const isItemOwned = cardInfo ? unlockedItemIds.has(cardInfo.id) : false;
-              const isPartiallyCovered = partiallyCoveredWeaponTypes.has(choice);
-              const isTypeCovered = coveredWeaponTypes.has(choice);
-              const chipStyle = CHIP_STYLES[getChipVariant(isItemOwned, isPartiallyCovered, isTypeCovered)];
-              return (
-                <span
-                  key={i}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 4,
-                    fontSize: 11,
-                    color: chipStyle.color,
-                    background: chipStyle.background,
-                    border: chipStyle.border,
-                    borderRadius: 4,
-                    padding: '1px 6px',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {cardInfo && (
-                    <img
-                      src={cardInfo.icon}
-                      alt=""
-                      style={{ width: 14, height: 14, borderRadius: 2, objectFit: 'cover' }}
-                    />
-                  )}
-                  {cardInfo ? cardInfo.name : t(`weapons.${choice}`)}
-                </span>
-              );
-            })}
-            {openCount > 0 && (
-              <span style={{ fontSize: 11, color: '#4a4458', whiteSpace: 'nowrap' }}>
-                {t('starterKits.openSlots', { count: openCount })}
-              </span>
-            )}
-          </>
-        ) : (
-          availableWeapons.map((wt) => (
+        {availableWeapons.map((wt) => {
+          const isSelected = selectedWeapons.has(wt);
+          return (
             <span
               key={wt}
               style={{
                 fontSize: 11,
-                color: '#9d93b0',
-                background: 'rgba(147,73,204,0.12)',
-                border: '1px solid rgba(147,73,204,0.28)',
+                fontWeight: isSelected ? 700 : 400,
+                color: isSelected ? '#d4b8f0' : '#9d93b0',
+                background: isSelected ? 'rgba(147,73,204,0.28)' : 'rgba(147,73,204,0.10)',
+                border: isSelected
+                  ? '1px solid rgba(147,73,204,0.75)'
+                  : '1px solid rgba(147,73,204,0.22)',
                 borderRadius: 4,
                 padding: '1px 6px',
                 whiteSpace: 'nowrap',
+                transition: 'all 0.15s',
               }}
             >
               {t(`weapons.${wt}`)}
             </span>
-          ))
-        )}
+          );
+        })}
       </div>
+
+      {/* Choices column — only shown when kit is owned */}
+      {isOwned && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            gap: 4,
+            flexShrink: 0,
+            flexWrap: 'wrap',
+            minWidth: 120,
+          }}
+        >
+          {kitChoices.map((choice, i) => {
+            if (!choice) {
+              return (
+                <span key={i} style={{ fontSize: 11, color: '#4a4458', whiteSpace: 'nowrap' }}>
+                  {t('starterKits.makeSelection')}
+                </span>
+              );
+            }
+            const cardInfo = weaponCardMap.get(choice);
+            const isItemOwned = cardInfo ? unlockedItemIds.has(cardInfo.id) : false;
+            const isPartiallyCovered = partiallyCoveredWeaponTypes.has(choice);
+            const isTypeCovered = coveredWeaponTypes.has(choice);
+            const chipStyle =
+              CHIP_STYLES[getChipVariant(isItemOwned, isPartiallyCovered, isTypeCovered)];
+            return (
+              <span
+                key={i}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  fontSize: 11,
+                  color: chipStyle.color,
+                  background: chipStyle.background,
+                  border: chipStyle.border,
+                  borderRadius: 4,
+                  padding: '1px 6px',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {cardInfo && (
+                  <img
+                    src={cardInfo.icon}
+                    alt=""
+                    style={{ width: 14, height: 14, borderRadius: 2, objectFit: 'cover' }}
+                  />
+                )}
+                {cardInfo ? cardInfo.name : t(`weapons.${choice}`)}
+              </span>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

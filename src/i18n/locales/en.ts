@@ -125,8 +125,7 @@ export default {
     choose: 'Choose',
     change: 'Change',
     clear: 'Clear',
-    openSlots: '{{count}} open',
-    openSlots_other: '{{count}} open',
+    makeSelection: 'Make selection',
     loadingAccount: 'Loading account data…',
     noOwned: 'No starter kits found in bank or inventory.',
     errorTitle: 'Failed to load starter kit data',
@@ -138,7 +137,7 @@ export default {
   },
   prophecy: {
     eyebrow: '✦ ROADMAP · CHAPTER V',
-    title: 'Glint\'s Prophecy',
+    title: "Glint's Prophecy",
     subtitle:
       'The crystal dragon saw your journey long in advance. ' +
       'Set the orbs in the right order — and ignite each one when fate is fulfilled.',
@@ -234,7 +233,7 @@ export default {
   transfer: {
     eyebrow: '✦ ZOMMOROS · PROPHECY',
     button: 'Plan in Prophecy',
-    title: 'Transfer to Glint\'s Prophecy',
+    title: "Transfer to Glint's Prophecy",
     subtitle_one: '{{count}} weapon will be added to your roadmap.',
     subtitle_other: '{{count}} weapons will be added to your roadmap.',
     subtitle: '{{count}} weapon(s) will be added to your roadmap.',
