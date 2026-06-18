@@ -1,11 +1,33 @@
 import type {
+  ArmorAnalysisResult,
   Character,
   GW2Item,
   LegendaryArmoryItem,
+  LegendaryArmorRecommendation,
+  LegendaryTrinketRecommendation,
   LegendaryWeaponRecommendation,
+  TrinketSlot,
+  TrinketSlotType,
   WeaponType,
 } from '@/types/gw2-api';
 import { DUAL_WIELD_WEAPON_TYPES } from '@/utils/weaponProperties';
+import {
+  ALL_TRINKET_SLOT_TYPES,
+  DUAL_TRINKET_SLOT_TYPES,
+  SLOT_TO_TRINKET_TYPE,
+  TRINKET_SLOT_DEFAULT_ICONS,
+  TRINKET_SLOTS,
+} from '@/utils/trinketProperties';
+import { PROFESSION_ARMOR_WEIGHT } from '@/utils/professionArmorWeight';
+import type { ArmorWeight } from '@/utils/professionArmorWeight';
+import {
+  ALL_ARMOR_SLOTS,
+  ALL_ARMOR_WEIGHTS,
+  ARMOR_EQUIPMENT_SLOTS,
+  ARMOR_SLOT_ICONS,
+} from '@/utils/armorProperties';
+import type { ArmorMode, ArmorSlotType } from '@/utils/armorProperties';
+import { LEGENDARY_ARMOR_DATA } from '@/utils/legendaryArmorData';
 
 export interface CalculationOptions {
   /** Weapon types → kit count map from useStarterKits. Empty map = disabled. */
@@ -205,14 +227,270 @@ export function calculateRecommendations(
   return { recommendations, coveredByArmory };
 }
 
-/** Collect all unique item IDs needed for an analysis run */
+/** Collect all unique item IDs needed for an analysis run (weapons + trinkets/back + armor) */
 export function collectItemIds(characters: Character[], armory: LegendaryArmoryItem[]): number[] {
   const ids = new Set<number>();
   for (const char of characters) {
     for (const eq of char.equipment) {
-      if (WEAPON_SLOTS.has(eq.slot)) ids.add(eq.id);
+      if (WEAPON_SLOTS.has(eq.slot) || TRINKET_SLOTS.has(eq.slot) || ARMOR_EQUIPMENT_SLOTS.has(eq.slot)) ids.add(eq.id);
     }
   }
   for (const entry of armory) ids.add(entry.id);
   return [...ids];
+}
+
+// ─── Trinket & Back analysis ──────────────────────────────────────────────────
+
+interface TrinketAccumulator {
+  allChars: LegendaryTrinketRecommendation['affectedCharacters'];
+  hasEquippedLegendary: boolean;
+  icon: string | undefined;
+  sampleItemId: number | undefined;
+}
+
+export interface TrinketAnalysisResult {
+  recommendations: LegendaryTrinketRecommendation[];
+  coveredByArmory: LegendaryTrinketRecommendation[];
+}
+
+export function calculateTrinketRecommendations(
+  characters: Character[],
+  itemMap: Map<number, GW2Item>,
+  armory: LegendaryArmoryItem[],
+): TrinketAnalysisResult {
+  // Build armory map: TrinketSlotType → legendary count + icon
+  const armoryBySlotType = new Map<TrinketSlotType, number>();
+  const armoryIconBySlotType = new Map<TrinketSlotType, { icon: string; id: number }>();
+
+  for (const entry of armory) {
+    const item = itemMap.get(entry.id);
+    if (!item) continue;
+
+    let slotType: TrinketSlotType | null = null;
+    if (item.type === 'Back') {
+      slotType = 'Back';
+    } else if (item.type === 'Trinket' && item.details?.type) {
+      const dt = item.details.type;
+      if (dt === 'Amulet' || dt === 'Ring' || dt === 'Accessory') slotType = dt as TrinketSlotType;
+    }
+    if (!slotType) continue;
+
+    armoryBySlotType.set(slotType, (armoryBySlotType.get(slotType) ?? 0) + entry.count);
+    if (!armoryIconBySlotType.has(slotType))
+      armoryIconBySlotType.set(slotType, { icon: item.icon, id: item.id });
+  }
+
+  // Walk all trinket/back equipment slots
+  const usageMap = new Map<TrinketSlotType, TrinketAccumulator>();
+
+  for (const char of characters) {
+    for (const eq of char.equipment) {
+      const slotType = SLOT_TO_TRINKET_TYPE[eq.slot];
+      if (!slotType) continue;
+
+      const item = itemMap.get(eq.id);
+      if (!item) continue;
+
+      const isLegendary = item.rarity === 'Legendary';
+      const tabCount = eq.tabs?.length ?? 1;
+
+      const acc: TrinketAccumulator = usageMap.get(slotType) ?? {
+        allChars: [],
+        hasEquippedLegendary: false,
+        icon: undefined,
+        sampleItemId: undefined,
+      };
+
+      for (let i = 0; i < tabCount; i++) {
+        acc.allChars.push({
+          name: char.name,
+          profession: char.profession,
+          slot: eq.slot as TrinketSlot,
+          isLegendary,
+        });
+      }
+
+      if (isLegendary) acc.hasEquippedLegendary = true;
+      if (!isLegendary && !acc.icon) {
+        acc.icon = item.icon;
+        acc.sampleItemId = item.id;
+      }
+
+      usageMap.set(slotType, acc);
+    }
+  }
+
+  // Ensure every slot type appears, using armory/itemMap icons as fallback
+  const itemMapIconBySlotType = new Map<TrinketSlotType, { icon: string; id: number }>();
+  for (const [id, item] of itemMap) {
+    let slotType: TrinketSlotType | null = null;
+    if (item.type === 'Back') slotType = 'Back';
+    else if (item.type === 'Trinket' && item.details?.type) {
+      const dt = item.details.type;
+      if (dt === 'Amulet' || dt === 'Ring' || dt === 'Accessory') slotType = dt as TrinketSlotType;
+    }
+    if (slotType && !itemMapIconBySlotType.has(slotType))
+      itemMapIconBySlotType.set(slotType, { icon: item.icon, id });
+  }
+
+  for (const slotType of ALL_TRINKET_SLOT_TYPES) {
+    if (!usageMap.has(slotType)) {
+      const info = armoryIconBySlotType.get(slotType) ?? itemMapIconBySlotType.get(slotType);
+      usageMap.set(slotType, {
+        allChars: [],
+        hasEquippedLegendary: false,
+        icon: info?.icon,
+        sampleItemId: info?.id,
+      });
+    }
+  }
+
+  const recommendations: LegendaryTrinketRecommendation[] = [];
+  const coveredByArmory: LegendaryTrinketRecommendation[] = [];
+
+  for (const [slotType, acc] of usageMap.entries()) {
+    const armoryCount = armoryBySlotType.get(slotType) ?? 0;
+    const impact = acc.allChars.filter((c) => !c.isLegendary).length;
+
+    const rec: LegendaryTrinketRecommendation = {
+      slotType,
+      impact,
+      affectedCharacters: acc.allChars,
+      existingLegendaryCount: armoryCount,
+      hasEquippedLegendary: acc.hasEquippedLegendary,
+      icon: TRINKET_SLOT_DEFAULT_ICONS[slotType],
+      sampleItemId: acc.sampleItemId,
+    };
+
+    const isDual = DUAL_TRINKET_SLOT_TYPES.has(slotType);
+    const isCovered = isDual
+      ? impact === 0 || armoryCount >= 2
+      : armoryCount > 0 || acc.hasEquippedLegendary;
+
+    if (isCovered) coveredByArmory.push(rec);
+    else recommendations.push(rec);
+  }
+
+  const byImpact = (a: LegendaryTrinketRecommendation, b: LegendaryTrinketRecommendation) =>
+    b.impact - a.impact || a.slotType.localeCompare(b.slotType);
+
+  recommendations.sort(byImpact);
+  coveredByArmory.sort(byImpact);
+
+  return { recommendations, coveredByArmory };
+}
+
+// ─── Armor analysis ───────────────────────────────────────────────────────────
+
+type ArmorKey = `${ArmorWeight}:${ArmorSlotType}`;
+
+interface ArmorAccumulator {
+  allChars: LegendaryArmorRecommendation['affectedCharacters'];
+  hasEquippedLegendary: boolean;
+  coveredModes: Set<ArmorMode>;
+}
+
+export function calculateArmorRecommendations(
+  characters: Character[],
+  itemMap: Map<number, GW2Item>,
+  armory: LegendaryArmoryItem[],
+): ArmorAnalysisResult {
+  // Build armory coverage: (weight:slot) → count + modes
+  const armoryCountByKey = new Map<ArmorKey, number>();
+  const armoryModesByKey = new Map<ArmorKey, Set<ArmorMode>>();
+
+  for (const entry of armory) {
+    const data = LEGENDARY_ARMOR_DATA.get(entry.id);
+    if (!data) continue;
+    const key: ArmorKey = `${data.weight}:${data.slot}`;
+    armoryCountByKey.set(key, (armoryCountByKey.get(key) ?? 0) + entry.count);
+    const modes = armoryModesByKey.get(key) ?? new Set<ArmorMode>();
+    modes.add(data.mode);
+    armoryModesByKey.set(key, modes);
+  }
+
+  // Walk character equipment for all armor slots
+  const usageMap = new Map<ArmorKey, ArmorAccumulator>();
+
+  for (const char of characters) {
+    const weight = PROFESSION_ARMOR_WEIGHT[char.profession];
+    if (!weight) continue;
+
+    for (const eq of char.equipment) {
+      if (!ARMOR_EQUIPMENT_SLOTS.has(eq.slot)) continue;
+      const slot = eq.slot as ArmorSlotType;
+      const item = itemMap.get(eq.id);
+      if (!item) continue;
+
+      const key: ArmorKey = `${weight}:${slot}`;
+      const tabCount = eq.tabs?.length ?? 1;
+      const isLegendary = item.rarity === 'Legendary';
+
+      const acc: ArmorAccumulator = usageMap.get(key) ?? {
+        allChars: [],
+        hasEquippedLegendary: false,
+        coveredModes: new Set<ArmorMode>(),
+      };
+
+      for (let i = 0; i < tabCount; i++) {
+        acc.allChars.push({ name: char.name, profession: char.profession, isLegendary });
+      }
+
+      if (isLegendary) {
+        acc.hasEquippedLegendary = true;
+        const armorData = LEGENDARY_ARMOR_DATA.get(eq.id);
+        if (armorData) acc.coveredModes.add(armorData.mode);
+      }
+
+      usageMap.set(key, acc);
+    }
+  }
+
+  // Ensure every (weight × slot) combo exists
+  for (const weight of ALL_ARMOR_WEIGHTS) {
+    for (const slot of ALL_ARMOR_SLOTS) {
+      const key: ArmorKey = `${weight}:${slot}`;
+      if (!usageMap.has(key)) {
+        usageMap.set(key, { allChars: [], hasEquippedLegendary: false, coveredModes: new Set() });
+      }
+    }
+  }
+
+  const recommendations: LegendaryArmorRecommendation[] = [];
+  const coveredByArmory: LegendaryArmorRecommendation[] = [];
+
+  for (const weight of ALL_ARMOR_WEIGHTS) {
+    for (const slot of ALL_ARMOR_SLOTS) {
+      const key: ArmorKey = `${weight}:${slot}`;
+      const acc = usageMap.get(key)!;
+      const armoryCount = armoryCountByKey.get(key) ?? 0;
+      const impact = acc.allChars.filter((c) => !c.isLegendary).length;
+      const coveredModes: ArmorMode[] = [
+        ...new Set([...(armoryModesByKey.get(key) ?? []), ...acc.coveredModes]),
+      ];
+
+      const rec: LegendaryArmorRecommendation = {
+        slot,
+        weight,
+        impact,
+        affectedCharacters: acc.allChars,
+        existingLegendaryCount: armoryCount,
+        hasEquippedLegendary: acc.hasEquippedLegendary,
+        coveredModes,
+        icon: ARMOR_SLOT_ICONS[weight][slot],
+      };
+
+      const isCovered = armoryCount > 0 || acc.hasEquippedLegendary;
+      if (isCovered) coveredByArmory.push(rec);
+      else recommendations.push(rec);
+    }
+  }
+
+  const byArmorImpact = (a: LegendaryArmorRecommendation, b: LegendaryArmorRecommendation) =>
+    b.impact - a.impact || a.slot.localeCompare(b.slot);
+
+  recommendations.sort(byArmorImpact);
+  coveredByArmory.sort(byArmorImpact);
+
+  return { recommendations, coveredByArmory };
 }

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, ArrowUpDown, Check, ChevronRight, RefreshCw, Users } from 'lucide-react';
+import { AlertTriangle, ArrowUpDown, Check, ChevronDown, ChevronRight, RefreshCw, Users, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -93,9 +93,77 @@ export function CharacterSelectionPage({
 
   const selectedCharacters = characters.filter((c) => selected.has(c.name));
 
+  // ── Quick-select panel ─────────────────────────────────────────
+  const [quickSelectOpen, setQuickSelectOpen] = useState(false);
+
+  const [minHours, setMinHours] = useState<number>(() => storage.getMinPlaytimeHours());
+  const sliderRef = useRef<HTMLInputElement>(null);
+  const sliderDisplayRef = useRef<HTMLSpanElement>(null);
+  const [topNInput, setTopNInput] = useState<string>('');
+
+  const sliderMax = useMemo(() => {
+    if (characters.length === 0) return 500;
+    const maxH = Math.max(...characters.map((c) => c.age / 3600));
+    return Math.max(100, Math.ceil(maxH / 50) * 50);
+  }, [characters]);
+
+  // Sync slider DOM when sliderMax changes (characters loaded) or initial value
+  useEffect(() => {
+    if (!sliderRef.current) return;
+    const clamped = Math.min(minHours, sliderMax);
+    sliderRef.current.value = String(clamped);
+    const pct = (clamped / sliderMax) * 100;
+    sliderRef.current.style.background = `linear-gradient(to right, rgba(147,73,204,0.7) ${pct}%, rgba(147,73,204,0.2) ${pct}%)`;
+    if (sliderDisplayRef.current) sliderDisplayRef.current.textContent = `${clamped} h`;
+  }, [sliderMax]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSliderInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value);
+    const pct = (val / sliderMax) * 100;
+    e.target.style.background = `linear-gradient(to right, rgba(147,73,204,0.7) ${pct}%, rgba(147,73,204,0.2) ${pct}%)`;
+    if (sliderDisplayRef.current) sliderDisplayRef.current.textContent = `${val} h`;
+  };
+
+  const handleSliderPointerUp = () => {
+    if (!sliderRef.current) return;
+    setMinHours(Number(sliderRef.current.value));
+  };
+
+  const applyPlaytimeFilter = () => {
+    const val = sliderRef.current ? Number(sliderRef.current.value) : minHours;
+    storage.setMinPlaytimeHours(val);
+    const minSeconds = val * 3600;
+    setSelected(new Set(characters.filter((c) => c.age >= minSeconds).map((c) => c.name)));
+  };
+
+  const applyTopN = () => {
+    const n = parseInt(topNInput);
+    if (isNaN(n) || n <= 0) return;
+    const sorted = [...characters].sort((a, b) => b.age - a.age);
+    setSelected(new Set(sorted.slice(0, n).map((c) => c.name)));
+  };
+
+  const applyLevel80Only = () => {
+    setSelected(new Set(characters.filter((c) => c.level === 80).map((c) => c.name)));
+  };
+
   // ── Loading / error ────────────────────────────────────────────
   const isLoading = charactersQuery.isPending;
   const error = charactersQuery.error;
+
+  const quickSelectButtonStyle: React.CSSProperties = {
+    padding: '4px 12px',
+    borderRadius: 4,
+    border: '1px solid rgba(147,73,204,0.35)',
+    background: 'rgba(147,73,204,0.15)',
+    color: '#c8a0f0',
+    fontSize: 12,
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: 'all 0.15s',
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
+  };
 
   const SORT_OPTIONS: { key: SortKey; label: string }[] = [
     { key: 'playtime', label: t('characters.sortPlaytime') },
@@ -208,6 +276,40 @@ export function CharacterSelectionPage({
                     </span>
                   )}
 
+                  {/* Quick-select toggle */}
+                  <button
+                    onClick={() => setQuickSelectOpen((v) => !v)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 5,
+                      padding: '3px 10px',
+                      borderRadius: 4,
+                      border: quickSelectOpen
+                        ? '1px solid rgba(147,73,204,0.55)'
+                        : '1px solid rgba(147,73,204,0.28)',
+                      background: quickSelectOpen
+                        ? 'rgba(147,73,204,0.18)'
+                        : 'rgba(147,73,204,0.08)',
+                      color: quickSelectOpen ? '#c8a0f0' : '#9d93b0',
+                      fontSize: 12,
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <Zap className="w-3 h-3" />
+                    {t('characters.quickSelect')}
+                    <ChevronDown
+                      className="w-3 h-3"
+                      style={{
+                        transition: 'transform 0.2s',
+                        transform: quickSelectOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                      }}
+                    />
+                  </button>
+
                   {/* Sort dropdown */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -235,6 +337,146 @@ export function CharacterSelectionPage({
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
+                </div>
+              </div>
+            )}
+
+            {/* Quick-select panel */}
+            {quickSelectOpen && (
+              <div
+                style={{
+                  border: '1px solid rgba(147,73,204,0.22)',
+                  background: 'rgba(15,11,22,0.85)',
+                  borderRadius: 8,
+                  padding: '14px 16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    color: '#5a5468',
+                  }}
+                >
+                  {t('characters.quickSelect')}
+                </span>
+
+                {/* Level 80 only */}
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm" style={{ color: '#c8bee0', fontWeight: 500 }}>
+                      {t('characters.onlyMaxLevel')}
+                    </p>
+                    <p className="text-xs" style={{ color: '#5a5468' }}>
+                      {t('characters.onlyMaxLevelHint')}
+                    </p>
+                  </div>
+                  <button
+                    onClick={applyLevel80Only}
+                    style={quickSelectButtonStyle}
+                  >
+                    {t('characters.topNApply')}
+                  </button>
+                </div>
+
+                <div style={{ height: 1, background: 'rgba(147,73,204,0.1)' }} />
+
+                {/* Top N */}
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm" style={{ color: '#c8bee0', fontWeight: 500 }}>
+                      {t('characters.topN')}
+                    </p>
+                    <p className="text-xs" style={{ color: '#5a5468' }}>
+                      {t('characters.topNHint')}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={topNInput}
+                      onChange={(e) => setTopNInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && applyTopN()}
+                      placeholder="5"
+                      style={{
+                        width: 60,
+                        padding: '3px 6px',
+                        background: 'rgba(147,73,204,0.08)',
+                        border: '1px solid rgba(147,73,204,0.25)',
+                        borderRadius: 4,
+                        color: '#e8e4f0',
+                        fontSize: 13,
+                        textAlign: 'center',
+                        outline: 'none',
+                      }}
+                    />
+                    <button
+                      onClick={applyTopN}
+                      disabled={topNInput === '' || isNaN(parseInt(topNInput)) || parseInt(topNInput) <= 0}
+                      style={{
+                        ...quickSelectButtonStyle,
+                        opacity: topNInput !== '' && !isNaN(parseInt(topNInput)) && parseInt(topNInput) > 0 ? 1 : 0.4,
+                        cursor: topNInput !== '' && !isNaN(parseInt(topNInput)) && parseInt(topNInput) > 0 ? 'pointer' : 'not-allowed',
+                      }}
+                    >
+                      {t('characters.topNApply')}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ height: 1, background: 'rgba(147,73,204,0.1)' }} />
+
+                {/* Min playtime */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm" style={{ color: '#c8bee0', fontWeight: 500 }}>
+                        {t('characters.minPlaytimeLabel')}
+                      </p>
+                      <p className="text-xs" style={{ color: '#5a5468' }}>
+                        {t('characters.minPlaytimeHint', { hours: minHours })}
+                      </p>
+                    </div>
+                    <button onClick={applyPlaytimeFilter} style={quickSelectButtonStyle}>
+                      {t('characters.minPlaytimeApply')}
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={sliderRef}
+                      type="range"
+                      min={0}
+                      max={sliderMax}
+                      step={1}
+                      defaultValue={Math.min(minHours, sliderMax)}
+                      onChange={handleSliderInput}
+                      onPointerUp={handleSliderPointerUp}
+                      className="playtime-slider"
+                      style={{
+                        background: `linear-gradient(to right, rgba(147,73,204,0.7) ${(Math.min(minHours, sliderMax) / sliderMax) * 100}%, rgba(147,73,204,0.2) ${(Math.min(minHours, sliderMax) / sliderMax) * 100}%)`,
+                      }}
+                    />
+                    <span
+                      ref={sliderDisplayRef}
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: '#c8a0f0',
+                        minWidth: 52,
+                        textAlign: 'right',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {Math.min(minHours, sliderMax)} h
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
