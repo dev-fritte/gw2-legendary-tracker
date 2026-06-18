@@ -46,6 +46,7 @@ export default {
     errorTitle: 'Charaktere konnten nicht geladen werden',
     errorRetry: 'Erneut versuchen',
     noCharacters: 'Keine Charaktere auf diesem Konto gefunden.',
+    selectToAnalyze: 'Wähle links Charaktere aus, um Empfehlungen zu sehen.',
     fetchingCharacter: '{{name}} wird geladen…',
     partialError: '{{count}} Charakter(e) konnten nicht geladen werden und wurden übersprungen.',
     sortBy: 'Sortieren nach',

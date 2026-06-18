@@ -44,6 +44,7 @@ export default {
     errorTitle: 'Failed to load characters',
     errorRetry: 'Retry',
     noCharacters: 'No characters found on this account.',
+    selectToAnalyze: 'Select characters on the left to see recommendations.',
     fetchingCharacter: 'Loading {{name}}…',
     partialError: '{{count}} character(s) could not be loaded and were skipped.',
     sortBy: 'Sort by',

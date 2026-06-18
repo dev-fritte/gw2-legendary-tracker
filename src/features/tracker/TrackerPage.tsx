@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, ArrowLeft, RefreshCw, Sparkles, ArrowRight } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { NavSection } from '@/components/Navbar';
-import { Navbar } from '@/components/Navbar';
 import {
   WeaponRecommendationCard,
   WeaponRecommendationCardSkeleton,
@@ -23,16 +22,12 @@ import { TransferToProphecyModal } from './TransferToProphecyModal';
 interface TrackerPageProps {
   apiKey: string;
   characters: Character[];
-  onBack: () => void;
-  onLogout: () => void;
   onNavigate: (section: NavSection) => void;
 }
 
 export function TrackerPage({
   apiKey,
   characters,
-  onBack,
-  onLogout,
   onNavigate,
 }: Readonly<TrackerPageProps>) {
   const { t } = useTranslation();
@@ -54,58 +49,27 @@ export function TrackerPage({
     useArmorAnalysis(apiKey, characters);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ color: '#e8e4f0' }}>
-      <Navbar onLogout={onLogout} activeSection="zommoros" onNavigate={onNavigate} />
-
-      <main className="flex-1 mx-auto w-full max-w-2xl px-4 py-8 space-y-6">
-        {/* Page header */}
-        <div className="space-y-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onBack}
-            className="gap-1.5 -ml-2"
-            style={{ color: '#8e8a9a' }}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            {t('tracker.backToSelection')}
-          </Button>
-
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span style={{ color: '#9349CC', fontFamily: '"Cinzel", serif', fontSize: 20 }}>
-                ✦
-              </span>
-              <h1
-                className="text-xl font-semibold"
-                style={{ color: '#e8e4f0', fontFamily: '"Cinzel", serif' }}
-              >
-                {t('tracker.title')}
-              </h1>
-            </div>
-            <p className="text-sm" style={{ color: '#8e8a9a' }}>
-              {t('tracker.description')}
-            </p>
+    <div className="space-y-6" style={{ color: '#e8e4f0' }}>
+      {/* Page header */}
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span style={{ color: '#9349CC', fontFamily: '"Cinzel", serif', fontSize: 20 }}>
+              ✦
+            </span>
+            <h1
+              className="text-xl font-semibold"
+              style={{ color: '#e8e4f0', fontFamily: '"Cinzel", serif' }}
+            >
+              {t('tracker.title')}
+            </h1>
           </div>
+          <p className="text-sm" style={{ color: '#8e8a9a' }}>
+            {t('tracker.description')}
+          </p>
+        </div>
 
-          {/* Analyzed characters chips */}
-          <div className="flex flex-wrap gap-1.5">
-            {characters.map((c) => (
-              <span
-                key={c.name}
-                className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs"
-                style={{
-                  border: '1px solid rgba(147,73,204,0.25)',
-                  background: 'rgba(147,73,204,0.08)',
-                  color: '#a89cc0',
-                }}
-              >
-                {c.name}
-              </span>
-            ))}
-          </div>
-
-          {/* Tab bar */}
+        {/* Tab bar */}
           <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid rgba(147,73,204,0.15)', paddingBottom: 0 }}>
             {(['weapons', 'trinkets', 'armor'] as const).map((tab) => {
               const isActive = activeTab === tab;
@@ -504,7 +468,6 @@ export function TrackerPage({
             )}
           </>
         )}
-      </main>
 
       {showTransferModal && result?.recommendations && (
         <TransferToProphecyModal

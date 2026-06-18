@@ -54,7 +54,7 @@ export function CharacterCard({ character, selected, onToggle }: CharacterCardPr
       />
 
       {/* Profession icon */}
-      <div style={{ width: 48, height: 48, flexShrink: 0 }}>
+      <div style={{ width: 32, height: 32, flexShrink: 0 }}>
         <img
           src={meta.decoIcon}
           alt={character.profession}
@@ -64,24 +64,22 @@ export function CharacterCard({ character, selected, onToggle }: CharacterCardPr
 
       {/* Text block */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-medium text-[#e8e4f0] truncate">{character.name}</span>
-        </div>
+        <span className="font-medium text-[#e8e4f0] truncate block">{character.name}</span>
 
-        <div className="mt-1 flex items-center gap-3 text-sm" style={{ color: '#6a6478' }}>
+        <div className="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 text-xs" style={{ color: '#6a6478' }}>
           <span>{t('characters.level', { level: character.level })}</span>
           <span style={{ color: '#3a3448' }}>·</span>
           <span className="capitalize">{character.race}</span>
           <span style={{ color: '#3a3448' }}>·</span>
           <span className="flex items-center gap-1">
-            <Clock className="w-3.5 h-3.5" />
+            <Clock className="w-3 h-3" />
             {hours.toLocaleString()} h
           </span>
           {templateCount > 0 && (
             <>
               <span style={{ color: '#3a3448' }}>·</span>
               <span className="flex items-center gap-1">
-                <LayoutList className="w-3.5 h-3.5" />
+                <LayoutList className="w-3 h-3" />
                 {t('characters.templates', { count: templateCount })}
               </span>
             </>
