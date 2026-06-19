@@ -132,6 +132,7 @@ export interface ItemDetails {
   min_power?: number;
   max_power?: number;
   defense?: number;
+  weight_class?: string;
   infusion_slots?: InfusionSlot[];
   attribute_adjustment?: number;
   infix_upgrade?: InfixUpgrade;

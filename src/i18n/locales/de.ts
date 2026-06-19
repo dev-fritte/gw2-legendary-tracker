@@ -195,6 +195,21 @@ export default {
     MediumArmor: 'Mittel',
     LightArmor: 'Leicht',
   },
+  armorSlots: {
+    Helm: 'Helm',
+    HelmAquatic: 'Tauchhelm',
+    Shoulders: 'Schulterschutz',
+    Coat: 'Brustpanzer',
+    Gloves: 'Handschuhe',
+    Leggings: 'Beinschienen',
+    Boots: 'Stiefel',
+  },
+  weightClasses: {
+    Heavy: 'Schwer',
+    Medium: 'Mittel',
+    Light: 'Leicht',
+    Clothing: 'Stoff',
+  },
   armorModes: {
     openWorld: 'Open World',
     raids: 'Raids',

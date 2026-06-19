@@ -193,6 +193,9 @@ export function ConstellationPath({
                 name={pickerIt?.name}
                 icon={pickerIt?.icon}
                 description={pickerIt?.description}
+                itemType={pickerIt?.itemType}
+                detailType={pickerIt?.detailType}
+                weightClass={pickerIt?.weightClass}
               >
               <div
                 onClick={() => (step.item ? onToggle(step.id) : onSlotClick(step.id))}

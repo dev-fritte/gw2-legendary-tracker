@@ -10,6 +10,10 @@ export interface LegendaryGridItem {
   count: number;
   maxCount: number;
   itemType: string;
+  /** Weapon type for weapons, armor slot for armor — from GW2 item details */
+  detailType?: string;
+  /** Armor weight class (Heavy/Medium/Light/Clothing) */
+  weightClass?: string;
 }
 
 function useAllLegendaryArmory(apiKey: string) {
@@ -59,6 +63,8 @@ export function useLegendaryOverview(apiKey: string) {
       count: accountMap.get(item.id) ?? 0,
       maxCount: maxCountMap.get(item.id) ?? 1,
       itemType: item.type,
+      detailType: item.details?.type,
+      weightClass: item.details?.weight_class,
     }))
     .sort((a, b) => {
       if (a.count > 0 && b.count === 0) return -1;

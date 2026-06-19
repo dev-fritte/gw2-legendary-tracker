@@ -8,6 +8,12 @@ interface LegendaryItemPopoverProps {
   name?: string;
   icon?: string;
   description?: string;
+  /** GW2 item type, e.g. 'Weapon' | 'Armor' */
+  itemType?: string;
+  /** Weapon type for weapons, armor slot for armor — from GW2 item details */
+  detailType?: string;
+  /** Armor weight class (Heavy/Medium/Light/Clothing) */
+  weightClass?: string;
   children: React.ReactNode;
 }
 
@@ -27,6 +33,9 @@ export function LegendaryItemPopover({
   name,
   icon,
   description,
+  itemType,
+  detailType,
+  weightClass,
   children,
 }: LegendaryItemPopoverProps) {
   const { i18n, t } = useTranslation();
@@ -35,6 +44,19 @@ export function LegendaryItemPopover({
   if (!name) return <>{children}</>;
 
   const cleanDesc = description ? stripMarkup(description) : '';
+
+  const typeLabel =
+    itemType === 'Weapon' && detailType
+      ? String(t(`weapons.${detailType}`, { defaultValue: detailType }))
+      : itemType === 'Armor' && (detailType || weightClass)
+        ? [
+            detailType && String(t(`armorSlots.${detailType}`, { defaultValue: detailType })),
+            weightClass &&
+              String(t(`weightClasses.${weightClass}`, { defaultValue: weightClass })),
+          ]
+            .filter(Boolean)
+            .join(' · ')
+        : '';
 
   return (
     <TooltipPrimitive.Root delayDuration={500}>
@@ -88,6 +110,21 @@ export function LegendaryItemPopover({
               {name}
             </span>
           </div>
+
+          {/* Type label */}
+          {typeLabel && (
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+                color: '#9349CC',
+              }}
+            >
+              {typeLabel}
+            </span>
+          )}
 
           {/* Description */}
           {cleanDesc && (

@@ -14,8 +14,10 @@ export interface LegendaryPickerItem {
   description?: string;
   itemType: string; // 'Weapon' | 'Armor' | 'Trinket' | 'Back' | 'UpgradeComponent'
   generation: LegendaryGeneration;
-  /** Weapon type, armor weight, trinket slot, etc. — from GW2 item details */
+  /** Weapon type, armor slot, trinket slot, etc. — from GW2 item details */
   detailType?: string;
+  /** Armor weight class (Heavy/Medium/Light/Clothing) */
+  weightClass?: string;
 }
 
 /** Maps generation key to the picker top-level tab. */
@@ -83,6 +85,7 @@ export function useAllLegendaryItems(apiKey: string) {
     itemType: raw.type,
     generation: getLegendaryGeneration(raw.id, raw.type),
     detailType: raw.details?.type,
+    weightClass: raw.details?.weight_class,
   }));
 
   // Stable lookup map — name → item (used to resolve step.item strings)

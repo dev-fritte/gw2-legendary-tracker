@@ -284,6 +284,9 @@ function LegendaryTile({ item }: { item: LegendaryGridItem }) {
       name={item.name}
       icon={item.icon}
       description={item.description}
+      itemType={item.itemType}
+      detailType={item.detailType}
+      weightClass={item.weightClass}
     >
     <div
       style={{

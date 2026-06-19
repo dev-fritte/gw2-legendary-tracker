@@ -86,8 +86,16 @@ Your API key is stored only in your browser's `localStorage` and is never sent t
 - [x] add starterkits to roadmap selection
 - [x] remove default data from glint's prophecy
 - [x] expand starterkits which are not owned (to plan)
-- [ ] cache starterkits
+- [x] cache starterkits
+- [x] zomorros: select only characters with playtime > X hours
+- [ ] BUG: fetch items with correct language, reload on change
+- [ ] add gen3 legendary skins to overview page, sort by type name
+- [x] add ItemType in hover modal, add armor class for armor items
 - [ ] scan snowcrows benchmarks for number of builds with the specific weapon
 - [ ] add gen3 legendary skins
 - [ ] add material/crafing calculations to check how expensive the legendary item is
 - [ ] settings for default wiki language
+- [ ] roadmap for first legendaries
+  - select played gamemodes
+  - show timegated tasks
+  - show overlaps of legendaries

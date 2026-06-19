@@ -99,6 +99,9 @@ export function ChronicleCard({
           name={pickerIt?.name}
           icon={pickerIt?.icon}
           description={pickerIt?.description}
+          itemType={pickerIt?.itemType}
+          detailType={pickerIt?.detailType}
+          weightClass={pickerIt?.weightClass}
         >
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flex: 1, minHeight: 0 }}>
           <ProphecyOrb status={status} tint={tint} size={44} icon={pickerIt?.icon} />

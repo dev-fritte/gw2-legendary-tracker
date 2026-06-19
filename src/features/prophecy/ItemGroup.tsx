@@ -51,6 +51,9 @@ export function ItemGroup({
             name={it.name}
             icon={it.icon}
             description={it.description}
+            itemType={it.itemType}
+            detailType={it.detailType}
+            weightClass={it.weightClass}
           >
           <button
             onClick={() => onPick(it.name)}
