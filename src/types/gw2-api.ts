@@ -225,6 +225,46 @@ export interface LegendaryWeaponRecommendation {
   sampleItemId?: number;
 }
 
+export type TrinketSlotType = 'Amulet' | 'Ring' | 'Accessory' | 'Back';
+
+export interface LegendaryTrinketRecommendation {
+  slotType: TrinketSlotType;
+  impact: number;
+  affectedCharacters: Array<{
+    name: string;
+    profession: string;
+    slot: TrinketSlot;
+    isLegendary: boolean;
+  }>;
+  existingLegendaryCount: number;
+  hasEquippedLegendary: boolean;
+  icon?: string;
+  sampleItemId?: number;
+}
+
+import type { ArmorWeight } from '@/utils/professionArmorWeight';
+import type { ArmorMode, ArmorSlotType } from '@/utils/armorProperties';
+
+export interface LegendaryArmorRecommendation {
+  slot: ArmorSlotType;
+  weight: ArmorWeight;
+  impact: number;
+  affectedCharacters: Array<{
+    name: string;
+    profession: string;
+    isLegendary: boolean;
+  }>;
+  existingLegendaryCount: number;
+  hasEquippedLegendary: boolean;
+  coveredModes: ArmorMode[];
+  icon: string;
+}
+
+export interface ArmorAnalysisResult {
+  recommendations: LegendaryArmorRecommendation[];
+  coveredByArmory: LegendaryArmorRecommendation[];
+}
+
 /** A single item slot in the account bank (null = empty slot) */
 export interface BankItem {
   id: number;

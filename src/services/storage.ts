@@ -9,6 +9,7 @@ export interface StoredStep {
 }
 const SELECTED_CHARS_KEY = 'gw2_legendary_tracker_selected_chars';
 const KIT_CHOICES_KEY = 'gw2_legendary_tracker_kit_choices';
+const MIN_PLAYTIME_KEY = 'gw2_legendary_tracker_min_playtime_hours';
 
 export const storage = {
   getApiKey(): string | null {
@@ -84,6 +85,25 @@ export const storage = {
   setRoadmap(steps: StoredStep[]): void {
     try {
       localStorage.setItem(ROADMAP_KEY, JSON.stringify(steps));
+    } catch {
+      // ignore
+    }
+  },
+
+  getMinPlaytimeHours(): number {
+    try {
+      const raw = localStorage.getItem(MIN_PLAYTIME_KEY);
+      if (!raw) return 0;
+      const n = parseFloat(raw);
+      return isNaN(n) ? 0 : n;
+    } catch {
+      return 0;
+    }
+  },
+
+  setMinPlaytimeHours(hours: number): void {
+    try {
+      localStorage.setItem(MIN_PLAYTIME_KEY, String(hours));
     } catch {
       // ignore
     }
