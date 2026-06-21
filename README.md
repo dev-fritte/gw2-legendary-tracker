@@ -88,7 +88,7 @@ Your API key is stored only in your browser's `localStorage` and is never sent t
 - [x] expand starterkits which are not owned (to plan)
 - [x] cache starterkits
 - [x] zomorros: select only characters with playtime > X hours
-- [ ] BUG: fetch items with correct language, reload on change
+- [x] BUG: fetch items with correct language, reload on change
 - [ ] add gen3 legendary skins to overview page, sort by type name
 - [x] add ItemType in hover modal, add armor class for armor items
 - [ ] scan snowcrows benchmarks for number of builds with the specific weapon
