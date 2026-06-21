@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { getApiClient } from '@/services/apiClient';
 import type { WeaponType } from '@/types/gw2-api';
 import { DUAL_WIELD_WEAPON_TYPES } from '@/utils/weaponProperties';
@@ -23,6 +24,8 @@ export interface ArmoryStatus {
 }
 
 export function useArmoryStatus(apiKey: string): ArmoryStatus & { isLoading: boolean } {
+  const { i18n } = useTranslation();
+  const lang = i18n.language.startsWith('de') ? 'de' : 'en';
   // Same query keys as useLegendaryOverview — fully shared cache
   const accountArmoryQuery = useQuery({
     queryKey: ['legendaryArmory', 'account', apiKey],
@@ -39,8 +42,8 @@ export function useArmoryStatus(apiKey: string): ArmoryStatus & { isLoading: boo
   const allIds = useMemo(() => (allArmoryQuery.data ?? []).map((e) => e.id), [allArmoryQuery.data]);
 
   const itemsQuery = useQuery({
-    queryKey: ['items', allIds],
-    queryFn: () => getApiClient(apiKey).getItems(allIds),
+    queryKey: ['items', allIds, lang],
+    queryFn: () => getApiClient(apiKey).getItems(allIds, lang),
     enabled: allIds.length > 0,
     staleTime: 60 * 60 * 1000,
   });

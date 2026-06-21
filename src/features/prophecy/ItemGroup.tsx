@@ -9,8 +9,8 @@ import { LegendaryItemPopover } from '@/components/ui/LegendaryItemPopover';
 
 interface ItemGroupProps {
   items: LegendaryPickerItem[];
-  currentItem: string | null;
-  onPick: (name: string) => void;
+  currentItem: number | null;
+  onPick: (id: number) => void;
   t: TFunction;
   kitChosenWeaponTypes: Set<string>;
   usedInRoadmap: RoadmapUsage;
@@ -33,7 +33,7 @@ export function ItemGroup({
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
       {items.map((it) => {
-        const isCurrent = currentItem === it.name;
+        const isCurrent = currentItem === it.id;
         const isOwned = unlockedItemIds.has(it.id);
         const tint = GENERATION_TINT[it.generation];
         const subLabel = getSubLabel(it, t);
@@ -42,8 +42,8 @@ export function ItemGroup({
         const isStarterKit =
           it.generation === 'gen1' && !!it.detailType && kitChosenWeaponTypes.has(it.detailType);
 
-        const isRoadmapDone = usedInRoadmap.done.has(it.name);
-        const isRoadmapPlanned = !isRoadmapDone && usedInRoadmap.planned.has(it.name);
+        const isRoadmapDone = usedInRoadmap.done.has(it.id);
+        const isRoadmapPlanned = !isRoadmapDone && usedInRoadmap.planned.has(it.id);
 
         return (
           <LegendaryItemPopover
@@ -56,7 +56,7 @@ export function ItemGroup({
             weightClass={it.weightClass}
           >
           <button
-            onClick={() => onPick(it.name)}
+            onClick={() => onPick(it.id)}
             style={{
               height: 72,
               display: 'flex',

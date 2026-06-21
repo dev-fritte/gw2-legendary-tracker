@@ -9,7 +9,7 @@ interface SortableEntryCardProps {
   entry: TransferEntry;
   index: number;
   onDelete: () => void;
-  onSelect: (name: string) => void;
+  onSelect: (itemId: number) => void;
   t: (key: string, opts?: Record<string, unknown>) => string;
 }
 
@@ -124,12 +124,12 @@ export function SortableEntryCard({
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-            {entry.availableNames.map((name) => {
-              const isSelected = entry.selectedName === name;
+            {entry.availableOptions.map((opt) => {
+              const isSelected = entry.selectedId === opt.id;
               return (
-                <Tooltip key={name} content={name} side="top" delayDuration={500}>
+                <Tooltip key={opt.id} content={opt.name} side="top" delayDuration={500}>
                   <button
-                    onClick={() => onSelect(name)}
+                    onClick={() => onSelect(opt.id)}
                     style={{
                       padding: '2px 8px',
                       borderRadius: 4,
@@ -146,7 +146,7 @@ export function SortableEntryCard({
                       textOverflow: 'ellipsis',
                     }}
                   >
-                    {name}
+                    {opt.name}
                   </button>
                 </Tooltip>
               );

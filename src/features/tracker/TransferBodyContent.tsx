@@ -12,7 +12,7 @@ interface TransferBodyContentProps {
   sensors: ReturnType<typeof useSensors>;
   onDragEnd: (event: DragEndEvent) => void;
   onDelete: (id: string) => void;
-  onSelect: (id: string, name: string) => void;
+  onSelect: (id: string, itemId: number) => void;
   t: (key: string, opts?: Record<string, unknown>) => string;
 }
 
@@ -76,7 +76,7 @@ export function TransferBodyContent({
                 entry={entry}
                 index={i}
                 onDelete={() => onDelete(entry.id)}
-                onSelect={(name) => onSelect(entry.id, name)}
+                onSelect={(itemId) => onSelect(entry.id, itemId)}
                 t={t}
               />
             ))}

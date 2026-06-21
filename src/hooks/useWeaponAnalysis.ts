@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { getApiClient } from '@/services/apiClient';
 import { calculateRecommendations, collectItemIds } from '@/utils/calculation';
 import type { Character, GW2Item, LegendaryArmoryItem, WeaponType } from '@/types/gw2-api';
@@ -12,10 +13,10 @@ function useArmory(apiKey: string) {
   });
 }
 
-function useItems(apiKey: string, ids: number[], enabled: boolean) {
+function useItems(apiKey: string, ids: number[], enabled: boolean, lang: string) {
   return useQuery({
-    queryKey: ['items', ids],
-    queryFn: async (): Promise<GW2Item[]> => getApiClient(apiKey).getItems(ids),
+    queryKey: ['items', ids, lang],
+    queryFn: async (): Promise<GW2Item[]> => getApiClient(apiKey).getItems(ids, lang),
     enabled: enabled && ids.length > 0,
     staleTime: 60 * 60 * 1000,
   });
@@ -27,11 +28,13 @@ export function useWeaponAnalysis(
   starterKitMap: Map<WeaponType, number> = new Map(),
   prioritiseStarterKits: boolean = true
 ) {
+  const { i18n } = useTranslation();
+  const lang = i18n.language.startsWith('de') ? 'de' : 'en';
   const armoryQuery = useArmory(apiKey);
   const armory = armoryQuery.data ?? [];
 
   const itemIds = armoryQuery.isSuccess ? collectItemIds(characters, armory) : [];
-  const itemsQuery = useItems(apiKey, itemIds, armoryQuery.isSuccess);
+  const itemsQuery = useItems(apiKey, itemIds, armoryQuery.isSuccess, lang);
 
   // Fetch ALL legendary item data to supply icons for weapon types that are
   // neither equipped nor owned. Shares cache with Overview / StarterKits pages.
@@ -44,7 +47,7 @@ export function useWeaponAnalysis(
     () => (allArmoryQuery.data ?? []).map((e) => e.id),
     [allArmoryQuery.data]
   );
-  const allLegendaryItemsQuery = useItems(apiKey, allLegendaryIds, allLegendaryIds.length > 0);
+  const allLegendaryItemsQuery = useItems(apiKey, allLegendaryIds, allLegendaryIds.length > 0, lang);
 
   // Merge: character/owned-armory items take precedence, all-legendary fills the gaps.
   const itemMap = useMemo(() => {

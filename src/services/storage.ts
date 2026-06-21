@@ -3,7 +3,8 @@ const ROADMAP_KEY = 'lmf.roadmap.v1';
 
 export interface StoredStep {
   id: number;
-  item: string | null;
+  /** GW2 item ID — stored as an ID (not a localized name) so it survives language switches. */
+  item: number | null;
   done: boolean;
   doneAt?: string;
 }
@@ -76,7 +77,10 @@ export const storage = {
     try {
       const raw = localStorage.getItem(ROADMAP_KEY);
       if (!raw) return [];
-      return JSON.parse(raw) as StoredStep[];
+      const parsed = JSON.parse(raw) as StoredStep[];
+      // Legacy entries stored the localized item name (string) instead of its ID —
+      // those can't be resolved reliably anymore, so reset them to "unselected".
+      return parsed.map((s) => (typeof s.item === 'string' ? { ...s, item: null } : s));
     } catch {
       return [];
     }

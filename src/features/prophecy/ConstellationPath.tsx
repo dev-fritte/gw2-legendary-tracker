@@ -11,7 +11,7 @@ import { LegendaryItemPopover } from '@/components/ui/LegendaryItemPopover';
 
 interface PathProps {
   steps: Step[];
-  itemsByName: Map<string, LegendaryPickerItem>;
+  itemsById: Map<number, LegendaryPickerItem>;
   onSlotClick: (id: number) => void;
   onToggle: (id: number) => void;
   onScrollSync: (sx: number) => void;
@@ -22,7 +22,7 @@ const H = 400;
 
 export function ConstellationPath({
   steps,
-  itemsByName,
+  itemsById,
   onSlotClick,
   onToggle,
   onScrollSync,
@@ -183,7 +183,7 @@ export function ConstellationPath({
           {steps.map((step, i) => {
             const pos = positions[i];
             const status = stepStatus(step, steps);
-            const pickerIt = step.item ? itemsByName.get(step.item) : undefined;
+            const pickerIt = step.item ? itemsById.get(step.item) : undefined;
             const tint = pickerIt ? GENERATION_TINT[pickerIt.generation] : GENERATION_TINT.other;
             const orbSize = status === 'active' ? 92 : 76;
 
@@ -248,7 +248,7 @@ export function ConstellationPath({
                       color: status === 'done' ? GOLD : '#fff',
                     }}
                   >
-                    {step.item ?? (
+                    {pickerIt?.name ?? (
                       <span style={{ color: '#5a5468', fontStyle: 'italic' }}>{t('prophecy.empty')}</span>
                     )}
                   </div>

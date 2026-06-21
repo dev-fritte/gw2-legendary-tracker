@@ -33,7 +33,8 @@ export const TAB_GENERATIONS: Record<string, LegendaryGeneration[]> = {
 // ─── Step types ───────────────────────────────────────────────────────────────
 export interface Step {
   id: number;
-  item: string | null;
+  /** GW2 item ID — stored as an ID (not a localized name) so it survives language switches. */
+  item: number | null;
   done: boolean;
   doneAt?: string;
 }

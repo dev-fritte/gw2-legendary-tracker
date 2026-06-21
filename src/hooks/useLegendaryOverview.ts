@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { getApiClient } from '@/services/apiClient';
 import type { GW2Item, LegendaryArmoryItem } from '@/types/gw2-api';
 
@@ -32,22 +33,24 @@ function useAccountArmory(apiKey: string) {
   });
 }
 
-function useItems(apiKey: string, ids: number[], enabled: boolean) {
+function useItems(apiKey: string, ids: number[], enabled: boolean, lang: string) {
   return useQuery({
-    queryKey: ['items', ids],
-    queryFn: () => getApiClient(apiKey).getItems(ids),
+    queryKey: ['items', ids, lang],
+    queryFn: () => getApiClient(apiKey).getItems(ids, lang),
     enabled: enabled && ids.length > 0,
     staleTime: 60 * 60 * 1000,
   });
 }
 
 export function useLegendaryOverview(apiKey: string) {
+  const { i18n } = useTranslation();
+  const lang = i18n.language.startsWith('de') ? 'de' : 'en';
   const allQuery = useAllLegendaryArmory(apiKey);
   const accountQuery = useAccountArmory(apiKey);
 
   const allIds = (allQuery.data ?? []).map((e) => e.id);
   const itemsReady = allQuery.isSuccess && accountQuery.isSuccess;
-  const itemsQuery = useItems(apiKey, allIds, itemsReady);
+  const itemsQuery = useItems(apiKey, allIds, itemsReady, lang);
 
   const accountMap = new Map<number, number>((accountQuery.data ?? []).map((e) => [e.id, e.count]));
   const maxCountMap = new Map<number, number>(

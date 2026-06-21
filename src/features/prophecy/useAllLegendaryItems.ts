@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { getApiClient } from '@/services/apiClient';
 import type { GW2Item } from '@/types/gw2-api';
 import { getLegendaryGeneration, type LegendaryGeneration } from '@/utils/legendaryGenerations';
@@ -60,6 +61,9 @@ export const GENERATION_TINT: Record<LegendaryGeneration, string> = {
  *  Reuses the same React-Query cache keys as useLegendaryOverview so the
  *  network request fires only once even when both hooks are mounted. */
 export function useAllLegendaryItems(apiKey: string) {
+  const { i18n } = useTranslation();
+  const lang = i18n.language.startsWith('de') ? 'de' : 'en';
+
   // Step 1 — all legendary armory entries (public endpoint, no user data)
   const allQuery = useQuery({
     queryKey: ['legendaryArmory', 'all'],
@@ -71,8 +75,8 @@ export function useAllLegendaryItems(apiKey: string) {
 
   // Step 2 — full item data (same cache key as useLegendaryOverview → free)
   const itemsQuery = useQuery({
-    queryKey: ['items', allIds],
-    queryFn: () => getApiClient(apiKey).getItems(allIds),
+    queryKey: ['items', allIds, lang],
+    queryFn: () => getApiClient(apiKey).getItems(allIds, lang),
     enabled: allQuery.isSuccess && allIds.length > 0,
     staleTime: 60 * 60 * 1000,
   });
@@ -88,12 +92,12 @@ export function useAllLegendaryItems(apiKey: string) {
     weightClass: raw.details?.weight_class,
   }));
 
-  // Stable lookup map — name → item (used to resolve step.item strings)
-  const itemsByName = new Map<string, LegendaryPickerItem>(items.map((i) => [i.name, i]));
+  // Stable lookup map — id → item (used to resolve step.item IDs)
+  const itemsById = new Map<number, LegendaryPickerItem>(items.map((i) => [i.id, i]));
 
   return {
     items,
-    itemsByName,
+    itemsById,
     isLoading: allQuery.isPending || itemsQuery.isPending,
   };
 }

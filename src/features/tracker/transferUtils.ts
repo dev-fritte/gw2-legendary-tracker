@@ -9,8 +9,8 @@ export function buildEntries(
   return recommendations.flatMap((rec): TransferEntry[] => {
     const matching = allItems
       .filter((it) => it.itemType === 'Weapon' && it.detailType === rec.weaponType)
-      .map((it) => it.name)
-      .sort((a, b) => a.localeCompare(b));
+      .map((it) => ({ id: it.id, name: it.name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
 
     if (matching.length === 0) return [];
 
@@ -20,8 +20,8 @@ export function buildEntries(
         weaponType: rec.weaponType,
         impact: rec.impact,
         recIcon: rec.icon,
-        availableNames: matching,
-        selectedName: matching[0],
+        availableOptions: matching,
+        selectedId: matching[0].id,
       },
     ];
   });

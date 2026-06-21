@@ -12,7 +12,7 @@ interface CardProps {
   step: Step;
   index: number;
   steps: Step[];
-  itemsByName: Map<string, LegendaryPickerItem>;
+  itemsById: Map<number, LegendaryPickerItem>;
   onSlotClick: (id: number) => void;
   onToggle: (id: number) => void;
   onRemove: (id: number) => void;
@@ -22,14 +22,14 @@ export function ChronicleCard({
   step,
   index,
   steps,
-  itemsByName,
+  itemsById,
   onSlotClick,
   onToggle,
   onRemove,
 }: CardProps) {
   const { t } = useTranslation();
   const status = stepStatus(step, steps);
-  const pickerIt = step.item ? itemsByName.get(step.item) : undefined;
+  const pickerIt = step.item ? itemsById.get(step.item) : undefined;
   const tint = pickerIt ? GENERATION_TINT[pickerIt.generation] : GENERATION_TINT.other;
   const subLabel = pickerIt ? getSubLabel(pickerIt, t) : '';
 
@@ -119,7 +119,7 @@ export function ChronicleCard({
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {step.item}
+                  {pickerIt?.name}
                 </div>
                 {subLabel && (
                   <div

@@ -6,7 +6,12 @@ export function useRoadmap() {
   const [steps, setSteps] = useState<Step[]>(() => {
     try {
       const raw = localStorage.getItem(ROADMAP_KEY);
-      if (raw) return JSON.parse(raw) as Step[];
+      if (raw) {
+        const parsed = JSON.parse(raw) as Step[];
+        // Legacy entries stored the localized item name (string) instead of its ID —
+        // those can't be resolved reliably anymore, so reset them to "unselected".
+        return parsed.map((s) => (typeof s.item === 'string' ? { ...s, item: null } : s));
+      }
     } catch (e) {
       void e;
     }
@@ -24,7 +29,7 @@ export function useRoadmap() {
 
   return {
     steps,
-    setItem: (id: number, item: string) =>
+    setItem: (id: number, item: number) =>
       persist(steps.map((s) => (s.id === id ? { ...s, item } : s))),
     toggleDone: (id: number) =>
       persist(

@@ -22,7 +22,7 @@ interface PageProps {
 export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) {
   const { t } = useTranslation();
   const { steps, setItem, toggleDone, addStep, removeStep } = useRoadmap();
-  const { items: allItems, itemsByName } = useAllLegendaryItems(apiKey);
+  const { items: allItems, itemsById } = useAllLegendaryItems(apiKey);
   const { unlockedItemIds } = useArmoryStatus(apiKey);
   const [pickerFor, setPickerFor] = useState<number | null>(null);
 
@@ -69,6 +69,7 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
   const doneCount = steps.filter((s) => s.done).length;
   const plannedCount = steps.filter((s) => !s.done && s.item).length;
   const nextStep = steps.find((s) => !s.done && s.item);
+  const nextStepName = nextStep?.item != null ? itemsById.get(nextStep.item)?.name : undefined;
   const pickerStep = pickerFor != null ? steps.find((s) => s.id === pickerFor) : null;
 
   return (
@@ -155,7 +156,7 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
             [
               { label: t('prophecy.stats.done'),    value: doneCount,             glyph: '✓', color: GOLD,   isText: false },
               { label: t('prophecy.stats.planned'),  value: plannedCount,          glyph: '◆', color: PURPLE, isText: false },
-              { label: t('prophecy.stats.next'),     value: nextStep?.item ?? '—', glyph: '✦', color: PURPLE, isText: true  },
+              { label: t('prophecy.stats.next'),     value: nextStepName ?? '—', glyph: '✦', color: PURPLE, isText: true  },
             ] as const
           ).map((stat) => (
             <div
@@ -220,7 +221,7 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
           <ConstellationPath
             scrollRef={pathScrollRef}
             steps={steps}
-            itemsByName={itemsByName}
+            itemsById={itemsById}
             onSlotClick={(id) => setPickerFor(id)}
             onToggle={(id) => toggleDone(id)}
             onScrollSync={(sx) => syncTo(chronScrollRef, sx)}
@@ -254,7 +255,7 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
                 step={step}
                 index={i}
                 steps={steps}
-                itemsByName={itemsByName}
+                itemsById={itemsById}
                 onSlotClick={(id) => setPickerFor(id)}
                 onToggle={(id) => toggleDone(id)}
                 onRemove={(id) => removeStep(id)}
@@ -274,16 +275,16 @@ export function GlintsProphecyPage({ apiKey, onLogout, onNavigate }: PageProps) 
             done: new Set(
               steps
                 .filter((s) => s.id !== pickerStep.id && s.done && s.item)
-                .map((s) => s.item as string),
+                .map((s) => s.item as number),
             ),
             planned: new Set(
               steps
                 .filter((s) => s.id !== pickerStep.id && !s.done && s.item)
-                .map((s) => s.item as string),
+                .map((s) => s.item as number),
             ),
           }}
-          onPick={(name) => {
-            setItem(pickerStep.id, name);
+          onPick={(id) => {
+            setItem(pickerStep.id, id);
             setPickerFor(null);
           }}
           onClose={() => setPickerFor(null)}

@@ -11,18 +11,18 @@ import { PickerHeader } from './PickerHeader';
 import { PickerTabBar } from './PickerTabBar';
 
 export interface RoadmapUsage {
-  /** Item names that sit in already-done steps */
-  done: Set<string>;
-  /** Item names that sit in planned (not-yet-done) steps */
-  planned: Set<string>;
+  /** Item IDs that sit in already-done steps */
+  done: Set<number>;
+  /** Item IDs that sit in planned (not-yet-done) steps */
+  planned: Set<number>;
 }
 
 interface PickerProps {
   allItems: LegendaryPickerItem[];
   unlockedItemIds: Set<number>;
-  currentItem: string | null;
+  currentItem: number | null;
   usedInRoadmap: RoadmapUsage;
-  onPick: (name: string) => void;
+  onPick: (id: number) => void;
   onClose: () => void;
 }
 

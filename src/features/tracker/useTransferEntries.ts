@@ -22,7 +22,7 @@ interface UseTransferEntriesResult {
   sensors: ReturnType<typeof useSensors>;
   handleDragEnd: (event: DragEndEvent) => void;
   deleteEntry: (id: string) => void;
-  setSelected: (id: string, name: string) => void;
+  setSelected: (id: string, itemId: number) => void;
   handleTransfer: () => void;
 }
 
@@ -73,19 +73,19 @@ export function useTransferEntries(
     setEntries((prev) => prev.filter((e) => e.id !== id));
   }
 
-  function setSelected(id: string, name: string) {
-    setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, selectedName: name } : e)));
+  function setSelected(id: string, itemId: number) {
+    setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, selectedId: itemId } : e)));
   }
 
   function handleTransfer() {
-    const toAdd = entries.filter((e) => e.selectedName);
+    const toAdd = entries.filter((e) => e.selectedId);
     if (toAdd.length === 0) return;
     const existing = storage.getRoadmap();
     const base = importMode === 'overwrite' ? existing.filter((s) => s.done) : existing;
     const maxId = base.length > 0 ? Math.max(...base.map((s) => s.id)) : 0;
     storage.setRoadmap([
       ...base,
-      ...toAdd.map((e, i) => ({ id: maxId + i + 1, item: e.selectedName, done: false })),
+      ...toAdd.map((e, i) => ({ id: maxId + i + 1, item: e.selectedId, done: false })),
     ]);
     onTransferred();
   }
